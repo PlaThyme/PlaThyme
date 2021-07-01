@@ -7,7 +7,7 @@ const gameInfo = {
   roomName: "Cool Players Only",
   roomCode: "12345"
 }
-const playerInfo = ["Mike", "Vandana", "Zach"]
+const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
 
 function App() {
   return (
