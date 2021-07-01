@@ -1,0 +1,24 @@
+{
+  "name": "PlaThyme",
+  "version": "1.0.0",
+  "description": "Game Hosting Site",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sree-Vandana/PlaThyme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sree-Vandana/PlaThyme/issues"
+  },
+  "homepage": "https://github.com/Sree-Vandana/PlaThyme#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.9"
+  }
+}
