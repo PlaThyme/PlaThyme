@@ -13,7 +13,7 @@ const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
 
 function App() {
   const [listofGames, setListofGames] = useState([
-    {gameId: 1, gameName: "Decrypto", minPlayers: 4},
+    {gameId: 1, gameName: "game 0", minPlayers: 4},
     {gameId: 2, gameName: "game 1", minPlayers: 3},
     {gameId: 3, gameName: "game 2", minPlayers: 2},
     {gameId: 4, gameName: "game 4", minPlayers: 1},

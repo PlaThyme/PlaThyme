@@ -88,7 +88,10 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
           </Listbox>
 
           <p class="text-center py-2">
-            Minimum Number of Players: {selected.minPlayers}
+            Minimum Number of Players:{" "}
+            <span className="bg-thyme-darkest text-thyme-lightest">
+              <b>&nbsp;{selected.minPlayers}&nbsp;</b>
+            </span>
           </p>
         </div>
 
