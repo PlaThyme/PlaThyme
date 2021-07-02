@@ -1,0 +1,31 @@
+{
+  "name": "PlaThyme",
+  "version": "1.0.0",
+  "description": "Game Hosting Site",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/index",
+    "build": "cd client && npm install && npm run build",
+    "qbuild": "cd client && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlaThyme/PlaThyme.git"
+  },
+  "keywords": [
+    "games",
+    "enigma",
+    "react"
+  ],
+  "author": "Sree Vandana Nadipalli, Michael Fulton, Zachariah Santangelo",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PlaThyme/PlaThyme/issues"
+  },
+  "homepage": "https://github.com/PlaThyme/PlaThyme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.9"
+  }
+}

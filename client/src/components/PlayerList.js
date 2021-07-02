@@ -1,3 +1,8 @@
+//PlayerList takes in an array of players and displays them in a list.
+//TODO Make Leave Room button fuctional.
+
+
+
 const PlayerList = ({players}) => {
     return (
         <div className="grid justify-items-center">
