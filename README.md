@@ -12,7 +12,7 @@ It is a multiplayer web game hosting site. We are aiming to create a website whe
 * [Socket.io](https://socket.io/docs/v4) / PubSub 
 * [Heroku](https://www.heroku.com/) 
 * [VS Code](https://code.visualstudio.com/)
-* [TailwindCSS](https://tailwindcss.com/docs)
+* [TailwindCSS](https://tailwindcss.com/docs/guides/create-react-app)
 
 # Programming Languages
 * JavaScript
