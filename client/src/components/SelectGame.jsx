@@ -1,14 +1,17 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 
-export default function SelectGame({ handleSelectedGame, listofGames }) {
+export default function SelectGame({ handleSelectedGame, listofGames, createGame, joinGame}) {
   const [selected, setSelected] = useState({
     gameId: 0,
     gameName: "Game Name",
     minPlayers: "Min Players",
   });
   const [selectedOption, setSelectedOption] = useState("create-room");
+
+  const nameRef = useRef()
+  const codeRef = useRef()
 
   useEffect(() => {
     handleSelectedGame(selected);
@@ -21,6 +24,16 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
   const handleJoinRoom = () => {
     setSelectedOption("join-room");
   };
+
+  function handleCreateNewRoom(e){
+    e.preventDefault();
+    createGame(nameRef.current.value, selected)
+  }
+
+  function handeJoinExistingRoom(e){
+    e.preventDefault()
+    joinGame(nameRef.current.value, codeRef.current.value)
+  }
 
   return (
     <>
@@ -120,7 +133,7 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
 
         {selectedOption === "create-room" ? (
           <div class="bg-thyme p-4 shadow md:w-3/4 mx-auto lg:w-1/2">
-            <form action="">
+            <form onSubmit={handleCreateNewRoom} action="">
               <div class="mb-5">
                 <input
                   type="text"
@@ -128,6 +141,8 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
                   name="name"
                   placeholder="Enter Name"
                   class="border border-gray-300 shadow p-2 w-full"
+                  ref={nameRef}
+                  required
                 />
               </div>
               <button class="block w-full bg-thyme-darkest hover:text-thyme-light text-white font-bold p-2">
@@ -137,7 +152,7 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
           </div>
         ) : (
           <div class="bg-thyme p-4 shadow md:w-3/4 mx-auto lg:w-1/2">
-            <form action="">
+            <form onSubmit={handeJoinExistingRoom} action="">
               <div class="mb-5">
                 <input
                   type="text"
@@ -145,6 +160,8 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
                   name="name"
                   placeholder="Enter Name"
                   class="border border-gray-300 shadow p-2 w-full"
+                  ref={nameRef}
+                  required
                 />
               </div>
               <div class="mb-5">
@@ -154,6 +171,8 @@ export default function SelectGame({ handleSelectedGame, listofGames }) {
                   name="name"
                   placeholder="Enter Room Code"
                   class="border border-gray-300 shadow p-2 w-full"
+                  ref={codeRef}
+                  required
                 />
               </div>
               <button class="block w-full bg-thyme-darkest hover:text-thyme-light text-white font-bold p-2">

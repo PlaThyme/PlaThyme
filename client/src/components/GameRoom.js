@@ -1,4 +1,4 @@
-import PlayerList from "./PlayerList";
+import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 
 const GameRoom = ({ gameInfo, playerInfo }) => {
@@ -6,7 +6,7 @@ const GameRoom = ({ gameInfo, playerInfo }) => {
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
         <h1 className="inline text-thyme-lightest text-3xl">
-          {gameInfo.name} - {gameInfo.roomName}
+          {gameInfo.name}
         </h1>
         <div className="flex inline">
           <ToolTip text="Copy to Clipboard">
@@ -30,21 +30,11 @@ const GameRoom = ({ gameInfo, playerInfo }) => {
         </div>
         
         <div className="relative w-60 bg-gray-900">
-          <PlayerList players={playerInfo} />
+          <SideBar players={playerInfo} />
         </div>
       </div>
     </div>
   );
 };
-// window.addEventListener("DOMContentLoaded", () => {
-//   const cpyBtn = document.querySelector("btn-cpy");
-//   const ttBtn = document.querySelector("btn-tt");
-//   cpyBtn.addEventListener("mouseenter", () => {
-//     ttBtn.classNameList.remove("hidden")
-//   })
-//   cpyBtn.addEventListener("mouseleave", () => {
-//     ttBtn.classNameList.add("hidden")
-//   })
-// });
 
 export default GameRoom;
