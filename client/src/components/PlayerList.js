@@ -6,7 +6,7 @@
 const PlayerList = ({players}) => {
     return (
         <div className="grid justify-items-center">
-            <button className="font-mono bg-thyme flex-grow p-2 text-2xl hover:bg-thyme-light rounded-b-lg">Players</button>
+            <button className="bg-thyme flex-grow p-2 text-2xl hover:bg-thyme-light rounded-b-lg">Players</button>
             <ul className="bg-gray-900 divide-y-4 divide-thyme divide-dashed content-center">
                 {players.map((player) => (
                     <h1 className="text-xl text-center align-middle bg-gray-900 text-thyme-lightest p-2">
