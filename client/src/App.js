@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SelectGame from './components/SelectGame';
 import './App.css';
+import Carousel from './components/carousel';
 import GameRoom from './components/GameRoom';
 
 
@@ -31,6 +32,7 @@ function App() {
 
   return (
     <div className="App font-mono">
+      <Carousel/>
       <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} />
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
     </div>
