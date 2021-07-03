@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <h1>Hello world!</h1>
-  <Carousel/>
+      <Carousel/>
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
     </div>
   );
