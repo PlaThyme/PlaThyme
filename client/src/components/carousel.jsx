@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'; 
 //https://codepen.io/tacotoemeck/pen/Jjbjgpy?editors=0010
 class Carousel extends Component {
     state = { 
