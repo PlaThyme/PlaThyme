@@ -21,10 +21,10 @@ function App() {
   })
 
   const [listofGames, setListofGames] = useState([
-    {gameId: 1, gameName: "Draw The Word", minPlayers: 3},
-    {gameId: 2, gameName: "game 1", minPlayers: 3},
-    {gameId: 3, gameName: "game 2", minPlayers: 2},
-    {gameId: 4, gameName: "game 4", minPlayers: 1},
+    {gameId: 0, gameName: "Draw The Word", minPlayers: 3},
+    {gameId: 1, gameName: "game 1", minPlayers: 3},
+    {gameId: 2, gameName: "game 2", minPlayers: 2},
+    {gameId: 3, gameName: "game 4", minPlayers: 1},
   ]);
   const [selectedGame, setSelectedGame] = useState({
     gameId: 0,
@@ -35,7 +35,7 @@ function App() {
   function handleCreateGame (playerName, selectedGame){
     console.log(playerName, selectedGame);
     const id = selectedGame.gameId;
-    socket.emit('newRoom', {playerName,id});
+    socket.emit('newRoom', {name:playerName,gameId:id});
   }
 
   function handleJoinGame (playerName, roomCode){

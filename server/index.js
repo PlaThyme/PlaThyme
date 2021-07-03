@@ -19,8 +19,10 @@ io.on('connection', socket => {
 
   function handleCreateGame(data){
     let info = JSON.parse(data);
-    roomName = makeid(6);
-    socket.emit('gameCode', roomName);
+    roomName = makeid(6);  
+    const gameData = {playerList:[info.playerName], code:roomName, gameId: info.gameId};
+    gameRooms[roomName] = gameData;
+    socket.emit('gameData', gameData);
     socket.join(roomName);
     socket.number = 1;
   }
