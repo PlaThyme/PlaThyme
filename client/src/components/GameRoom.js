@@ -5,14 +5,14 @@ const GameRoom = ({ gameInfo, playerInfo }) => {
   return (
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
-        <h1 className="font-mono inline text-thyme-lightest text-3xl">
+        <h1 className="inline text-thyme-lightest text-3xl">
           {gameInfo.name} - {gameInfo.roomName}
         </h1>
         <div className="flex inline">
           <ToolTip text="Copy to Clipboard">
             <button
               id="btn-cpy"
-              className="inline font-mono inline text-thyme-lightest text-3xl border-2 rounded-lg px-2 hover:bg-thyme-darkest"
+              className="inline inline text-thyme-lightest text-3xl border-2 rounded-lg px-2 hover:bg-thyme-darkest"
               onClick={() => {
                 navigator.clipboard.writeText(gameInfo.roomCode);
               }}
