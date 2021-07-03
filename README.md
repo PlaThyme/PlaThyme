@@ -4,7 +4,7 @@
 * Michael Fulton
 
 # PlaThyme
-It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game, create a private room and start playing games. The site shall be able to host open source games created by contributors. Initially we are aiming on making 3 games, each with each of the games being created individually by each of the initial contributors.
+It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game, create a private room and start playing games. The site shall be able to host open source games created by contributors. Initially we are aiming on making one game collaboratively. This will help us nail down the creation process, and create documentation for it. Following this, additional games will be created, each with each of the games being created individually by each of the initial contributors.
 
 # Technologies and Environment
 * [React](https://reactjs.org/docs/getting-started.html)
