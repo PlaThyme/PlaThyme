@@ -3,6 +3,10 @@ import SelectGame from './components/SelectGame';
 import './App.css';
 import GameRoom from './components/GameRoom';
 
+//Create socket.io client
+import socketClient from "socket.io-client";
+const SERVER = "http://localhost:3001";
+
 
 const gameInfo = {
   name: "Enigma Breaker",
@@ -28,6 +32,11 @@ function App() {
     console.log("selected game = ", gameName);
     setSelectedGame(gameName);
   }
+
+  var socket = socketClient(SERVER);
+  socket.on('connection', () => {
+    console.log('Front and back end now connectted');
+  });
 
   return (
     <div className="App font-mono bg-thyme-darkest">
