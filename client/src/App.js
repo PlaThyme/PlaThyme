@@ -15,23 +15,23 @@ const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
 
 function App() {
   const [gameInfo, setGameInfo] = useState({
-    name: null,
-    roomCode: null,
-    playerName: null
+    gameName: null,
+    roomCode: null
   })
 
   const [listofGames, setListofGames] = useState([
-    {gameId: 0, gameName: "Draw The Word", minPlayers: 3},
-    {gameId: 1, gameName: "game 1", minPlayers: 3},
-    {gameId: 2, gameName: "game 2", minPlayers: 2},
-    {gameId: 3, gameName: "game 4", minPlayers: 1},
+    {gameId: 1, gameName: "Draw The Word", minPlayers: 3},
+    {gameId: 2, gameName: "game 1", minPlayers: 3},
+    {gameId: 3, gameName: "game 2", minPlayers: 2},
+    {gameId: 4, gameName: "game 4", minPlayers: 1},
   ]);
   const [selectedGame, setSelectedGame] = useState({
     gameId: 0,
     gameName: "Game Name",
     minPlayers: "Min Players",
   });
-  const [inGame, setInGame] = useState(false)
+
+  const [inGame, setInGame] = useState(false);
 
   function handleCreateGame (playerName, selectedGame){
     console.log(playerName, selectedGame);
@@ -53,16 +53,24 @@ function App() {
     console.log('Front and back end now connectted');
   });
 
-  socket.on('gameCode', (code) => {
-    
-
+  socket.on('gameData', (gameData) => {
+    console.log(gameData)
+    const name = listofGames.find((id) => id.gameId == gameData.gameId).gameName
+    console.log(name)
+    console.log(gameData.code)
+    setGameInfo({gameName:name, roomCode:gameData.code})
+    console.log(gameInfo)
+    setInGame(true)
   } )
 
 
   return (
     <div className="App font-mono bg-thyme-darkest">
-      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
-      <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
+      {inGame ? 
+        <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame}/>
+        :
+        <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
+      } 
     </div>
   );
 }

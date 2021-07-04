@@ -18,13 +18,12 @@ io.on('connection', socket => {
   socket.on('newRoom', (data) => {handleCreateGame(data)})
 
   function handleCreateGame(data){
-    let info = JSON.parse(data);
     roomName = makeid(6);  
-    const gameData = {playerList:[info.playerName], code:roomName, gameId: info.gameId};
+    const gameData = {playerList: data.name, code:roomName, gameId: data.gameId};
     gameRooms[roomName] = gameData;
     socket.emit('gameData', gameData);
     socket.join(roomName);
-
+    console.log(gameData);
   }
 
   //From https://github.com/HungryTurtleCode/multiplayerSnake/blob/master/server/server.js

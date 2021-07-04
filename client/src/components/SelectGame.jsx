@@ -5,7 +5,7 @@ import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 export default function SelectGame({ handleSelectedGame, listofGames, createGame, joinGame}) {
   const [selected, setSelected] = useState({
     gameId: 0,
-    gameName: "Game Name",
+    gameName: "Select a Game",
     minPlayers: "Min Players",
   });
   const [selectedOption, setSelectedOption] = useState("create-room");
@@ -27,6 +27,10 @@ export default function SelectGame({ handleSelectedGame, listofGames, createGame
 
   function handleCreateNewRoom(e){
     e.preventDefault();
+    if(selected.gameId == 0){
+      setSelected({gameId: 0, gameName: "Please Select a Game!", minPlayers:"See Above ^^^"})
+      return;
+    }
     createGame(nameRef.current.value, selected)
   }
 

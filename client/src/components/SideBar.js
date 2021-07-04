@@ -2,11 +2,15 @@
 //TODO Make Leave Room button fuctional.
 import { RadioGroup } from '@headlessui/react'
 import { useState } from 'react'
+import Chat from './Chat'
 
-const SideBar = ({players}) => {
+const SideBar = ({players, leaveGame}) => {
     const [selected, setSelected] = useState('playersBtn')
     const [showPlayers, setPlayersChat] = useState(true)
     
+    function handleLeaveGame(){
+        leaveGame(false)
+    }
 
     return (
         <div className="grid justify-items-center">
@@ -31,9 +35,9 @@ const SideBar = ({players}) => {
                     ))}
                 </ul>
                 :
-                <h1>Nope</h1>
+                <Chat/>
             }
-            <button className="text-thyme-lightest p-2 w-full text-2xl rounded-t-lg bg-red-600 hover:bg-red-800 absolute bottom-0 right-0">Leave Room</button>
+            <button onClick={() => handleLeaveGame()} className="text-thyme-lightest p-2 w-full text-2xl rounded-t-lg bg-red-600 hover:bg-red-800 absolute bottom-0 right-0">Leave Room</button>
         </div>
     )
 }

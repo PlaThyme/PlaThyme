@@ -1,12 +1,12 @@
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 
-const GameRoom = ({ gameInfo, playerInfo }) => {
+const GameRoom = ({ gameInfo, playerInfo, leaveGame}) => {
   return (
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
         <h1 className="inline text-thyme-lightest text-3xl">
-          {gameInfo.name}
+          {gameInfo.gameName}
         </h1>
         <div className="flex inline">
           <ToolTip text="Copy to Clipboard">
@@ -30,7 +30,7 @@ const GameRoom = ({ gameInfo, playerInfo }) => {
         </div>
         
         <div className="relative w-60 bg-gray-900">
-          <SideBar players={playerInfo} />
+          <SideBar players={playerInfo} leaveGame={leaveGame} />
         </div>
       </div>
     </div>

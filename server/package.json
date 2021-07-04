@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./index",
     "build": "cd ../client && npm install && npm run build",
-    "qbuild": "cd client && npm run build",
+    "qbuild": "cd ../client && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,6 +27,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "nodemon": "^2.0.9",
+    "socket.io": "^4.1.2",
     "uuid": "^8.3.2"
   }
 }
