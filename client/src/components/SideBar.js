@@ -4,7 +4,7 @@ import { RadioGroup } from "@headlessui/react";
 import { useState } from "react";
 import Chat from "./Chat";
 
-const SideBar = ({ players, leaveGame }) => {
+const SideBar = ({ players, leaveGame, socket}) => {
   const [selected, setSelected] = useState("playersBtn");
   const [showPlayers, setPlayersChat] = useState(true);
 
@@ -56,7 +56,7 @@ const SideBar = ({ players, leaveGame }) => {
           </ul>
             </div>
         ) : (
-            <Chat className="flex-grow" />
+            <Chat socket={socket} className="flex-grow" />
             )}
             </div>
         <button

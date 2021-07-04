@@ -4,9 +4,8 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const http = require('http').createServer(app)
 const {makeid} = require('./makeid');
-const gameStates = {};
-const gameRooms = {};
 
+const {joinRoom, leaveRoom, getUser, getUsersInRoom, roomExists} = require("./rooms.js");
 
 //Get sockets running
 const io = require('socket.io')(http);
@@ -20,12 +19,21 @@ io.on('connection', socket => {
   socket.on('newRoom', (data) => {handleCreateGame(data)})
 
   function handleCreateGame(data){
-    roomName = makeid(6);  
-    const gameData = {playerList: data.name, code:roomName, gameId: data.gameId};
-    gameRooms[roomName] = gameData;
+    roomCode = makeid(6);
+
+    //Check if the random ID was a repeat. If so, recursively attempt again.
+    if(roomExists(roomCode)){
+      handleCreateGame(data);
+      return;
+    }
+
+    const gameData = {playerName: data.name, code:roomCode, gameId: data.gameId};
+    
+    //Adds user to room tracking.
+    joinRoom(socket.id, data.name, data.gameId, roomCode);
+
     socket.emit('gameData', gameData);
-    socket.join(roomName);
-    console.log(gameData);
+    socket.join(roomCode);
   }
 
   //From https://github.com/HungryTurtleCode/multiplayerSnake/blob/master/server/server.js

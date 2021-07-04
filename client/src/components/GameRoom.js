@@ -1,7 +1,7 @@
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 
-const GameRoom = ({ gameInfo, playerInfo, leaveGame}) => {
+const GameRoom = ({ gameInfo, playerInfo, leaveGame, socket}) => {
   return (
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
@@ -31,7 +31,7 @@ const GameRoom = ({ gameInfo, playerInfo, leaveGame}) => {
         
         <div className="flex relative bg-gray-900">
           <div className="flex w-60">
-            <SideBar players={playerInfo} leaveGame={leaveGame} />
+            <SideBar players={playerInfo} leaveGame={leaveGame} socket={socket} />
           </div>
         </div>
       </div>

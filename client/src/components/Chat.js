@@ -1,8 +1,10 @@
-import React from 'react'
+import React from 'react';
+import io from 'socket.io-client';
 
-const Chat = () => {
+const Chat = (socket) => {
     function handleSend(e){
         e.preventDefault();
+        console.log(socket);
     }
 
     return (
@@ -14,7 +16,7 @@ const Chat = () => {
                 <form 
                 onSubmit={handleSend}
                 className="">
-                    <textarea
+                    <input
                         className="h-20  flex-1 text-xs"
                         type="text"
                         placeholder="Enter Message"
