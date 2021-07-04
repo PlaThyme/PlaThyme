@@ -36,7 +36,6 @@ export default function SelectGame({ handleSelectedGame, listofGames, createGame
   }
 
   return (
-    <>
       <div className="h-screen">
         <div class="sm:w-5/6 md:w-1/4 lg:w-1/3 mx-auto">
           <Listbox value={selected} onChange={setSelected}>
@@ -182,6 +181,5 @@ export default function SelectGame({ handleSelectedGame, listofGames, createGame
           </div>
         )}
       </div>
-    </>
   );
 }

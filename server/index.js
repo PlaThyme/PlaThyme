@@ -24,7 +24,22 @@ io.on('connection', socket => {
     gameRooms[roomName] = gameData;
     socket.emit('gameData', gameData);
     socket.join(roomName);
-    socket.number = 1;
+
+  }
+
+  //From https://github.com/HungryTurtleCode/multiplayerSnake/blob/master/server/server.js
+  function handleJoinGame (data) {
+    const gameRoom = io.sockets.adapter.rooms[gameCode];
+    let allUsers;
+    if(gameRoom){
+      allUsers = room.sockets;
+    }
+
+    let numUsers = 0;
+    if (allUsers) {
+      numUsers = Object.keys(allUsers).length;
+    }
+
   }
 
 });

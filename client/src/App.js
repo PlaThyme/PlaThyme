@@ -31,6 +31,7 @@ function App() {
     gameName: "Game Name",
     minPlayers: "Min Players",
   });
+  const [inGame, setInGame] = useState(false)
 
   function handleCreateGame (playerName, selectedGame){
     console.log(playerName, selectedGame);
