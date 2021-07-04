@@ -56,7 +56,7 @@ const SideBar = ({ players, leaveGame }) => {
           </ul>
             </div>
         ) : (
-            <Chat />
+            <Chat className="flex-grow" />
             )}
             </div>
         <button
