@@ -15,6 +15,8 @@ const io = require('socket.io')(http);
 io.on('connection', socket => {
   console.log('Client Connected');
 
+  socket.emit('message', "yup");
+
   socket.on('newRoom', (data) => {handleCreateGame(data)})
 
   function handleCreateGame(data){

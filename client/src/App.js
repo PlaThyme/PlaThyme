@@ -55,7 +55,7 @@ function App() {
 
   socket.on('gameData', (gameData) => {
     console.log(gameData)
-    const name = listofGames.find((id) => id.gameId == gameData.gameId).gameName
+    const name = listofGames.find((id) => id.gameId === gameData.gameId).gameName
     console.log(name)
     console.log(gameData.code)
     setGameInfo({gameName:name, roomCode:gameData.code})
@@ -66,11 +66,11 @@ function App() {
 
   return (
     <div className="App font-mono bg-thyme-darkest">
-      {inGame ? 
-        <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame}/>
+      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
+      <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame}/>
+      {/* {inGame ? 
         :
-        <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
-      } 
+      }  */}
     </div>
   );
 }

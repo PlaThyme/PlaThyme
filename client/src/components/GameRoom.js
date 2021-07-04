@@ -29,8 +29,10 @@ const GameRoom = ({ gameInfo, playerInfo, leaveGame}) => {
             </div>
         </div>
         
-        <div className="relative w-60 bg-gray-900">
-          <SideBar players={playerInfo} leaveGame={leaveGame} />
+        <div className="flex relative bg-gray-900">
+          <div className="flex w-60">
+            <SideBar players={playerInfo} leaveGame={leaveGame} />
+          </div>
         </div>
       </div>
     </div>
