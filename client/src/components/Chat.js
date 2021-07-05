@@ -1,29 +1,32 @@
 import React from 'react';
 import io from 'socket.io-client';
+import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 const Chat = (socket) => {
     function handleSend(e){
         e.preventDefault();
+        document.getElementById('send-box').reset();
         console.log(socket);
     }
 
     return (
-        <div className="flex w-11/12 flex-col">
-            <div className="flex-1 flex-grow w-full bg-gray-800">
+        <div className="flex flex-col">
+            <div className="flex m-1 flex-grow bg-thyme-800">
                 
             </div>
-            <div class="flex chat-form-container pb-10">
+            <div class="chat-form-container pb-2">
                 <form 
+                className="flex"
                 onSubmit={handleSend}
-                className="">
+                id="send-box">
                     <input
-                        className="h-20  flex-1 text-xs"
+                        className="w-40 text-md"
                         type="text"
                         placeholder="Enter Message"
                         required
                         autocomplete="off"
                     />
-                    <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+                    <button class="flex btn p-1 mx-2 text-sm bg-thyme-600 text-thyme-100 rounded">Send<PaperAirplaneIcon className="w-5 h-5 text-thyme-100" /></button>
                 </form>
             </div>
         </div>
