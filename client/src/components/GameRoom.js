@@ -1,7 +1,7 @@
 import PlayerList from "./PlayerList";
 import ToolTip from "./ToolTip";
 
-const GameRoom = ({ gameInfo, playerInfo }) => {
+const GameRoom = ({ gameInfo, playerInfo, children }) => {
   return (
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
@@ -22,11 +22,10 @@ const GameRoom = ({ gameInfo, playerInfo }) => {
           </ToolTip>
         </div>
       </nav>
-      <div className="relative flex inline h-full">
-        <div className="grid justify-items-center bg-gray-800 flex-grow">
-            <div className="m-auto">
-                <div className="text-thyme-lightest">This is in the center!</div>
-            </div>
+      <div className="flex h-screen">
+        <div className=" bg-gray-800 flex-grow">
+          {/* <div className="text-thyme-lightest">This is in the center!</div> */}
+          {children}
         </div>
         
         <div className="relative w-60 bg-gray-900">
