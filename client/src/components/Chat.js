@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import ChatMessage from './ChatMessage';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
-const Chat = ({socket, playerName}) => {
+const Chat = ({socket, currentPlayer}) => {
     const [messages, setMessages] = useState([]);
 
     function handleSend(e){
@@ -16,7 +16,7 @@ const Chat = ({socket, playerName}) => {
     }
 
     useEffect(() =>{
-        socket.on('message', message => {
+        socket.on('message', (message) => {
             setMessages(message => [...messages, message]);
         });
     },[]);
@@ -24,7 +24,7 @@ const Chat = ({socket, playerName}) => {
     return (
         <div className="flex flex-col">
             <div className="flex m-1 flex-grow bg-thyme-800">
-                {messages.map((message, playerName) => <div><Message message={message} playerName={playerName}></Message></div>)}
+                {messages.map((message, currentPlayer) => <div><ChatMessage message={message} playerName={currentPlayer}></ChatMessage></div>)}
             </div>
             <div class="chat-form-container pb-2">
                 <form 

@@ -4,7 +4,7 @@ import { Dialog, RadioGroup, Transition} from "@headlessui/react";
 import { useState, Fragment } from "react";
 import Chat from "./Chat";
 
-const SideBar = ({ players, leaveGame, socket }) => {
+const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
   const [selected, setSelected] = useState("playersBtn");
   const [showPlayers, setPlayersChat] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,9 +57,9 @@ const SideBar = ({ players, leaveGame, socket }) => {
         {showPlayers ? (
           <div className="flex-shrink flex-rows flex">
             <ul className="flex-col bg-gray-900 divide-y-4 divide-thyme divide-dashed content-center">
-              {players.map((player) => (
+              {allUsers.map((player) => (
                 <h1 className="text-xl text-center align-middle bg-gray-900 text-thyme-lightest p-2">
-                  {player}
+                  {player.name}
                 </h1>
               ))}
             </ul>

@@ -1,5 +1,5 @@
-const ChatMessage = ({message:{text, sender}, currentUser}) => {
-    const sentByCurentUser = (currentUser === message.user)
+const ChatMessage = ({message,currentPlayer}) => {
+    const sentByCurrentUser = (currentPlayer === message.user)
 
     return (
         sentByCurrentUser ?

@@ -11,14 +11,12 @@ const SERVER = "http://localhost:3001";
 let socket;
 
 
-const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
-
-
 function App() {
+  const [currentPlayer, setCurrentPlayer] = useState('none');
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
     roomCode: null
-  })
+  });
 
   const [listofGames, setListofGames] = useState([
     {gameId: 1, gameName: "Draw The Word", minPlayers: 3},
@@ -35,13 +33,15 @@ function App() {
   const [inGame, setInGame] = useState(false);
 
   function handleCreateGame (playerName, selectedGame){
+    setCurrentPlayer(playerName);
     console.log(playerName, selectedGame);
     const id = selectedGame.gameId;
     socket.emit('newRoom', {name:playerName,gameId:id});
   }
 
   function handleJoinGame (playerName, roomCode){
-    console.log([playerName,roomCode])
+    setCurrentPlayer(playerName);
+    console.log([playerName,roomCode]);
   }
 
   const handleSelectedGame = (gameName) => {
@@ -82,7 +82,7 @@ function App() {
       :
       <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
     }
-    <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame} socket={socket}/>
+    <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}/>
       </div>
   );
 }

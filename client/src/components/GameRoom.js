@@ -3,7 +3,7 @@ import ToolTip from "./ToolTip";
 import {useState, useEffect} from 'react';
 
 
-const GameRoom = ({ gameInfo, playerInfo, leaveGame, socket}) => {
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket}) => {
   const [allUsers, setAllUsers] = useState([]);
   useEffect(()=>{
     socket.on('userData',(users) =>{
@@ -40,7 +40,7 @@ const GameRoom = ({ gameInfo, playerInfo, leaveGame, socket}) => {
         
         <div className="flex relative bg-gray-900">
           <div className="flex w-60">
-            <SideBar currentPlayer={playerInfo} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
+            <SideBar currentPlayer={currentPlayer} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
           </div>
         </div>
       </div>

@@ -29,7 +29,13 @@ io.on('connection', socket => {
     }
     const error = joinRoom({id:socket.id, gameId:gid, playerName:name, roomCode:roomCode})
     if(error){return callback(error)}
+
+    socket.broadcast.to(roomCode).emit('message', {sender:'PlaThyme', text:`${name} has joined the game.`});
+    io.to(roomCode).emit('userData', getUsersInRoom(roomCode));
+    
   });
+
+
 
   function handleCreateGame(data){
     roomCode = makeid(6);
