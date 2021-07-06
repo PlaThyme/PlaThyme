@@ -41,7 +41,7 @@ export default function SelectGame({
   function handleCreateNewRoom(e) {
     e.preventDefault();
     if (selected.gameId === 0) {
-      openModal(true);
+      openModal();
       return;
     }
     createGame(nameRef.current.value, selected);

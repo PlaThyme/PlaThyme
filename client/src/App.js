@@ -77,12 +77,13 @@ function App() {
 
   return (
     <div className="App font-mono bg-thyme-darkest">
-      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
-      <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame} socket={socket}/>
-      {/* {inGame ? 
+      {inGame ? 
       <></>
-      : */}
-    </div>
+      :
+      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
+    }
+    <GameRoom gameInfo={gameInfo} playerInfo={playerInfo} leaveGame={setInGame} socket={socket}/>
+      </div>
   );
 }
 

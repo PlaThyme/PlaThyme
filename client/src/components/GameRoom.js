@@ -1,7 +1,16 @@
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
+import {useState, useEffect} from 'react';
+
 
 const GameRoom = ({ gameInfo, playerInfo, leaveGame, socket}) => {
+  const [allUsers, setAllUsers] = useState([]);
+  useEffect(()=>{
+    socket.on('userData',(users) =>{
+      setAllUsers(users);
+    })
+  },[]);
+  
   return (
     <div className="flex flex-col h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
@@ -31,7 +40,7 @@ const GameRoom = ({ gameInfo, playerInfo, leaveGame, socket}) => {
         
         <div className="flex relative bg-gray-900">
           <div className="flex w-60">
-            <SideBar players={playerInfo} leaveGame={leaveGame} socket={socket} />
+            <SideBar currentPlayer={playerInfo} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
           </div>
         </div>
       </div>

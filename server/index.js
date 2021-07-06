@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').createServer(app)
 const {makeid} = require('./makeid');
 
-const {joinRoom, leaveRoom, getUser, getUsersInRoom, roomExists} = require("./rooms.js");
+const {joinRoom, leaveRoom, getUser, getGameId, numUsersInRoom, getUsersInRoom, roomExists} = require("./rooms.js");
 
 //Get sockets running
 const io = require('socket.io')(http);
@@ -16,7 +16,20 @@ io.on('connection', socket => {
 
   socket.emit('message', "yup");
 
-  socket.on('newRoom', (data) => {handleCreateGame(data)})
+  socket.on('newRoom', (data) => {handleCreateGame(data)});
+
+  socket.on('leaveRoom', () => leaveRoom(socket.id));
+
+  socket.on('messageSend', (message) => {handleMessageSend(message)});
+
+  socket.on('joinGame', ({name, roomCode}, callback) =>{
+    const gid = getGameId(roomCode);
+    if(gid === null){
+      callback('No Such Room');
+    }
+    const error = joinRoom({id:socket.id, gameId:gid, playerName:name, roomCode:roomCode})
+    if(error){return callback(error)}
+  });
 
   function handleCreateGame(data){
     roomCode = makeid(6);
@@ -27,10 +40,12 @@ io.on('connection', socket => {
       return;
     }
 
+
     const gameData = {playerName: data.name, code:roomCode, gameId: data.gameId};
     
     //Adds user to room tracking.
-    joinRoom(socket.id, data.name, data.gameId, roomCode);
+    let error = joinRoom({id: socket.id, name:data.name, gameId: data.gameId, roomCode:roomCode});
+    if(error){return callback(error)}
 
     socket.emit('gameData', gameData);
     socket.join(roomCode);
@@ -48,9 +63,17 @@ io.on('connection', socket => {
     if (allUsers) {
       numUsers = Object.keys(allUsers).length;
     }
-
+    io.to(gameRoom)
   }
 
+  function handleLeaveGame (id) {
+    leaveRoom(id);
+  }
+
+  function handleMessageSend(message){
+    const sender = getUser(socket.id);
+    io.to(sender.roomCode).emit('message',{sender: sender.name, text: message})
+  }
 });
 
 http.listen(PORT, () => {

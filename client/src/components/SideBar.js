@@ -69,7 +69,7 @@ const SideBar = ({ players, leaveGame, socket }) => {
         )}
       </div>
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => openModal()}
         className=" text-thyme-lightest p-2 w-full text-xl rounded-t-lg bg-red-600 hover:bg-red-800"
       >
         Leave Room..?
@@ -78,9 +78,9 @@ const SideBar = ({ players, leaveGame, socket }) => {
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
-          onClose={closeModal}
+          onClose={() => setIsOpen(false)}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div className="h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
               <Dialog.Overlay className="fixed inset-Y0" />
             </Transition.Child>
@@ -90,7 +90,6 @@ const SideBar = ({ players, leaveGame, socket }) => {
               className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
-              &#8203;
             </span>
             <Transition.Child
               as={Fragment}
