@@ -79,11 +79,11 @@ function App() {
     <div className="App font-mono bg-thyme-darkest">
       {inGame ?
         <>
-          <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}/>
         </>
       :
       <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
     }
+    <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}/>
       </div>
   );
 }

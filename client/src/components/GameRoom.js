@@ -1,9 +1,9 @@
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 import {useState, useEffect} from 'react';
+import io from 'socket.io-client';
 
-
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket}) => {
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io}) => {
   const [allUsers, setAllUsers] = useState([]);
   useEffect(()=>{
     socket.on('userData',(users) =>{
