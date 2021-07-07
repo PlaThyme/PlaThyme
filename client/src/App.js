@@ -3,8 +3,6 @@ import SelectGame from './components/SelectGame';
 import './App.css';
 import GameRoom from './components/GameRoom';
 
-import {v4} from 'uuid'
-
 //Create socket.io client
 import io from "socket.io-client";
 const SERVER = "http://localhost:3001";
@@ -44,13 +42,11 @@ function App() {
   }
 
   const handleSelectedGame = (gameName) => {
-    console.log("selected game = ", gameName);
     setSelectedGame(gameName);
   }
 
   useEffect(() => {
     socket = io(SERVER);
-    console.log(socket);
     socket.on('connection', () => {
       
     });

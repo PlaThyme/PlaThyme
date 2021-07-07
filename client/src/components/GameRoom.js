@@ -12,7 +12,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io}) => {
   },[]);
   
   return (
-    <div className="flex flex-col h-screen w-full">
+    <div className="flex flex-col h-screen max-h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
         <h1 className="inline text-thyme-lightest text-3xl">
           {gameInfo.gameName}

@@ -20,7 +20,8 @@ const leaveRoom = (id) =>{
     }
 }
 
-const getUser = (id) =>{ return users.find((user) => user.id === id);}
+const getUser = (id) =>{ 
+    return users.find((user) => user.id === id);}
 
 const getGameId = (roomCode) => {
     const aUser = users.find((user) => user.roomCode === roomCode)

@@ -4,13 +4,13 @@ import MessageFeed from './MessageFeed';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 const Chat = ({socket, currentPlayer}) => {
-    const [messages, setMessages] = useState([{sender:"Mike", text:"Default Text"},{sender:"NotMike", text:"Something else to fill this"}]);
+    const [messages, setMessages] = useState([]);
     const messageRef = useRef();
 
     function handleSend(e){
         e.preventDefault();
         if(messageRef.current.value){
-            socket.emit('messageSend', messageRef.current.value);
+            socket.emit('messageSend', {sender:currentPlayer, text:messageRef.current.value});
         }
         document.getElementById('send-box').reset();
     }
@@ -21,9 +21,8 @@ const Chat = ({socket, currentPlayer}) => {
     }, []);
     return (
         <div className="flex flex-col">
-            <div className="flex m-1 flex-grow bg-thyme-800">
+            <div className="flex m-1 flex-grow bg-thyme-800 overflow-scroll-y">
                 <MessageFeed messages={messages} currentPlayer={currentPlayer}/>
-                {/* {messages.map((message) => (<ChatMessage message={message} playerName={currentPlayer}/>))} */}
             </div>
             <div class="chat-form-container pb-2">
                 <form 
