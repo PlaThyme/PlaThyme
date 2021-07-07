@@ -65,7 +65,7 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
             </ul>
           </div>
         ) : (
-          <Chat socket={socket} className="flex-grow" />
+          <Chat socket={socket} currentPlayer={currentPlayer} className="flex-grow" />
         )}
       </div>
       <button

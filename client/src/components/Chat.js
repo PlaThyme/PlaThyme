@@ -1,10 +1,10 @@
 import {useState, useEffect, useRef} from 'react';
 import io from 'socket.io-client';
-import ChatMessage from './ChatMessage';
+import MessageFeed from './MessageFeed';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 const Chat = ({socket, currentPlayer}) => {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([{sender:"Mike", text:"Default Text"},{sender:"NotMike", text:"Something else to fill this"}]);
     const messageRef = useRef();
 
     function handleSend(e){
@@ -13,21 +13,17 @@ const Chat = ({socket, currentPlayer}) => {
             socket.emit('messageSend', messageRef.current.value);
         }
         document.getElementById('send-box').reset();
-        console.log(socket);
     }
-
-    useEffect(() =>{
-        socket.on('message', (message) => {
-            let list = messages;
-            list.push(message);
-            setMessages(list);
+    useEffect(() => {
+        socket.on('message', message => {
+          setMessages(messages => [ ...messages, message ]);
         });
-    },[]);
-
+    }, []);
     return (
         <div className="flex flex-col">
             <div className="flex m-1 flex-grow bg-thyme-800">
-                {messages.map((message, currentPlayer) => <div><ChatMessage message={message} playerName={currentPlayer}></ChatMessage></div>)}
+                <MessageFeed messages={messages} currentPlayer={currentPlayer}/>
+                {/* {messages.map((message) => (<ChatMessage message={message} playerName={currentPlayer}/>))} */}
             </div>
             <div class="chat-form-container pb-2">
                 <form 
