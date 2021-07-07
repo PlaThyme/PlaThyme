@@ -1,31 +1,44 @@
-import React from 'react'
+import {useState, useEffect, useRef} from 'react';
+import io from 'socket.io-client';
+import MessageFeed from './MessageFeed';
+import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
-const Chat = () => {
+const Chat = ({socket, currentPlayer}) => {
+    const [messages, setMessages] = useState([]);
+    const messageRef = useRef();
+
+    function handleSend(e){
+        e.preventDefault();
+        if(messageRef.current.value){
+            socket.emit('messageSend', {sender:currentPlayer, text:messageRef.current.value});
+        }
+        document.getElementById('send-box').reset();
+    }
+    useEffect(() => {
+        socket.on('message', message => {
+          setMessages(messages => [ ...messages, message ]);
+        });
+    }, []);
     return (
-        <div class="chat-container">
-            <header class="chat-header">
-                <h1><i class="fas fa-smile"></i> ChatCord</h1>
-                <a id="leave-btn" class="btn">Leave Room</a>
-            </header>
-            <main class="chat-main">
-                <div class="chat-sidebar">
-                    <h3><i class="fas fa-comments"></i> Room Name:</h3>
-                    <h2 id="room-name"></h2>
-                    <h3><i class="fas fa-users"></i> Users</h3>
-                    <ul id="users"></ul>
-                </div>
-                <div class="chat-messages"></div>
-            </main>
-            <div class="chat-form-container">
-                <form id="chat-form">
+        <div className="flex-col">
+            <div className="m-1 bg-thyme-800 overflow-scroll-y">
+                <MessageFeed messages={messages} currentPlayer={currentPlayer}/>
+            </div>
+            <div class="chat-form-container pb-2">
+                <form 
+                className="pl-1 flex"
+                onSubmit={handleSend}
+                id="send-box">
                     <input
-                        id="msg"
+                        className="w-40 text-md"
                         type="text"
-                        placeholder="Enter Message"
+                        id="chatBox"
+                        placeholder="Chat Here"
                         required
+                        ref = {messageRef}
                         autocomplete="off"
                     />
-                    <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+                    <button class="flex btn py1 pl2 mx-2 text-sm bg-thyme-600 text-thyme-100 rounded">Send<PaperAirplaneIcon className="w-5 h-5 text-thyme-100" /></button>
                 </form>
             </div>
         </div>
