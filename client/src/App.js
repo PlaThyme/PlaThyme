@@ -40,7 +40,7 @@ function App() {
 
   function handleJoinGame (playerName, roomCode){
     setCurrentPlayer(playerName);
-    socket.emit('joinRoom',{name:playerName,roomCode:roomCode});
+    socket.emit('joinGame',{name:playerName,roomCode:roomCode});
   }
 
   const handleSelectedGame = (gameName) => {

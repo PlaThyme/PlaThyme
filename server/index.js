@@ -26,10 +26,10 @@ io.on('connection', socket => {
     console.log(name,roomCode)
     const gid = getGameId(roomCode);
     if(gid === null){
-      callback('No Such Room');
+    //  callback('No Such Room');
     }
     const error = joinRoom({id:socket.id, gameId:gid, playerName:name, roomCode:roomCode})
-    if(error){return callback(error)}
+    //if(error){return callback(error)}
 
     socket.broadcast.to(roomCode).emit('message', {sender:'PlaThyme', text:`${name} has joined the game.`});
     io.to(roomCode).emit('userData', getUsersInRoom(roomCode));
