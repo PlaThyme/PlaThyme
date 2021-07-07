@@ -23,6 +23,7 @@ io.on('connection', socket => {
   socket.on('messageSend', (message) => {handleMessageSend(message)});
 
   socket.on('joinGame', ({name, roomCode}, callback) =>{
+    console.log(name,roomCode)
     const gid = getGameId(roomCode);
     if(gid === null){
       callback('No Such Room');
@@ -32,6 +33,10 @@ io.on('connection', socket => {
 
     socket.broadcast.to(roomCode).emit('message', {sender:'PlaThyme', text:`${name} has joined the game.`});
     io.to(roomCode).emit('userData', getUsersInRoom(roomCode));
+
+    const gameData = {playerName: name, code:roomCode, gameId: gid};
+    socket.emit('gameData', gameData);
+    socket.join(roomCode);
     
   });
 
