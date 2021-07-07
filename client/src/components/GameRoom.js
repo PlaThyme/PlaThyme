@@ -31,15 +31,15 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io}) => {
           </ToolTip>
         </div>
       </nav>
-      <div className="relative flex inline h-full">
+      <div className="flex inline h-full">
         <div className="grid justify-items-center bg-gray-800 flex-grow">
             <div className="m-auto">
                 <div className="text-thyme-lightest">This is in the center!</div>
             </div>
         </div>
         
-        <div className="flex relative bg-gray-900">
-          <div className="flex w-60">
+        <div className="flex bg-gray-900">
+          <div className="flex flex-none w-60">
             <SideBar currentPlayer={currentPlayer} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
           </div>
         </div>

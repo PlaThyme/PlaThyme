@@ -20,8 +20,8 @@ const Chat = ({socket, currentPlayer}) => {
         });
     }, []);
     return (
-        <div className="flex flex-col">
-            <div className="flex m-1 flex-grow bg-thyme-800 overflow-scroll-y">
+        <div className="flex-col">
+            <div className="m-1 bg-thyme-800 overflow-scroll-y">
                 <MessageFeed messages={messages} currentPlayer={currentPlayer}/>
             </div>
             <div class="chat-form-container pb-2">
