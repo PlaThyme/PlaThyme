@@ -32,4 +32,4 @@ const getUsersInRoom = (roomCode) =>{return users.filter((user) => {user.roomCod
 
 const numUsersInRoom = (roomCode) =>{return users.filter((user) => user.roomCode === roomCode).length}
 
-module.exports = {joinRoom, leaveRoom, getUser, getGameId, numUsersInRoom, getUsersInRoom, roomExists}
+module.exports = {joinRoom, leaveRoom, getUser, getGameId, numUsersInRoom, getUsersInRoom}

@@ -1,15 +1,16 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import io from 'socket.io-client';
 import ChatMessage from './ChatMessage';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 const Chat = ({socket, currentPlayer}) => {
     const [messages, setMessages] = useState([]);
+    const messageRef = useRef();
 
     function handleSend(e){
         e.preventDefault();
-        if(e.text){
-            socket.emit('messageSend', e.text);
+        if(messageRef.current.value){
+            socket.emit('messageSend', messageRef.current.value);
         }
         document.getElementById('send-box').reset();
         console.log(socket);
@@ -17,7 +18,9 @@ const Chat = ({socket, currentPlayer}) => {
 
     useEffect(() =>{
         socket.on('message', (message) => {
-            setMessages(message => [...messages, message]);
+            let list = messages;
+            list.push(message);
+            setMessages(list);
         });
     },[]);
 
@@ -34,8 +37,10 @@ const Chat = ({socket, currentPlayer}) => {
                     <input
                         className="w-40 text-md"
                         type="text"
+                        id="chatBox"
                         placeholder="Chat Here"
                         required
+                        ref = {messageRef}
                         autocomplete="off"
                     />
                     <button class="flex btn py1 pl2 mx-2 text-sm bg-thyme-600 text-thyme-100 rounded">Send<PaperAirplaneIcon className="w-5 h-5 text-thyme-100" /></button>

@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').createServer(app)
 const {makeid} = require('./makeid');
 
-const {joinRoom, leaveRoom, getUser, getGameId, numUsersInRoom, getUsersInRoom, roomExists} = require("./rooms.js");
+const {joinRoom, leaveRoom, getUser, getGameId, numUsersInRoom, getUsersInRoom} = require("./rooms.js");
 
 //Get sockets running
 const io = require('socket.io')(http);
@@ -16,7 +16,7 @@ io.on('connection', socket => {
 
   socket.emit('message', "yup");
 
-  socket.on('newRoom', (data) => {handleCreateGame(data)});
+  socket.on('newRoom', (data) => {console.log(data);handleCreateGame(data)});
 
   socket.on('leaveRoom', () => leaveRoom(socket.id));
 
@@ -38,10 +38,11 @@ io.on('connection', socket => {
 
 
   function handleCreateGame(data){
+    console.log(data);
     roomCode = makeid(6);
 
     //Check if the random ID was a repeat. If so, recursively attempt again.
-    if(roomExists(roomCode)){
+    if(numUsersInRoom(roomCode) > 0){
       handleCreateGame(data);
       return;
     }
@@ -51,7 +52,7 @@ io.on('connection', socket => {
     
     //Adds user to room tracking.
     let error = joinRoom({id: socket.id, name:data.name, gameId: data.gameId, roomCode:roomCode});
-    if(error){return callback(error)}
+    //if(error){return callback(error)}
 
     socket.emit('gameData', gameData);
     socket.join(roomCode);
