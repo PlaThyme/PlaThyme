@@ -56,17 +56,16 @@ io.on("connection", (socket) => {
     if (gid === null) {
       socket.emit("error", { error: "gid" });
     }
-    const error = joinRoom({
+    let error = joinRoom({
       id: socket.id,
       gameId: gid,
       name: name,
       roomCode: roomCode,
     });
     if (error.error === "dup") {
-      console.log("dup");
       socket.emit("error", { error: "dup" });
     }
-    if (!error) {
+    if (error.error !== "dup" && error.error !== "dup") {
       socket.broadcast.to(roomCode).emit("message", {
         sender: "",
         text: `"${name}" has joined the game.`,

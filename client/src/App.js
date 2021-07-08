@@ -82,6 +82,7 @@ function App() {
         buttonText = "Typo?";
         openModal();
       }
+      error = null;
     });
 
     return () => {
