@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import SelectGame from './components/SelectGame';
 import './App.css';
 import GameRoom from './components/GameRoom';
-// import WhiteBoardContainer from './Games/DrawTheWord/WhiteBoardContainer';
-import Board from './Games/DrawTheWord/Board';
-import Board2 from './Games/DrawTheWord/board2';
+import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
 
 //Create socket.io client
 import socketClient from "socket.io-client";
@@ -45,7 +43,7 @@ function App() {
     <div className="App font-mono bg-thyme-darkest">
       {/* <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} /> */}
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}>
-        <Board2 />
+        <DrawingBoard />
       </GameRoom>
     </div>
   );

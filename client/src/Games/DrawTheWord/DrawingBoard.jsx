@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
-import "./WhiteBoardContainer.css";
+import "./DrawingBoardStyles.css";
 
-export default function Board2() {
+export default function DrawingBoard() {
   const [timeoutValue, setTimeoutValue] = useState(undefined);
-  const colorsRef = useRef(null);
   const socket = io.connect("http://localhost:3001");
+  const colorsRef = useRef(null);
 
   useEffect(() => {
     socket.on("canvas-data", (data) => {
       var image = new Image();
       var canvas = document.querySelector("#board");
-      // var canvas = document.getElementById("#board");
       var ctx = canvas.getContext("2d");
       image.onload = () => {
         ctx.drawImage(image, 0, 0);
@@ -21,32 +20,22 @@ export default function Board2() {
   }, []);
 
   useEffect(() => {
-    drawOnCanvas();
-  }, []);
-
-  const drawOnCanvas = () => {
+    const colors = document.getElementsByClassName("color");
     var canvas = document.querySelector("#board");
-    // var canvas = document.getElementById("#board");
     var ctx = canvas.getContext("2d");
-
     var sketch = document.querySelector("#sketch");
-    // var sketch = document.getElementById("#sketch");
     var sketch_style = getComputedStyle(sketch);
-    canvas.width = parseInt(sketch_style.getPropertyValue("width"));
-    canvas.height = parseInt(sketch_style.getPropertyValue("height"));
     var mouse = { x: 0, y: 0 };
     var last_mouse = { x: 0, y: 0 };
-    const colors = document.getElementsByClassName("color");
-
     var lineWidthValue = 5;
     var strokeColor = "blue";
 
-    // helper that will update the current color
+    canvas.width = parseInt(sketch_style.getPropertyValue("width"));
+    canvas.height = parseInt(sketch_style.getPropertyValue("height"));
+
     const onColorUpdate = (e) => {
       strokeColor = e.target.className.split(" ")[1];
     };
-
-    // loop through the color elements and add the click event listeners
     for (let i = 0; i < colors.length; i++) {
       colors[i].addEventListener("click", onColorUpdate, false);
     }
@@ -57,6 +46,8 @@ export default function Board2() {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.lineWidth = lineWidthValue;
       ctx.strokeStyle = strokeColor;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
       ctx.closePath();
       ctx.stroke();
 
@@ -71,15 +62,6 @@ export default function Board2() {
       );
     };
 
-    // const onMouseDown = (e) => {
-    //   onPaint("from mouseDown");
-    // };
-
-    // const onMouseUp = (e) => {
-    //   onPaint("from mouse Up");
-    // };
-
-    /* Mouse Capturing Work */
     canvas.addEventListener(
       "mousemove",
       function (e) {
@@ -91,12 +73,6 @@ export default function Board2() {
       },
       false
     );
-
-    /* Drawing on Paint App */
-    // ctx.lineWidth = 5;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    // ctx.strokeStyle = "blue";
 
     canvas.addEventListener(
       "mousedown",
@@ -113,17 +89,13 @@ export default function Board2() {
       },
       false
     );
-  };;
+  }, []);
 
   return (
     <div className="container">
       <div className="board-container sketch mt-8" id="sketch">
         <canvas id="board" className="board" />
       </div>
-      {/* <div className="color-picker-contsiner">
-        <input type="color" />
-      </div> */}
-
       <div ref={colorsRef} className="colors">
         <div className="color black" />
         <div className="color red" />

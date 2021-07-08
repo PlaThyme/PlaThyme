@@ -1,20 +1,29 @@
- * {
-  box-sizing: border-box;
-}
-
-.whiteboard {
+.container {
+  width: 60%;
   height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
 }
 
-.colors {
-  position: fixed;
+.color-picker-container{
+  text-align: center;
 }
+
+.board-container{
+  width: 60%;
+  height: 60%;
+  margin: auto;
+  margin-top: 1%;
+  background: white;
+}
+
+.board{
+  width: 100%;
+  height: 100%;
+}
+
+.sketch{
+  width: 60%;
+  height: 60%;
+} 
 
 .color {
   display: inline-block;
