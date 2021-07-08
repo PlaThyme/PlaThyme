@@ -1,4 +1,3 @@
-// import { render } from "@headlessui/react/dist/utils/render";
 import React, { Component } from "react";
 import io from "socket.io-client";
 import "./WhiteBoardContainer.css";
