@@ -3,8 +3,7 @@ import io from 'socket.io-client';
 import MessageFeed from './MessageFeed';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
-const Chat = ({socket, currentPlayer}) => {
-    const [messages, setMessages] = useState([]);
+const Chat = ({socket, currentPlayer, messages}) => {
     const messageRef = useRef();
 
     function handleSend(e){
@@ -14,11 +13,6 @@ const Chat = ({socket, currentPlayer}) => {
         }
         document.getElementById('send-box').reset();
     }
-    useEffect(() => {
-        socket.on('message', message => {
-          setMessages(messages => [ ...messages, message ]);
-        });
-    }, []);
     return (
         <div className="flex-col">
             <div className="m-1 bg-thyme-800 overflow-scroll-y">
