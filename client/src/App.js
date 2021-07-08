@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SelectGame from './components/SelectGame';
 import './App.css';
 import GameRoom from './components/GameRoom';
 
 //Create socket.io client
-import socketClient from "socket.io-client";
+import io from "socket.io-client";
 const SERVER = "http://localhost:3001";
+let socket;
 
-
-const gameInfo = {
-  name: "Enigma Breaker",
-  roomName: "Cool Players Only",
-  roomCode: "12345"
-}
-const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
 
 function App() {
+  const [currentPlayer, setCurrentPlayer] = useState('none');
+  const [gameInfo, setGameInfo] = useState({
+    gameName: null,
+    roomCode: null
+  });
+
   const [listofGames, setListofGames] = useState([
-    {gameId: 1, gameName: "game 0", minPlayers: 4},
+    {gameId: 1, gameName: "Draw The Word", minPlayers: 3},
     {gameId: 2, gameName: "game 1", minPlayers: 3},
     {gameId: 3, gameName: "game 2", minPlayers: 2},
     {gameId: 4, gameName: "game 4", minPlayers: 1},
@@ -28,21 +28,54 @@ function App() {
     minPlayers: "Min Players",
   });
 
+  const [inGame, setInGame] = useState(false);
+
+  function handleCreateGame (playerName, selectedGame){
+    setCurrentPlayer(playerName);
+    const id = selectedGame.gameId;
+    socket.emit('newRoom', {name:playerName,gameId:id});
+  }
+
+  function handleJoinGame (playerName, roomCode){
+    setCurrentPlayer(playerName);
+    socket.emit('joinGame',{name:playerName,roomCode:roomCode});
+  }
+
   const handleSelectedGame = (gameName) => {
-    console.log("selected game = ", gameName);
     setSelectedGame(gameName);
   }
 
-  var socket = socketClient(SERVER);
-  socket.on('connection', () => {
-    console.log('Front and back end now connectted');
-  });
+  useEffect(() => {
+    socket = io(SERVER);
+    socket.on('connection', () => {
+      
+    });
+
+    socket.on('gameData', (gameData) => {
+      const name = listofGames.find((id) => id.gameId === gameData.gameId).gameName
+      setGameInfo({gameName:name, roomCode:gameData.code})
+      setInGame(true)
+    } )
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    }
+
+  }, [SERVER]);
+  
+
 
   return (
     <div className="App font-mono bg-thyme-darkest">
-      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} />
-      <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
-    </div>
+      {inGame ?
+        <>
+      <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}/>
+        </>
+      :
+      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
+    }
+      </div>
   );
 }
 
