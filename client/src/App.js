@@ -71,7 +71,9 @@ function App() {
     <div className="App font-mono bg-thyme-darkest">
       {inGame ?
         <>
-      <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}/>
+      <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}>
+        <DrawingBoard />
+        </GameRoom>
         </>
       :
       <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>

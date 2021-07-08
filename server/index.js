@@ -62,6 +62,10 @@ io.on("connection", (socket) => {
     socket.join(roomCode);
   });
 
+  socket.on('canvas-data', (data) => {
+    socket.broadcast.emit('canvas-data', data);
+  })
+
   function handleCreateGame(data) {
     roomCode = makeid(6);
 

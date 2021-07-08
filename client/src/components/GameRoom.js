@@ -3,7 +3,7 @@ import ToolTip from "./ToolTip";
 import {useState, useEffect} from 'react';
 import io from 'socket.io-client';
 
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io}) => {
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io, children}) => {
   const [allUsers, setAllUsers] = useState([]);
   useEffect(()=>{
     socket.on('userData',(users) =>{
@@ -33,9 +33,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io}) => {
       </nav>
       <div className="flex inline h-full">
         <div className="grid justify-items-center bg-gray-800 flex-grow">
-            <div className="m-auto">
-                <div className="text-thyme-lightest">This is in the center!</div>
-            </div>
+          {children}
         </div>
         
         <div className="flex bg-gray-900">
