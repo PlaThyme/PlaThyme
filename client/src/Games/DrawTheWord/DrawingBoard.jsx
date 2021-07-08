@@ -46,8 +46,8 @@ export default function DrawingBoard() {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.lineWidth = lineWidthValue;
       ctx.strokeStyle = strokeColor;
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
+      // ctx.lineJoin = "round";
+      // ctx.lineCap = "round";
       ctx.closePath();
       ctx.stroke();
 
@@ -102,6 +102,7 @@ export default function DrawingBoard() {
         <div className="color green" />
         <div className="color blue" />
         <div className="color yellow" />
+        <div className="color white" />
       </div>
     </div>
   );
