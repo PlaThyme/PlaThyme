@@ -1,0 +1,6 @@
+.carousel {
+    display: inline-flex;
+    overflow-x: hidden; 
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Edge */
+  }

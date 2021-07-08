@@ -1,51 +1,95 @@
-import React, { Component } from 'react'; 
-//https://codepen.io/tacotoemeck/pen/Jjbjgpy?editors=0010
-class Carousel extends Component {
-    state = { 
-        total: 3,
-        selected: 0,
-        images: ['https://placekitten.com/200/150','https://placekitten.com/200/150','https://placekitten.com/200/150'],
-        imageUrl: 'https://placekitten.com/200/150'
-     }
+import React from 'react'; 
 
-    // constructor () {
-    //     super()
-    //     this.handleRight = this.handleRight.bind(this);
-    //     this.handleLeft = this.handleLeft.bind(this);
-    // }
+const images = ['https://placekitten.com/100/100','https://placekitten.com/100/100','https://placekitten.com/100/100']
+//const imgdescriptions = ['a cute cate', 'wow much cute', 'cuteis']
 
-    handleRight = () => {
-        if(this.state.selected < this.state.total - 1)
-            this.setState({ selected: this.state.selected + 1})
-        else 
-            this.setState({selected: 0})
-        }
+const Carousel = () => {
+  const [displayedImage, setDisplayedImage] = React.useState(0);
+  //const [currentText, setCurrentText] = React.useState(1);
 
-    handleLeft = () => {
-        if(this.state.selected === 0)
-            this.setState({ selected: this.state.total - 1})
-        else 
-            this.setState({selected: this.state.selected - 1})
-        }
+  const totalImages = images.length;
+  //const totalDescriptions = imgdescriptions.length;
+  
+
+  const imgrefs = images.reduce((ret, val, i) => {
+    ret[i] = React.createRef();
+    return ret;
+  }, {});
+
+  //const textrefs = imgdescriptions.reduce((ret, val, i) => {
+  //  ret[i] = React.createRef();
+  //  return ret;
+  //}, {});
+
+  const scrollToImage = i => {
+    setDisplayedImage(i);
+ //   setCurrentText(i);
+    
+    imgrefs[i].current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'start',
+    });
+
+  //  textrefs[i].current.scrollIntoView({
+  //    behavior: 'smooth',
+  //    block: 'nearest',
+  //    inline: 'start',
+  //  });
+  };
 
 
-    render() { 
-        return (
-        <React.Fragment>
-            <img src='https://placekitten.com/200/150' alt="kitten" />
-            <img src={this.state.imageUrl} alt="kitten" />
-            <span>{this.formatCarousel()}</span>
-            <button>Left</button>
-            <button>Right</button>
-        </React.Fragment>
-        );
+  const handleRight = () => {
+    if (displayedImage >= totalImages - 1) {
+      scrollToImage(0);
+    } else {
+      scrollToImage(displayedImage + 1);
     }
+  };
 
-    formatCarousel() {
-        const { selected } = this.state
-        return selected 
+  const handleLeft = () => {
+    if (displayedImage === 0) {
+      scrollToImage(totalImages - 1);
+    } else {
+      scrollToImage(displayedImage - 1);
     }
+  };
 
-}
  
+  const buttonStyle =
+    'text-white text-3xl z-10 bg-green-400 h-10 w-10 rounded-full flex items-center justify-center';
+
+  const sliderControl = isLeft => (
+    <button
+      type="button"
+      onClick={isLeft ? handleLeft : handleRight}
+      className={`${buttonStyle} ${isLeft ? 'left-2' : 'right-2'}`}
+      style={{ top: '40%' }}
+    >
+      <span role="img" aria-label={`Arrow ${isLeft ? 'left' : 'right'}`}>
+        {isLeft ? '<' : '>'}
+      </span>
+    </button>
+  );
+
+  return (
+
+    <div className="p-12 flex justify-center w-screen md:w-1/2 items-center">
+      {sliderControl(true)}
+      <div className="relative w-full">
+        <div className="carousel w-full border-8 border-green-500 text-center">
+          
+          {images.map((img, i) => (
+            <div className="w-full flex-shrink-0" key={img} ref={imgrefs[i]}>
+              <img src={img} className="w-full object-contain" />
+            </div>
+          ))}
+      
+        </div>  
+      </div>
+      {sliderControl()}
+    </div>
+  );
+};
+
 export default Carousel;

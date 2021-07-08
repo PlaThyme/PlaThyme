@@ -13,7 +13,6 @@ const playerInfo = ["Mike", "Vandana", "Zach", "David", "QuizMASTER"]
 function App() {
   return (
     <div className="App">
-      <h1>Hello world!</h1>
       <Carousel/>
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
     </div>
