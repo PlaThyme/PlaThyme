@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import "./DrawingBoardStyles.css";
 
-export default function DrawingBoard() {
+export default function DrawingBoard(props) {
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const socket = io.connect("http://localhost:3001");
   const colorsRef = useRef(null);
@@ -92,11 +92,17 @@ export default function DrawingBoard() {
   }, []);
 
   return (
-    <div className="container">
-      <div className="board-container sketch mt-8" id="sketch">
+    <div className="grid-container mt-10">
+      <div className="grid-item item-1 text-white">
+        <p>Timer: 1:29</p>
+      </div>
+      <div className="grid-item item-2 text-white">
+        <p>{props.currentWord}</p>
+      </div>
+      <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
       </div>
-      <div ref={colorsRef} className="colors">
+      <div ref={colorsRef} className="colors grid-item item-4">
         <div className="color black" />
         <div className="color red" />
         <div className="color green" />

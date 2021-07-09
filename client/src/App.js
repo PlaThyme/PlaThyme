@@ -43,7 +43,7 @@ function App() {
     <div className="App font-mono bg-thyme-darkest">
       {/* <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} /> */}
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}>
-        <DrawingBoard />
+        <DrawingBoard currentWord={"SomeWord"} />
       </GameRoom>
     </div>
   );
