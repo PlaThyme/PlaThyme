@@ -32,6 +32,11 @@ canvas#board.board{
   height: 28px;
   width: 28px;
 }
+svg{
+  height: 28px;
+  width: 28px;
+  padding: 6px;
+}
 
 /* .color.black { background-color: black; }
 .color.red { background-color: red; }
