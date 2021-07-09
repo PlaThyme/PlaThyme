@@ -29,16 +29,37 @@ canvas#board.board{
 
 .color {
   display: inline-block;
-  height: 48px;
-  width: 48px;
+  height: 28px;
+  width: 28px;
 }
 
-.color.black { background-color: black; }
+/* .color.black { background-color: black; }
 .color.red { background-color: red; }
 .color.green { background-color: green; }
 .color.blue { background-color: blue; }
 .color.yellow { background-color: yellow; }
-.color.white { background-color: white; }
+.color.white { background-color: white; } */
+
+.color.black {background-color: #000000; }
+.color.white {background-color: #ffffff; }
+.color.darkGray {background-color: #6e6e6e; }
+.color.lightGray {background-color: #cccccc; }
+.color.maroon {background-color: #4f0000; }
+.color.brown {background-color: #854500 ;}
+.color.red {background-color: #db0000; }
+.color.lightpink {background-color: #fcbdf6; }
+.color.orange {background-color: #fc8200; }
+.color.lightOrange {background-color: #ffc60d; }
+.color.yellow {background-color: #fff700; }
+.color.lightYellow {background-color: #fffca1; }
+.color.green {background-color: #198000; }
+.color.lightGreen {background-color: #32ff00; }
+.color.blue {background-color: #0011ff; }
+.color.lightBlue {background-color: #00ecf0; }
+.color.indigo {background-color: #271069; }
+.color.lightIndigo {background-color: #8c93d1; }
+.color.purple {background-color: #6e00e3; }
+.color.lightPurple {background-color: #d9c5f0; }
 
 .grid-container{
   display: grid;

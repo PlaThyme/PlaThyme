@@ -7,6 +7,29 @@ export default function DrawingBoard(props) {
   const socket = io.connect("http://localhost:3001");
   const colorsRef = useRef(null);
 
+  const colourPalletDict = {
+    black: "#000000",
+    white: "#ffffff",
+    darkGray: "#6e6e6e",
+    lightGray: "#cccccc",
+    maroon: "#4f0000",
+    brown: "#854500",
+    red: "#db0000",
+    lightpink: "#fcbdf6",
+    orange: "#fc8200",
+    lightOrange: "#ffc60d",
+    yellow: "#fff700",
+    lightYellow: "#fffca1",
+    green: "#198000",
+    lightGreen: "#32ff00",
+    blue: "#0011ff",
+    lightBlue: "#00ecf0",
+    indigo: "#271069",
+    lightIndigo: "#8c93d1",
+    purple: "#6e00e3",
+    lightPurple: "#d9c5f0",
+  };
+
   useEffect(() => {
     socket.on("canvas-data", (data) => {
       var image = new Image();
@@ -28,13 +51,13 @@ export default function DrawingBoard(props) {
     var mouse = { x: 0, y: 0 };
     var last_mouse = { x: 0, y: 0 };
     var lineWidthValue = 5;
-    var strokeColor = "blue";
+    var strokeColor = "#0000FF";
 
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
     const onColorUpdate = (e) => {
-      strokeColor = e.target.className.split(" ")[1];
+      strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
     };
     for (let i = 0; i < colors.length; i++) {
       colors[i].addEventListener("click", onColorUpdate, false);
@@ -103,12 +126,26 @@ export default function DrawingBoard(props) {
         <canvas id="board" className="board" />
       </div>
       <div ref={colorsRef} className="colors grid-item item-4">
-        <div className="color black" />
-        <div className="color red" />
-        <div className="color green" />
-        <div className="color blue" />
-        <div className="color yellow" />
-        <div className="color white" />
+        <div className="color black odd" />
+        <div className="color white  even" />
+        <div className="color darkGray odd" />
+        <div className="color lightGray even" />
+        <div className="color maroon odd" />
+        <div className="color brown even" />
+        <div className="color red odd" />
+        <div className="color lightpink even" />
+        <div className="color orange odd" />
+        <div className="color lightOrange even" />
+        <div className="color yellow odd" />
+        <div className="color lightYellow even" />
+        <div className="color green odd" />
+        <div className="color lightGreen even" />
+        <div className="color blue odd" />
+        <div className="color lightBlue even" />
+        <div className="color indigo odd" />
+        <div className="color lightIndigo even" />
+        <div className="color purple odd" />
+        <div className="color lightPurple even" />
       </div>
     </div>
   );
