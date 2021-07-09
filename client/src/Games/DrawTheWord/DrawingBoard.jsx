@@ -1,3 +1,8 @@
+/**
+ * @ResourcesUsed
+ * https://dev.to/jerrymcdonald/creating-a-shareable-whiteboard-with-canvas-socket-io-and-react-2en
+ * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
+ */
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
@@ -8,7 +13,6 @@ import "./DrawingBoardStyles.css";
  * @returns This function returns a drawing whiteboard, with some colour palets for 'Draw the Word' Game.
  */
 export default function DrawingBoard() {
-
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const socket = io.connect("http://localhost:3001");
   const colorsRef = useRef(null);

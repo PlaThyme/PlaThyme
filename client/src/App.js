@@ -68,10 +68,11 @@ export default function App() {
       {(inGame) ?
         <>
           <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}>
-            { (selectedGame.gameName === 'Draw The Word') ?
+            {/* { (selectedGame.gameName === "Draw The Word") ? 
               <DrawingBoard />
-              : <></>
-            }
+              : <></> 
+            } */}
+            <DrawingBoard />
           </GameRoom>
         </>
         :
