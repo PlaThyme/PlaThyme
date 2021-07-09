@@ -1,19 +1,25 @@
-//Tooltip generates a text popup based upon the 
-
 import React from "react";
 
+/** 
+ * Tooltip generates a text popup based upon the 
+ * @param {JSX}  children  -  
+ * @param {String} text    -
+ * 
+ * @return this function returns a tooltip.
+ * */
 const ToolTip = ({ children, text }) => {
+
   const ttRef = React.createRef();
 
-  function mouseEnter() {
+  const mouseEnter = () => {
     ttRef.current.style.bottom = "-35px";
     ttRef.current.style.opacity = 1;
   }
-
-  function mouseLeave() {
+  const mouseLeave = () => {
     ttRef.current.style.bottom = "-25px";
     ttRef.current.style.opacity = 0;
   }
+
   return (
     <div className="relative flex items-center">
       <div>

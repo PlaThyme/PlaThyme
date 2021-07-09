@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React from 'react';
 
 const ChatMessage = ({ message, currentPlayer}) => {
+
   let sentByCurrentUser = false;
   if (currentPlayer === message.sender) {
     sentByCurrentUser = true;

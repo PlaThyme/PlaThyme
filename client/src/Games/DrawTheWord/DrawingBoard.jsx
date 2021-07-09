@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
+
 import "./DrawingBoardStyles.css";
 
+/**
+ * For 'Draw the Word' Game.
+ * @returns This function returns a drawing whiteboard, with some colour palets for 'Draw the Word' Game.
+ */
 export default function DrawingBoard() {
+
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const socket = io.connect("http://localhost:3001");
   const colorsRef = useRef(null);
@@ -46,8 +52,6 @@ export default function DrawingBoard() {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.lineWidth = lineWidthValue;
       ctx.strokeStyle = strokeColor;
-      // ctx.lineJoin = "round";
-      // ctx.lineCap = "round";
       ctx.closePath();
       ctx.stroke();
 

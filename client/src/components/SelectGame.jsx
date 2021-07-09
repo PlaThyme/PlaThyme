@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, Fragment } from "react";
+
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 
@@ -8,24 +9,20 @@ export default function SelectGame({
   createGame,
   joinGame,
 }) {
+
   const [selected, setSelected] = useState({
     gameId: 0,
     gameName: "Select a Game",
     minPlayers: "Min Players",
   });
-
   const [selectedOption, setSelectedOption] = useState("create-room");
   const [isOpen, setIsOpen] = useState(false);
   const nameRef = useRef();
   const codeRef = useRef();
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
+  const closeModal = () => setIsOpen(false);
+  const openModal = () =>  setIsOpen(true);
+  
   useEffect(() => {
     handleSelectedGame(selected);
   }, [selected, handleSelectedGame]);
@@ -38,7 +35,7 @@ export default function SelectGame({
     setSelectedOption("join-room");
   };
 
-  function handleCreateNewRoom(e) {
+  const handleCreateNewRoom = (e) => {
     e.preventDefault();
     if (selected.gameId === 0) {
       openModal();
@@ -47,7 +44,7 @@ export default function SelectGame({
     createGame(nameRef.current.value, selected);
   }
 
-  function handeJoinExistingRoom(e) {
+  const handeJoinExistingRoom = (e) => {
     e.preventDefault();
     joinGame(nameRef.current.value, codeRef.current.value);
   }
@@ -55,6 +52,7 @@ export default function SelectGame({
   return (
     <div className="h-screen">
       <div class="sm:w-5/6 md:w-1/4 lg:w-1/3 mx-auto">
+
         <Listbox value={selected} onChange={setSelected}>
           <div className="relative mt-4">
             <Listbox.Button className="relative w-full border-2 py-2 pl-3 pr-10 text-thyme-lightest text-left justify-around bg-thyme-default shadow-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
@@ -112,6 +110,8 @@ export default function SelectGame({
             </Transition>
           </div>
         </Listbox>
+
+
         <Transition appear show={isOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -166,12 +166,16 @@ export default function SelectGame({
             </div>
           </Dialog>
         </Transition>
+
+
         <p class="text-center text-thyme-light py-2">
           Minimum Number of Players:{" "}
           <span className="bg-thyme-darkest text-thyme-lightest">
             <b>&nbsp;{selected.minPlayers}&nbsp;</b>
           </span>
         </p>
+
+
       </div>
 
       <div class=" flex justify-center mt-8 md:w-3/4 mx-auto lg:w-1/2">

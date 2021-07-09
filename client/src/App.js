@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import io from "socket.io-client";
+
 import SelectGame from './components/SelectGame';
-import './App.css';
 import GameRoom from './components/GameRoom';
 import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
 
-//Create socket.io client
-import io from "socket.io-client";
+import './App.css';
+
 const SERVER = "http://localhost:3001";
 let socket;
 
+export default function App() {
 
-function App() {
   const [currentPlayer, setCurrentPlayer] = useState('none');
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
     roomCode: null
   });
-
   const [listofGames, setListofGames] = useState([
     {gameId: 1, gameName: "Draw The Word", minPlayers: 3},
     {gameId: 2, gameName: "game 1", minPlayers: 3},
@@ -28,23 +28,7 @@ function App() {
     gameName: "Game Name",
     minPlayers: "Min Players",
   });
-
   const [inGame, setInGame] = useState(false);
-
-  function handleCreateGame (playerName, selectedGame){
-    setCurrentPlayer(playerName);
-    const id = selectedGame.gameId;
-    socket.emit('newRoom', {name:playerName,gameId:id});
-  }
-
-  function handleJoinGame (playerName, roomCode){
-    setCurrentPlayer(playerName);
-    socket.emit('joinGame',{name:playerName,roomCode:roomCode});
-  }
-
-  const handleSelectedGame = (gameName) => {
-    setSelectedGame(gameName);
-  }
 
   useEffect(() => {
     socket = io(SERVER);
@@ -62,24 +46,37 @@ function App() {
       socket.emit('disconnect');
       socket.off();
     }
-
   }, [SERVER]);
+
+  const handleCreateGame = (playerName, selectedGame) => {
+    setCurrentPlayer(playerName);
+    const id = selectedGame.gameId;
+    socket.emit('newRoom', {name:playerName,gameId:id});
+  }
+
+  const handleJoinGame  = (playerName, roomCode) => {
+    setCurrentPlayer(playerName);
+    socket.emit('joinGame',{name:playerName,roomCode:roomCode});
+  }
+
+  const handleSelectedGame = (gameName) => {
+    setSelectedGame(gameName);
+  }
   
-
-
   return (
     <div className="App font-mono bg-thyme-darkest">
-      {inGame ?
+      {(inGame) ?
         <>
-      <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}>
-        <DrawingBoard />
-        </GameRoom>
+          <GameRoom gameInfo={gameInfo} currentPlayer={currentPlayer} leaveGame={setInGame} socket={socket}>
+            { (selectedGame.gameName === 'Draw The Word') ?
+              <DrawingBoard />
+              : <></>
+            }
+          </GameRoom>
         </>
-      :
-      <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
-    }
-      </div>
+        :
+        <SelectGame handleSelectedGame={handleSelectedGame} listofGames={listofGames} createGame={handleCreateGame} joinGame={handleJoinGame}/>
+      }
+    </div>
   );
 }
-
-export default App;
