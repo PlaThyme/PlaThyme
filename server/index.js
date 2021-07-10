@@ -55,6 +55,9 @@ io.on("connection", (socket) => {
   socket.on('canvas-data', (data) => {
     socket.broadcast.emit('canvas-data', data);
   })
+  socket.on('clear-canvas-data', (data) => {
+    socket.broadcast.emit('clear-canvas-data', data);
+  })
 
   const handleCreateGame = (data) => {
     roomCode = makeid(6);

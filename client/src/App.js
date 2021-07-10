@@ -72,7 +72,7 @@ export default function App() {
               <DrawingBoard />
               : <></> 
             } */}
-            <DrawingBoard />
+            <DrawingBoard currentWord={"SomeWord"}/>
           </GameRoom>
         </>
         :
