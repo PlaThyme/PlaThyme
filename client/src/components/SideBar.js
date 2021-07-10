@@ -1,15 +1,17 @@
 //PlayerList takes in an array of players and displays them in a list.
 //TODO Make Leave Room button fuctional.
-import { Dialog, RadioGroup, Transition} from "@headlessui/react";
-import { useState, Fragment } from "react";
+import { Dialog, RadioGroup, Transition } from "@headlessui/react";
+import { useState, Fragment, useEffect } from "react";
 import Chat from "./Chat";
 
 const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
-  const [selected, setSelected] = useState("playersBtn");
-  const [showPlayers, setPlayersChat] = useState(true);
+  const [selected, setSelected] = useState("chatBtn");
+  const [showPlayers, setPlayersChat] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   function handleLeaveGame() {
+    socket.emit("leaveGame");
     leaveGame(false);
   }
 
@@ -20,6 +22,12 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
   function openModal() {
     setIsOpen(true);
   }
+
+  useEffect(() => {
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+  }, []);
 
   return (
     <div className="flex-col flex w-full">
@@ -65,7 +73,12 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
             </ul>
           </div>
         ) : (
-          <Chat socket={socket} currentPlayer={currentPlayer} className="flex-grow" />
+          <Chat
+            socket={socket}
+            messages={messages}
+            currentPlayer={currentPlayer}
+            className="flex-grow"
+          />
         )}
       </div>
       <button
@@ -89,8 +102,7 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
-            >
-            </span>
+            ></span>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-200"
