@@ -1,7 +1,7 @@
 import './App.css';
 import Carousel from './components/carousel';
 import GameRoom from './components/GameRoom';
-
+import RandomWord from './components/RandomWord';
 
 const gameInfo = {
   name: "Enigma Breaker",
@@ -14,6 +14,7 @@ function App() {
   return (
     <div className="App">
       <Carousel/>
+      <RandomWord/>
       <GameRoom gameInfo={gameInfo} playerInfo={playerInfo}/>
     </div>
   );

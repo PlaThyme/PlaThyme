@@ -1,6 +1,6 @@
 import React from 'react'; 
 
-const images = ['https://placekitten.com/100/100','https://placekitten.com/100/100','https://placekitten.com/100/100']
+const images = ['https://placekitten.com/101/100','https://placekitten.com/102/100','https://placekitten.com/103/100']
 //const imgdescriptions = ['a cute cate', 'wow much cute', 'cuteis']
 
 const Carousel = () => {
@@ -81,7 +81,7 @@ const Carousel = () => {
           
           {images.map((img, i) => (
             <div className="w-full flex-shrink-0" key={img} ref={imgrefs[i]}>
-              <img src={img} className="w-full object-contain" />
+              <img src={img} alt='' className="w-full object-contain" />
             </div>
           ))}
       
