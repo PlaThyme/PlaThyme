@@ -1,15 +1,18 @@
-import SideBar from "./SideBar";
-import ToolTip from "./ToolTip";
 import {useState, useEffect} from 'react';
 import io from 'socket.io-client';
 
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket }) => {
+import SideBar from "./SideBar";
+import ToolTip from "./ToolTip";
+
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
+
   const [allUsers, setAllUsers] = useState([]);
-  useEffect(()=>{
-    socket.on('userData',(users) =>{
+
+  useEffect(() => {
+    socket.on('userData',(users) => {
       setAllUsers(users);
     })
-  },[]);
+  }, []);
   
   return (
     <div className="flex flex-col h-screen max-h-screen w-full">
@@ -33,11 +36,8 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket }) => {
       </nav>
       <div className="flex inline h-full">
         <div className="grid justify-items-center bg-gray-800 flex-grow">
-            <div className="m-auto">
-                <div className="text-thyme-lightest">This is in the center!</div>
-            </div>
+          {children}
         </div>
-        
         <div className="flex bg-gray-900">
           <div className="flex flex-none w-60">
             <SideBar currentPlayer={currentPlayer} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />

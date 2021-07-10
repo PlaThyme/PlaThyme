@@ -1,29 +1,27 @@
-import React, { useState, useEffect, Fragment } from "react";
-import SelectGame from "./components/SelectGame";
-import "./App.css";
-import GameRoom from "./components/GameRoom";
+import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
-
-//Create socket.io client
 import io from "socket.io-client";
+
+import SelectGame from './components/SelectGame';
+import GameRoom from './components/GameRoom';
+import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+
+import './App.css';
+
 const SERVER = "http://localhost:3001";
 let socket;
 let title;
 let dialogText;
 let buttonText;
 
-function App() {
+export default function App() {
+
   const [currentPlayer, setCurrentPlayer] = useState("none");
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
     roomCode: null,
   });
   const [isOpen, setIsOpen] = useState(false);
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "game 1", minPlayers: 3 },
@@ -35,23 +33,7 @@ function App() {
     gameName: "Game Name",
     minPlayers: "Min Players",
   });
-
   const [inGame, setInGame] = useState(false);
-
-  function handleCreateGame(playerName, selectedGame) {
-    setCurrentPlayer(playerName);
-    const id = selectedGame.gameId;
-    socket.emit("newRoom", { name: playerName, gameId: id });
-  }
-
-  function handleJoinGame(playerName, roomCode) {
-    setCurrentPlayer(playerName);
-    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
-  }
-
-  const handleSelectedGame = (gameName) => {
-    setSelectedGame(gameName);
-  };
 
   useEffect(() => {
     socket = io(SERVER);
@@ -88,8 +70,25 @@ function App() {
     return () => {
       socket.emit("disconnect");
       socket.off();
-    };
+    }
   }, [SERVER]);
+
+  const closeModal = () => setIsOpen(false);
+
+  const handleCreateGame = (playerName, selectedGame) => {
+    setCurrentPlayer(playerName);
+    const id = selectedGame.gameId;
+    socket.emit("newRoom", { name: playerName, gameId: id });
+  }
+
+  const handleJoinGame = (playerName, roomCode) => {
+    setCurrentPlayer(playerName);
+    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
+  }
+
+  const handleSelectedGame = (gameName) => {
+    setSelectedGame(gameName);
+  };
 
   return (
     <div className="App font-mono bg-thyme-darkest">
@@ -100,7 +99,13 @@ function App() {
             currentPlayer={currentPlayer}
             leaveGame={setInGame}
             socket={socket}
-          />
+          >
+            {/* { (selectedGame.gameName === "Draw The Word") ? 
+              <DrawingBoard />
+              : <></> 
+            } */}
+            <DrawingBoard currentWord={"SomeWord"}/>
+          </GameRoom>
         </>
       ) : (
         <SelectGame
@@ -165,5 +170,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

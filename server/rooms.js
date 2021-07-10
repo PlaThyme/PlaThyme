@@ -1,5 +1,6 @@
 //Source: https://github.com/adrianhajdin/project_chat_application/blob/master/server/users.js
 
+// List of all users in a Room
 const users = [];
 
 const joinRoom = ({ id, name, gameId, roomCode }) => {
@@ -26,6 +27,7 @@ const getUser = (id) => {
   return users.find((user) => user.id === id);
 };
 
+// get GameId for a Room, based on Room code
 const getGameId = (roomCode) => {
   const aUser = users.find((user) => user.roomCode === roomCode);
   if (aUser) {
