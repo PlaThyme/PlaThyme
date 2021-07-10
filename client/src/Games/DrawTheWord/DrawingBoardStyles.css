@@ -68,7 +68,7 @@ svg{
   width: 800px;
   margin: auto;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 20px auto auto;
+  grid-template-rows: 20px auto 34px;
 }
 div.grid-item.item-3{
   grid-column: 1 / 3;

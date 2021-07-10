@@ -52,13 +52,14 @@ export default function DrawingBoard(props) {
     const svgPencil = document.getElementById("svgPencil");
     const svgEraser = document.getElementById("svgEraser");
     const svgCleanBoard = document.getElementById("svgCleanBoard");
+    const strokeWidth = document.getElementById("strokeWidth");
     var canvas = document.querySelector("#board");
     var ctx = canvas.getContext("2d");
     var sketch = document.querySelector("#sketch");
     var sketch_style = getComputedStyle(sketch);
     var mouse = { x: 0, y: 0 };
     var last_mouse = { x: 0, y: 0 };
-    var lineWidthValue = 5;
+    var lineWidthValue = 2;
     var strokeColor = "#000000";
 
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
@@ -69,12 +70,13 @@ export default function DrawingBoard(props) {
       socket.emit("clear-canvas-data", null);
     };
 
-    const onColorUpdate = (e) => {
-      console.log("--> ", e.target.className);
-      strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
-    };
+    const onColorUpdate = (e) => { strokeColor = colourPalletDict[e.target.className.split(" ")[1]]; };
     for (let i = 0; i < colors.length; i++) {
       colors[i].addEventListener("click", onColorUpdate, false);
+    }
+
+    const handleLineWidthChange = (e) => {
+      lineWidthValue = e.target.value;
     }
 
     svgPencil.addEventListener(
@@ -86,6 +88,7 @@ export default function DrawingBoard(props) {
     );
     svgEraser.addEventListener("click", () => (strokeColor = "#ffffff"), false);
     svgCleanBoard.addEventListener("click", handleCleanBoard, false);
+    strokeWidth.addEventListener("change", handleLineWidthChange, false);
 
     const onPaint = () => {
       ctx.beginPath();
@@ -93,8 +96,8 @@ export default function DrawingBoard(props) {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.lineWidth = lineWidthValue;
       ctx.strokeStyle = strokeColor;
-      // ctx.lineJoin = "round";
-      // ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
       ctx.closePath();
       ctx.stroke();
 
@@ -149,7 +152,7 @@ export default function DrawingBoard(props) {
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
       </div>
-      <div className="grid-item item-4 flex justify-between">
+      <div className="grid-item item-4 flex justify-between bg-thyme pt-1">
         <div ref={colorsRef} className="colors">
           <div className="color black odd" />
           <div className="color white  even" />
@@ -172,13 +175,32 @@ export default function DrawingBoard(props) {
           <div className="color purple odd" />
           <div className="color lightPurple even" />
         </div>
+        <div>
+          <label for="strokeWidth" className="pr-2 font-bold">
+            Stroke
+          </label>
+          <select name="strokeWidth" id="strokeWidth" className="w-14 p-0.5">
+            <option value="2">1</option>
+            <option value="4" selected={true}>
+                       2
+            </option>
+            <option value="6">3</option>
+            <option value="8">4</option>
+            <option value="10">5</option>
+            <option value="12">6</option>
+            <option value="14">7</option>
+            <option value="16">8</option>
+            <option value="18">9</option>
+            <option value="20">10</option>
+          </select>
+        </div>
         <div className="canvasTools flex justify-items-end">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
             fill="currentColor"
-            className="bi bi-pencil-fill bg-white"
+            className="bi bi-pencil-fill bg-white border-r-2"
             viewBox="0 0 16 16"
             id="svgPencil"
           >
@@ -190,7 +212,7 @@ export default function DrawingBoard(props) {
             width="16"
             height="16"
             fill="currentColor"
-            class="bi bi-eraser-fill bg-white"
+            class="bi bi-eraser-fill bg-white border-r-2"
             viewBox="0 0 16 16"
             id="svgEraser"
           >
