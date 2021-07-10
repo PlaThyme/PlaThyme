@@ -16,7 +16,9 @@ io.on('connection', (socket) => {
   socket.on('canvas-data', (data) => {
     socket.broadcast.emit('canvas-data', data);
   })
-  socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+  socket.on('clear-canvas-data', (data) => {
+    socket.broadcast.emit('clear-canvas-data', data);
+  })
 });
 
 http.listen(PORT, () => {

@@ -33,16 +33,13 @@ canvas#board.board{
   width: 28px;
 }
 svg{
+  display: inline-block;
   height: 28px;
   width: 28px;
   padding: 6px;
 }
 
-/* .color.black { background-color: black; }
-.color.red { background-color: red; }
-.color.green { background-color: green; }
-.color.blue { background-color: blue; }
-.color.yellow { background-color: yellow; }
+/* .color.black { background-color: white; }
 .color.white { background-color: white; } */
 
 .color.black {background-color: #000000; }
@@ -82,3 +79,4 @@ div.grid-item.item-3{
 .item-2{
   text-align: right;
 }
+
