@@ -1,5 +1,5 @@
 /**
- * @ResourcesUsed
+ * @Resources
  * https://dev.to/jerrymcdonald/creating-a-shareable-whiteboard-with-canvas-socket-io-and-react-2en
  * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
  */
@@ -8,11 +8,17 @@ import io from "socket.io-client";
 
 import "./DrawingBoardStyles.css";
 
+/**
+ * 
+ * @param {any} props 
+ * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
+ */
 export default function DrawingBoard(props) {
-  const [timeoutValue, setTimeoutValue] = useState(undefined);
-  const socket = io.connect("http://localhost:3001");
-  const colorsRef = useRef(null);
 
+  const SERVER = "http://localhost:3001";
+  let socket;
+  const [timeoutValue, setTimeoutValue] = useState(undefined);
+  const colorsRef = useRef(null);
   const colourPalletDict = {
     black: "#000000",
     white: "#ffffff",
@@ -37,6 +43,10 @@ export default function DrawingBoard(props) {
   };
 
   useEffect(() => {
+    socket = io(SERVER);
+
+    socket.on("connection", () => {});
+
     socket.on("canvas-data", (data) => {
       var image = new Image();
       var canvas = document.querySelector("#board");
@@ -46,12 +56,18 @@ export default function DrawingBoard(props) {
       };
       image.src = data;
     });
+
     socket.on("clear-canvas-data", (data) => {
       var canvas = document.querySelector("#board");
       var ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
-  }, []);
+
+    return () => {
+      socket.emit("disconnect");
+      socket.off();
+    };
+  }, [SERVER]);
 
   useEffect(() => {
     const colors = document.getElementsByClassName("color");
@@ -59,6 +75,7 @@ export default function DrawingBoard(props) {
     const svgEraser = document.getElementById("svgEraser");
     const svgCleanBoard = document.getElementById("svgCleanBoard");
     const strokeWidth = document.getElementById("strokeWidth");
+
     var canvas = document.querySelector("#board");
     var ctx = canvas.getContext("2d");
     var sketch = document.querySelector("#sketch");
@@ -75,18 +92,20 @@ export default function DrawingBoard(props) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       socket.emit("clear-canvas-data", null);
     };
+    const handleColorUpdate = (e) => {
 
-    const onColorUpdate = (e) => {
-      strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
-    };
-    for (let i = 0; i < colors.length; i++) {
-      colors[i].addEventListener("click", onColorUpdate, false);
-    }
-
+           strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
+;
+       };
     const handleLineWidthChange = (e) => {
+     
       lineWidthValue = e.target.value;
+   ;
     };
 
+    for (let i = 0; i < colors.length; i++) {
+      colors[i].addEventListener("click", handleColorUpdate, false);
+    }
     svgPencil.addEventListener(
       "click",
       () => {
@@ -147,7 +166,7 @@ export default function DrawingBoard(props) {
       },
       false
     );
-  }, []);
+  }, [SERVER]);
 
   return (
     <div className="grid-container mt-20">

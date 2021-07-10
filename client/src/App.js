@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import io from "socket.io-client";
 import { Dialog, Transition } from "@headlessui/react";
+import io from "socket.io-client";
 
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
@@ -34,23 +34,6 @@ export default function App() {
     minPlayers: "Min Players",
   });
   const [inGame, setInGame] = useState(false);
-
-  const closeModal = () => setIsOpen(false);
-
-  const handleCreateGame = (playerName, selectedGame) => {
-    setCurrentPlayer(playerName);
-    const id = selectedGame.gameId;
-    socket.emit("newRoom", { name: playerName, gameId: id });
-  }
-
-  const handleJoinGame = (playerName, roomCode) => {
-    setCurrentPlayer(playerName);
-    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
-  }
-
-  const handleSelectedGame = (gameName) => {
-    setSelectedGame(gameName);
-  };
 
   useEffect(() => {
     socket = io(SERVER);
@@ -89,6 +72,23 @@ export default function App() {
       socket.off();
     }
   }, [SERVER]);
+
+  const closeModal = () => setIsOpen(false);
+
+  const handleCreateGame = (playerName, selectedGame) => {
+    setCurrentPlayer(playerName);
+    const id = selectedGame.gameId;
+    socket.emit("newRoom", { name: playerName, gameId: id });
+  }
+
+  const handleJoinGame = (playerName, roomCode) => {
+    setCurrentPlayer(playerName);
+    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
+  }
+
+  const handleSelectedGame = (gameName) => {
+    setSelectedGame(gameName);
+  };
 
   return (
     <div className="App font-mono bg-thyme-darkest">
