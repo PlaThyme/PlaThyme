@@ -1,10 +1,10 @@
-const path = require("path");
 const express = require("express");
+const path = require("path");
+const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const http = require("http").createServer(app);
 const { makeid } = require("./makeid");
-
 const {
   joinRoom,
   leaveRoom,
@@ -19,38 +19,16 @@ const io = require("socket.io")(http);
 
 //Upon connection, log the fact, emit nothing.
 io.on("connection", (socket) => {
+
   console.log("Client Connected");
 
   socket.emit("message", "yup");
 
-  socket.on("newRoom", (data) => {
-    handleCreateGame(data);
-  });
-
-  socket.on("leaveRoom", () => leaveRoom(socket.id));
-
-  socket.on("messageSend", (message) => {
-    handleMessageSend(message);
-  });
-
-  socket.on("leaveGame", () => {
-    handleDisconnect();
-  });
-
-  socket.on("disconnect", () => {
-    handleDisconnect();
-  });
-
-  function handleDisconnect() {
-    const userName = leaveRoom(socket.id);
-    if (userName) {
-      io.to(userName.roomCode).emit("message", {
-        sender: "",
-        text: `"${userName.name}" left the game.`,
-      });
-    }
-  }
-
+  socket.on("newRoom", (data) => handleCreateGame(data));
+  socket.on("leaveRoom", () => leaveRoom(socket.id));   
+  socket.on("messageSend", (message) => handleMessageSend(message));
+  socket.on("leaveGame", () => handleDisconnect());
+  socket.on("disconnect", () => handleDisconnect());
   socket.on("joinGame", ({ name, roomCode }, callback) => {
     const gid = getGameId(roomCode);
     if (gid === null) {
@@ -77,8 +55,20 @@ io.on("connection", (socket) => {
       socket.join(roomCode);
     }
   });
+  socket.on('canvas-data', (data) => socket.broadcast.emit('canvas-data', data));
+  socket.on('clear-canvas-data', (data) => socket.broadcast.emit('clear-canvas-data', data));
 
-  function handleCreateGame(data) {
+  const handleDisconnect = () => {
+    const userName = leaveRoom(socket.id);
+    if (userName) {
+      io.to(userName.roomCode).emit("message", {
+        sender: "",
+        text: `"${userName.name}" left the game.`,
+      });
+    }
+  }  
+
+  const handleCreateGame = (data) => {
     roomCode = makeid(6);
 
     //Check if the random ID was a repeat. If so, recursively attempt again.
@@ -109,7 +99,7 @@ io.on("connection", (socket) => {
     socket.join(roomCode);
   }
 
-  function handleMessageSend(message) {
+  const handleMessageSend = (message) => {
     const senderId = getUser(socket.id);
     io.to(senderId.roomCode).emit("message", {
       sender: message.sender,

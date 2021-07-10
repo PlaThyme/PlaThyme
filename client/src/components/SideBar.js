@@ -1,25 +1,27 @@
 //PlayerList takes in an array of players and displays them in a list.
 //TODO Make Leave Room button fuctional.
-import { Dialog, RadioGroup, Transition } from "@headlessui/react";
 import { useState, Fragment, useEffect } from "react";
+import { Dialog, RadioGroup, Transition} from "@headlessui/react";
+
 import Chat from "./Chat";
 
 const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
+
   const [selected, setSelected] = useState("chatBtn");
   const [showPlayers, setPlayersChat] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
 
-  function handleLeaveGame() {
+  const handleLeaveGame = () => {
     socket.emit("leaveGame");
     leaveGame(false);
   }
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
   }
 
-  function openModal() {
+  const openModal = () => {
     setIsOpen(true);
   }
 

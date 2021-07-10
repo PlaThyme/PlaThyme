@@ -1,18 +1,20 @@
 import {useState, useEffect, useRef} from 'react';
-import io from 'socket.io-client';
-import MessageFeed from './MessageFeed';
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
+import io from 'socket.io-client';
+
+import MessageFeed from './MessageFeed';
 
 const Chat = ({socket, currentPlayer, messages}) => {
     const messageRef = useRef();
 
-    function handleSend(e){
+    const handleSend = (e) => {
         e.preventDefault();
         if(messageRef.current.value){
             socket.emit('messageSend', {sender:currentPlayer, text:messageRef.current.value});
         }
         document.getElementById('send-box').reset();
     }
+    
     return (
         <div className="flex-col">
             <div className="m-1 bg-thyme-800 overflow-scroll-y">
