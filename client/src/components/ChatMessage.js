@@ -9,7 +9,7 @@ const ChatMessage = ({ message, currentPlayer}) => {
   return (
     <div className="p-px">
       {sentByCurrentUser ? (
-        <div className="pl-3">
+        <div className="pl-3 py-px">
           <div className="flex flex-col rounded bg-gray-100">
             <p className="flex justify-end text-red-700">{message.sender}</p>
             <div>
@@ -20,7 +20,7 @@ const ChatMessage = ({ message, currentPlayer}) => {
           </div>
         </div>
       ) : (
-        <div className="pr-3">
+        <div className="pr-3 py-px">
           <div className="flex flex-col pr-2 rounded bg-thyme-100">
             <p className="flex justify-start text-blue-700">{message.sender}</p>
             <div className="flex">

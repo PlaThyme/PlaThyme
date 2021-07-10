@@ -27,37 +27,46 @@ io.on("connection", (socket) => {
   socket.on("newRoom", (data) => handleCreateGame(data));
   socket.on("leaveRoom", () => leaveRoom(socket.id));   
   socket.on("messageSend", (message) => handleMessageSend(message));
+  socket.on("leaveGame", () => handleDisconnect());
+  socket.on("disconnect", () => handleDisconnect());
   socket.on("joinGame", ({ name, roomCode }, callback) => {
     const gid = getGameId(roomCode);
     if (gid === null) {
-      //  callback('No Such Room');
+      socket.emit("error", { error: "gid" });
     }
-    const error = joinRoom({
+    let error = joinRoom({
       id: socket.id,
       gameId: gid,
       name: name,
       roomCode: roomCode,
     });
-    //if(error){return callback(error)}
-
-    socket.broadcast
-      .to(roomCode)
-      .emit("message", {
-        sender: "PlaThyme",
-        text: `${name} has joined the game.`,
+    if (error.error === "dup") {
+      socket.emit("error", { error: "dup" });
+    }
+    if (error.error !== "dup" && error.error !== "dup") {
+      socket.broadcast.to(roomCode).emit("message", {
+        sender: "",
+        text: `"${name}" has joined the game.`,
       });
-    io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
+      io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
 
-    const gameData = { playerName: name, code: roomCode, gameId: gid };
-    socket.emit("gameData", gameData);
-    socket.join(roomCode);
+      const gameData = { playerName: name, code: roomCode, gameId: gid };
+      socket.emit("gameData", gameData);
+      socket.join(roomCode);
+    }
   });
-  socket.on('canvas-data', (data) => {
-    socket.broadcast.emit('canvas-data', data);
-  })
-  socket.on('clear-canvas-data', (data) => {
-    socket.broadcast.emit('clear-canvas-data', data);
-  })
+  socket.on('canvas-data', (data) => socket.broadcast.emit('canvas-data', data));
+  socket.on('clear-canvas-data', (data) => socket.broadcast.emit('clear-canvas-data', data));
+
+  const handleDisconnect = () => {
+    const userName = leaveRoom(socket.id);
+    if (userName) {
+      io.to(userName.roomCode).emit("message", {
+        sender: "",
+        text: `"${userName.name}" left the game.`,
+      });
+    }
+  }  
 
   const handleCreateGame = (data) => {
     roomCode = makeid(6);
@@ -81,29 +90,13 @@ io.on("connection", (socket) => {
       gameId: data.gameId,
       roomCode: roomCode,
     });
-    //if(error){return callback(error)}
+
+    if (error.error === "dup") {
+      socket.emit("error", { error: "dup" });
+    }
 
     socket.emit("gameData", gameData);
     socket.join(roomCode);
-  }
-
-  //From https://github.com/HungryTurtleCode/multiplayerSnake/blob/master/server/server.js
-  const handleJoinGame = (data) => {
-    const gameRoom = io.sockets.adapter.rooms[gameCode];
-    let allUsers;
-    if (gameRoom) {
-      allUsers = room.sockets;
-    }
-
-    let numUsers = 0;
-    if (allUsers) {
-      numUsers = Object.keys(allUsers).length;
-    }
-    io.to(gameRoom);
-  }
-
-  const handleLeaveGame = (id) => {
-    leaveRoom(id);
   }
 
   const handleMessageSend = (message) => {

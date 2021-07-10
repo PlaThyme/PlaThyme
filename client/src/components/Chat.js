@@ -4,16 +4,8 @@ import io from 'socket.io-client';
 
 import MessageFeed from './MessageFeed';
 
-const Chat = ({ socket, currentPlayer }) => {
-
-    const [messages, setMessages] = useState([]);
+const Chat = ({socket, currentPlayer, messages}) => {
     const messageRef = useRef();
-
-    useEffect(() => {
-        socket.on('message', message => {
-          setMessages(messages => [ ...messages, message ]);
-        });
-    }, []);
 
     const handleSend = (e) => {
         e.preventDefault();

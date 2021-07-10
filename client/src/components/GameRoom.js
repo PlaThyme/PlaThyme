@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket = io, children}) => {
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
 
   const [allUsers, setAllUsers] = useState([]);
 
