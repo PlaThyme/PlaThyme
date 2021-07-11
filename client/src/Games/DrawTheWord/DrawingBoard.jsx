@@ -13,7 +13,7 @@ import "./DrawingBoardStyles.css";
  * @param {any} props 
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
-export default function DrawingBoard({ currentWord, socket }) {
+export default function DrawingBoard({ socket, currentWord }) {
   // const SERVER = "http://localhost:3001";
   // let socket;
   const [timeoutValue, setTimeoutValue] = useState(undefined);
