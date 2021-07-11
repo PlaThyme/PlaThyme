@@ -55,8 +55,14 @@ io.on("connection", (socket) => {
       socket.join(roomCode);
     }
   });
-  socket.on('canvas-data', (data) => socket.broadcast.emit('canvas-data', data));
-  socket.on('clear-canvas-data', (data) => socket.broadcast.emit('clear-canvas-data', data));
+  socket.on('canvas-data', (data) => {
+    const senderId = getUser(socket.id);
+    io.to(senderId.roomCode).emit('canvas-data', data);
+  });
+  socket.on('clear-canvas-data', (data) => {
+    const senderId = getUser(socket.id);
+    io.to(senderId.roomCode).emit('clear-canvas-data', data);
+  });
 
   const handleDisconnect = () => {
     const userName = leaveRoom(socket.id);
