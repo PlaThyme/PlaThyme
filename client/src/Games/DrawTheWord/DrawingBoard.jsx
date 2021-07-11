@@ -13,9 +13,10 @@ import "./DrawingBoardStyles.css";
  * @param {any} props 
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
-export default function DrawingBoard({ currentWord, socket }) {
-  // const SERVER = "http://localhost:3001";
-  // let socket;
+export default function DrawingBoard(props) {
+
+  const SERVER = "http://localhost:3001";
+  let socket;
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const colorsRef = useRef(null);
   const colourPalletDict = {
@@ -42,9 +43,9 @@ export default function DrawingBoard({ currentWord, socket }) {
   };
 
   useEffect(() => {
-    // socket = io(SERVER);
+    socket = io(SERVER);
 
-    // socket.on("connection", () => {});
+    socket.on("connection", () => {});
 
     socket.on("canvas-data", (data) => {
       var image = new Image();
@@ -62,11 +63,11 @@ export default function DrawingBoard({ currentWord, socket }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
 
-    // return () => {
-    //   socket.emit("disconnect");
-    //   socket.off();
-    // };
-  }, []);
+    return () => {
+      socket.emit("disconnect");
+      socket.off();
+    };
+  }, [SERVER]);
 
   useEffect(() => {
     const colors = document.getElementsByClassName("color");
@@ -92,10 +93,14 @@ export default function DrawingBoard({ currentWord, socket }) {
       socket.emit("clear-canvas-data", null);
     };
     const handleColorUpdate = (e) => {
-      strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
-    };
+
+           strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
+;
+       };
     const handleLineWidthChange = (e) => {
+     
       lineWidthValue = e.target.value;
+   ;
     };
 
     for (let i = 0; i < colors.length; i++) {
@@ -161,7 +166,7 @@ export default function DrawingBoard({ currentWord, socket }) {
       },
       false
     );
-  }, []);
+  }, [SERVER]);
 
   return (
     <div className="grid-container mt-20">
@@ -169,7 +174,7 @@ export default function DrawingBoard({ currentWord, socket }) {
         <p>Timer: 1:29</p>
       </div>
       <div className="grid-item item-2 text-white">
-        <p>{currentWord}</p>
+        <p>{props.currentWord}</p>
       </div>
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
