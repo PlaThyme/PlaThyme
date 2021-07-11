@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
 import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
 
@@ -24,7 +25,7 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "game 1", minPlayers: 3 },
+    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
     { gameId: 3, gameName: "game 2", minPlayers: 2 },
     { gameId: 4, gameName: "game 4", minPlayers: 1 },
   ]);
@@ -100,11 +101,12 @@ export default function App() {
             leaveGame={setInGame}
             socket={socket}
           >
-            {/* { (selectedGame.gameName === "Draw The Word") ? 
-              <DrawingBoard />
-              : <></> 
-            } */}
-            <DrawingBoard currentWord={"SomeWord"} socket={socket}/>
+            { (gameInfo.gameName === "Draw The Word") ? 
+              <DrawingBoard currentWord={"SomeWord"} socket={socket} />
+              : <TestGame socket={socket}/> 
+            }
+            {/* <DrawingBoard currentWord={"SomeWord"} socket={socket}/> */}
+            
           </GameRoom>
         </>
       ) : (

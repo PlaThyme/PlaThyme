@@ -63,6 +63,10 @@ io.on("connection", (socket) => {
     const senderId = getUser(socket.id);
     io.to(senderId.roomCode).emit('clear-canvas-data', data);
   });
+  socket.on('bg-colour-change', (data) => {
+    const senderId = getUser(socket.id);
+    io.to(senderId.roomCode).emit('bg-colour-change', data);
+  })
 
   const handleDisconnect = () => {
     const userName = leaveRoom(socket.id);
