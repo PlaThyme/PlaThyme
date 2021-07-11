@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
-import Carousel from './components/carousel';
+
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
 import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
@@ -104,17 +104,16 @@ export default function App() {
               <DrawingBoard />
               : <></> 
             } */}
-            <DrawingBoard currentWord={"SomeWord"} socket={socket}/>
+            <DrawingBoard currentWord={"SomeWord"}/>
           </GameRoom>
         </>
       ) : (
-        <div><Carousel/>
         <SelectGame
           handleSelectedGame={handleSelectedGame}
           listofGames={listofGames}
           createGame={handleCreateGame}
           joinGame={handleJoinGame}
-        /></div>
+        />
       )}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
