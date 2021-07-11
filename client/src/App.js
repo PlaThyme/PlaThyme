@@ -104,7 +104,7 @@ export default function App() {
               <DrawingBoard />
               : <></> 
             } */}
-            <DrawingBoard currentWord={"SomeWord"}/>
+            <DrawingBoard currentWord={"SomeWord"} socket={socket}/>
           </GameRoom>
         </>
       ) : (
