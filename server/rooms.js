@@ -27,6 +27,10 @@ const getUser = (id) => {
   return users.find((user) => user.id === id);
 };
 
+const getUserByNameAndCode = (userName, roomCode) => {
+  return users.find((user) => user.roomCode === roomCode && user.name === userName);
+}
+
 // get GameId for a Room, based on Room code
 const getGameId = (roomCode) => {
   const aUser = users.find((user) => user.roomCode === roomCode);
@@ -37,9 +41,7 @@ const getGameId = (roomCode) => {
 };
 
 const getUsersInRoom = (roomCode) => {
-  return users.filter((user) => {
-    user.roomCode === roomCode;
-  });
+  return users.filter((user) => user.roomCode === roomCode).map(user => user.name);
 };
 
 const numUsersInRoom = (roomCode) => {
@@ -53,4 +55,5 @@ module.exports = {
   getGameId,
   numUsersInRoom,
   getUsersInRoom,
+  getUserByNameAndCode,
 };
