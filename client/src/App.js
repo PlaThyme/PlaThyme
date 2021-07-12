@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
@@ -102,11 +102,9 @@ export default function App() {
             socket={socket}
           >
             { (gameInfo.gameName === "Draw The Word") ? 
-              <DrawingBoard currentWord={"SomeWord"} socket={socket} />
+              <DrawTheWord socket={socket} />
               : <TestGame socket={socket}/> 
             }
-            {/* <DrawingBoard currentWord={"SomeWord"} socket={socket}/> */}
-            
           </GameRoom>
         </>
       ) : (
