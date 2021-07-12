@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
+const DrawTheWord = require("./Games/DrawTheWord");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -68,19 +69,27 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
     }
   });
-  socket.on('canvas-data', (data) => {
-    const senderId = getUser(socket.id);
-    io.to(senderId.roomCode).emit('canvas-data', data);
+  socket.on('game-data', (data) =>{
+    games[getUser(socket.id).roomCode].recieveData(data);
   });
-  socket.on('clear-canvas-data', (data) => {
-    const senderId = getUser(socket.id);
-    io.to(senderId.roomCode).emit('clear-canvas-data', data);
-  });
-  socket.on('bg-colour-change', (data) => {
-    const roomCode = getUser(socket.id).roomCode;
-    games[roomCode].recieveData(data);
-  })
 
+
+  //Below to be removed
+  //////////////
+  // socket.on('canvas-data', (data) => {
+  //   const senderId = getUser(socket.id);
+  //   io.to(senderId.roomCode).emit('canvas-data', data);
+  // });
+  // socket.on('clear-canvas-data', (data) => {
+  //   const senderId = getUser(socket.id);
+  //   io.to(senderId.roomCode).emit('clear-canvas-data', data);
+  // });
+  // socket.on('bg-colour-change', (data) => {
+  //   const roomCode = getUser(socket.id).roomCode;
+  //   games[roomCode].recieveData(data);
+  // })
+  /////////////
+    
   const handleDisconnect = () => {
     const userName = leaveRoom(socket.id);
     if (userName) {
@@ -123,10 +132,18 @@ io.on("connection", (socket) => {
 
     socket.emit("gameData", gameData);
     socket.join(roomCode);
+
+
+    //When Making a game, the game must be added to the list below for its creation with its matching ID.
+    //Create a new game object for the selected game, and call its start game function.
+    if(data.gameId === 1){
+      games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name]);
+    }
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
-      games[roomCode].startGame();
     }
+    games[roomCode].startGame();
+
     //Send all players updated user list.
     io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
   }

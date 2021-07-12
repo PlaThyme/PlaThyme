@@ -1,15 +1,17 @@
 const Game = require("./Game");
-class TestGame extends Game{
+class DrawTheWord extends Game{
     constructor(roomCode, socket, io, players){
         super(roomCode, socket, io, players);
     }
 
-
     recieveData(data){
-        if(data.event === "bg-colour-change"){
+        if(data.event === "canvas-data"){
+            super.sendGameData(data);
+        }
+        if(data.event === "clear-canvas-data"){
             super.sendGameData(data);
         }
     }
 }
 
-module.exports = TestGame;
+module.exports = DrawTheWord;
