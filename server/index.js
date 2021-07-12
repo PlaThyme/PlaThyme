@@ -26,8 +26,6 @@ io.on("connection", (socket) => {
 
   console.log("Client Connected");
 
-  socket.emit("message", "yup");
-
   socket.on("newRoom", (data) => handleCreateGame(data));
   socket.on("leaveRoom", () => leaveRoom(socket.id));   
   socket.on("messageSend", (message) => handleMessageSend(message));
@@ -65,6 +63,8 @@ io.on("connection", (socket) => {
       socket.emit("gameData", gameData);
       socket.join(roomCode);
 
+      games[roomCode].newPlayer(name)
+
       //Send all players updated user list.
       io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
     }
@@ -99,6 +99,7 @@ io.on("connection", (socket) => {
       });
       //Send all players updated user list.
       io.to(userName.roomCode).emit("userData", getUsersInRoom(userName.roomCode));
+      games[userName.roomCode].disconnection(userName.name)
     }
     //TODO: If going with game API, make this delete empty game.
   }  
@@ -150,6 +151,7 @@ io.on("connection", (socket) => {
 
   const handleMessageSend = (message) => {
     const senderId = getUser(socket.id);
+    games[senderId.roomCode].chatMessage({sender:message.sender,text:message.text});
     io.to(senderId.roomCode).emit("message", {
       sender: message.sender,
       text: message.text,
