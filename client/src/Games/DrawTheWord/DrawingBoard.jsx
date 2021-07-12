@@ -46,21 +46,41 @@ export default function DrawingBoard({ socket, currentWord }) {
 
     // socket.on("connection", () => {});
 
-    socket.on("canvas-data", (data) => {
-      var image = new Image();
-      var canvas = document.querySelector("#board");
-      var ctx = canvas.getContext("2d");
-      image.onload = () => {
-        ctx.drawImage(image, 0, 0);
-      };
-      image.src = data;
-    });
 
-    socket.on("clear-canvas-data", (data) => {
-      var canvas = document.querySelector("#board");
-      var ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    socket.on("update-game",(data) =>{
+      if(data.event === "canvas-data"){
+        var image = new Image();
+        var canvas = document.querySelector("#board");
+        var ctx = canvas.getContext("2d");
+        image.onload = () => {
+          ctx.drawImage(image, 0, 0);
+        };
+        image.src = data.image;
+      }
+      if(data.event === "clear-canvas-data"){
+        var canvas = document.querySelector("#board");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     });
+    // Block below is to be removed, replaced by above code
+    /////////////////////////////////////////
+    // socket.on("canvas-data", (data) => {
+    //   var image = new Image();
+    //   var canvas = document.querySelector("#board");
+    //   var ctx = canvas.getContext("2d");
+    //   image.onload = () => {
+    //     ctx.drawImage(image, 0, 0);
+    //   };
+    //   image.src = data;
+    // });
+
+    // socket.on("clear-canvas-data", (data) => {
+    //   var canvas = document.querySelector("#board");
+    //   var ctx = canvas.getContext("2d");
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // });
+    ///////////////////////////////////////////
 
     // return () => {
     //   socket.emit("disconnect");
@@ -89,7 +109,7 @@ export default function DrawingBoard({ socket, currentWord }) {
 
     const handleCleanBoard = (e) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      socket.emit("clear-canvas-data", null);
+      socket.emit("game-data", {event:"clear-canvas-data"});
     };
     const handleColorUpdate = (e) => {
       strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
@@ -129,7 +149,7 @@ export default function DrawingBoard({ socket, currentWord }) {
       setTimeoutValue(
         setTimeout(() => {
           var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
-          socket.emit("canvas-data", base64ImageData);
+          socket.emit("game-data",{event:"canvas-data", image:base64ImageData});
         }, 1000)
       );
     };

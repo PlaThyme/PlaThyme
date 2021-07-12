@@ -4,12 +4,14 @@ export default function TestGame({ socket }) {
   const [colourName, setColourName] = useState("bg-blue-500");
 
   useEffect(() => {
-    socket.emit("bg-colour-change", colourName);
+    socket.emit("game-data",{event:"bg-colour-change", color:colourName});
   }, [colourName]);
 
   useEffect(() => {
-    socket.on("bg-colour-change", (data) => {
-      setColourName(data);
+    socket.on("update-game", (data) => {
+      if(data.event === "bg-colour-change"){
+        setColourName(data.color);
+      }
     });
   }, []);
 
