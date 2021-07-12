@@ -4,7 +4,7 @@ const {getUser} = require("../rooms.js");
 class Game{
     constructor (roomCode, socket, io, players) {
         this.roomCode = roomCode;  // String, room code is kept here.
-        this.players = players; //Array of players in this game.
+        this.players = [players]; //Array of players in this game.
         this.socket = socket;
         this.io = io;
     }
@@ -23,8 +23,8 @@ class Game{
     //Impliment the following methods in subclass version of your game, if you want to use their functonality.
     
     startGame(){}                           // Will be run after a new game is created.
-    newPlayer(playerName){}               // When a new player joins room, this method will be called. The string name of the new player will be passed into the funciton. Player will be added to list already.
-    disconnection(playerName){}             // This will be called when a player disconnects. String containing players name will be passed in.
+    newPlayer(playerName){this.players.push(playerName)}               // When a new player joins room, this method will be called. The string name of the new player will be passed into the funciton. By default player will be added to list.
+    disconnection(playerName){this.players = this.players.filter((player) => player !== playerName)}             // This will be called when a player disconnects. String containing players name will be passed in. By default removes player from list.
     recieveData(data){}                   // When data is recieved from a client in a room, this method is called with the data sent by the client.
     chatMessage({sender, message}){}       // When a player sends a chat message this will be called. The sender will be the player name, and the message, both as strings.
     
