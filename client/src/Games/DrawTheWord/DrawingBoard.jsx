@@ -5,9 +5,8 @@
  */
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
-
 import "./DrawingBoardStyles.css";
-
+import selectedWord from "./RandomWord";
 /**
  * 
  * @param {any} props 

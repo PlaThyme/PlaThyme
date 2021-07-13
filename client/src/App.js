@@ -17,7 +17,10 @@ let buttonText;
 
 export default function App() {
   return (
+    <>
     <RandomWord/>
+    {/* <Carousel/> */}
+    </>
   )
 }
 // export default function App() {
