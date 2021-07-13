@@ -4,7 +4,7 @@ const {getUser} = require("../rooms.js");
 class Game{
     constructor (roomCode, socket, io, players) {
         this.roomCode = roomCode;  // String, room code is kept here.
-        this.players = players; //Array of players in this game.
+        this.players = [players]; //Array of players in this game.
         this.socket = socket;
         this.io = io;
     }
