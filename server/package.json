@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index",
-    "build": "cd ../client && npm install && npm run build",
+    "build": "npm install && cd ../client && npm install && npm run build",
     "qbuild": "cd ../client && npm run build",
     "buildnrun": "cd ../client && npm run build && cd ../server && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"

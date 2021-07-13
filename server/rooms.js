@@ -1,4 +1,5 @@
-//Source: https://github.com/adrianhajdin/project_chat_application/blob/master/server/users.js
+// @Resources
+// https://github.com/adrianhajdin/project_chat_application/blob/master/server/users.js
 
 // List of all users in a Room
 const users = [];
