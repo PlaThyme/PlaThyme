@@ -63,29 +63,6 @@ export default function DrawingBoard({ socket, currentWord }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     });
-    // Block below is to be removed, replaced by above code
-    /////////////////////////////////////////
-    // socket.on("canvas-data", (data) => {
-    //   var image = new Image();
-    //   var canvas = document.querySelector("#board");
-    //   var ctx = canvas.getContext("2d");
-    //   image.onload = () => {
-    //     ctx.drawImage(image, 0, 0);
-    //   };
-    //   image.src = data;
-    // });
-
-    // socket.on("clear-canvas-data", (data) => {
-    //   var canvas = document.querySelector("#board");
-    //   var ctx = canvas.getContext("2d");
-    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // });
-    ///////////////////////////////////////////
-
-    // return () => {
-    //   socket.emit("disconnect");
-    //   socket.off();
-    // };
   }, []);
 
   useEffect(() => {
