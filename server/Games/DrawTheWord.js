@@ -17,6 +17,7 @@ class DrawTheWord extends Game{
             super.sendGameData(data);
         }
         if(data.event === "end-turn"){
+            super.sendGameData({event:"turn-ended"});
             this.handleEndOfTurn();
         }
         if(data.event === "word-selection"){
