@@ -123,8 +123,6 @@ export default function DrawingBoard({ socket, currentWord }) {
     strokeWidth.addEventListener("change", handleLineWidthChange, false);
 
     const onPaint = () => {
-      console.log(myTurn);
-      console.log("Attempt to paint")
       if (myTurn) {
         ctx.beginPath();
         ctx.moveTo(last_mouse.x, last_mouse.y);
