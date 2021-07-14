@@ -33,7 +33,7 @@ class DrawTheWord extends Game{
     }
     newPlayer(playerName){
         if(playerName){
-            turnOrder.push(playerName);
+            this.turnOrder.push(playerName);
             this.scores[playerName] = 0;
         }
     }
