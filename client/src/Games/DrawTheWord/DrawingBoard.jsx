@@ -45,10 +45,6 @@ export default function DrawingBoard({ socket, currentWord }) {
   };
 
   useEffect(() => {
-    myTurn ? setOpac("") : setOpac("opacity-0");
-  }, [myTurn]);
-
-  useEffect(() => {
     //Game updates sent only to this client
     socket.on("update-game-player", (data) => {
       if (data.event === "your-turn") {
@@ -75,6 +71,12 @@ export default function DrawingBoard({ socket, currentWord }) {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
+      if (data.event === "new-turn"){
+        setMyTurn(false);
+        var canvas = document.querySelector("#board");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     });
   }, []);
 
@@ -84,6 +86,8 @@ export default function DrawingBoard({ socket, currentWord }) {
     const svgEraser = document.getElementById("svgEraser");
     const svgCleanBoard = document.getElementById("svgCleanBoard");
     const strokeWidth = document.getElementById("strokeWidth");
+
+    myTurn ? setOpac("") : setOpac("opacity-0");
 
     var canvas = document.querySelector("#board");
     var ctx = canvas.getContext("2d");

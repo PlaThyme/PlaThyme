@@ -4,7 +4,7 @@ class DrawTheWord extends Game{
     constructor(roomCode, socket, io, players){
         super(roomCode, socket, io, players);
         this.turnOrder = players;
-        this.selectedWord = "";
+        this.selectedWord = "test";
         this.turnStarted = false;
         this.scores = {};
         this.handleEndOfTurn();
@@ -39,8 +39,6 @@ class DrawTheWord extends Game{
         }
     }
     disconnection(playerName){
-        console.log("Game Disconnection");
-        console.log(this.turnOrder);
         if(playerName === this.turnOrder[0]){
             //Do something about current player disconnection.
             this.turnStarted = false;
@@ -77,10 +75,15 @@ class DrawTheWord extends Game{
             super.sendDataToPlayer(this.turnOrder[0], theirTurn);
     }
     chatMessage(messageData){
+        this.turnStarted = true; //Short circuit to test turn logic.
         if(this.turnStarted){
-            //Put in message recognition logic here / points recognition.
-            //Eg if correct broadcast to start then set turnStarted to false.
-            //at the end if correct run this.handleEndOfTurn();
+            const splitWords = messageData.text.split(" ");
+            splitWords.forEach(word => {
+                if(word.toLowerCase() === this.selectedWord.toLowerCase()){
+                    //SCORE UPDATE LOGIC GOES HERE
+                    this.handleEndOfTurn();
+                }
+            })
         }
     }
     generateWords(){
