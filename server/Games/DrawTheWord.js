@@ -3,10 +3,11 @@ const Game = require("./Game");
 class DrawTheWord extends Game{
     constructor(roomCode, socket, io, players){
         super(roomCode, socket, io, players);
-        this.turnOrder = [];
+        this.turnOrder = players;
         this.selectedWord = "";
         this.turnStarted = false;
         this.scores = {};
+        this.handleEndOfTurn();
     };
 
     recieveData(data){
@@ -38,6 +39,8 @@ class DrawTheWord extends Game{
         }
     }
     disconnection(playerName){
+        console.log("Game Disconnection");
+        console.log(this.turnOrder);
         if(playerName === this.turnOrder[0]){
             //Do something about current player disconnection.
             this.turnStarted = false;
