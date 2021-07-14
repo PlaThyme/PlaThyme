@@ -17,6 +17,9 @@ export default function DrawingBoard({ socket, currentWord }) {
   // const SERVER = "http://localhost:3001";
   // let socket;
   const [timeoutValue, setTimeoutValue] = useState(undefined);
+  const [myTurn, setMyTurn] = useState(false);
+  const [opac, setOpac] = useState("opacity-0");
+  const [selectedWord, setSelectedWord] = useState(null);
   const colorsRef = useRef(null);
   const colourPalletDict = {
     black: "#000000",
@@ -42,6 +45,10 @@ export default function DrawingBoard({ socket, currentWord }) {
   };
 
   useEffect(() => {
+    myTurn ? setOpac("") : setOpac("opacity-0");
+  },[myTurn])
+
+  useEffect(() => {
     // socket = io(SERVER);
 
     // socket.on("connection", () => {});
@@ -61,6 +68,12 @@ export default function DrawingBoard({ socket, currentWord }) {
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      if(data.event === "your-turn"){
+        setMyTurn(true);
+        //Show popup for word selection. Set the selected word.
+
+        //handleSelectedWord();
       }
     });
   }, []);
@@ -134,11 +147,13 @@ export default function DrawingBoard({ socket, currentWord }) {
     canvas.addEventListener(
       "mousemove",
       function (e) {
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-
-        mouse.x = e.pageX - this.offsetLeft;
-        mouse.y = e.pageY - this.offsetTop;
+        if(myTurn){
+          last_mouse.x = mouse.x;
+          last_mouse.y = mouse.y;
+          
+          mouse.x = e.pageX - this.offsetLeft;
+          mouse.y = e.pageY - this.offsetTop;
+        }
       },
       false
     );
@@ -146,7 +161,9 @@ export default function DrawingBoard({ socket, currentWord }) {
     canvas.addEventListener(
       "mousedown",
       function (e) {
-        canvas.addEventListener("mousemove", onPaint, false);
+        if(myTurn){
+          canvas.addEventListener("mousemove", onPaint, false);
+        }
       },
       false
     );
@@ -154,12 +171,14 @@ export default function DrawingBoard({ socket, currentWord }) {
     canvas.addEventListener(
       "mouseup",
       function () {
-        canvas.removeEventListener("mousemove", onPaint, false);
+        if(myTurn){
+          canvas.removeEventListener("mousemove", onPaint, false);
+        }
       },
       false
     );
   }, []);
-
+  
   return (
     <div className="grid-container mt-20">
       <div className="grid-item item-1 text-white">
@@ -171,7 +190,8 @@ export default function DrawingBoard({ socket, currentWord }) {
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
       </div>
-      <div className="grid-item item-4 flex justify-between bg-thyme pt-1">
+      
+      <div className={`grid-item item-4 flex justify-between bg-thyme pt-1 ${opac}`}>
         <div ref={colorsRef} className="colors">
           <div className="color black odd" />
           <div className="color white  even" />
@@ -222,7 +242,7 @@ export default function DrawingBoard({ socket, currentWord }) {
             className="bi bi-pencil-fill bg-white border-r-2"
             viewBox="0 0 16 16"
             id="svgPencil"
-          >
+            >
             <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
           </svg>
 
@@ -234,7 +254,7 @@ export default function DrawingBoard({ socket, currentWord }) {
             class="bi bi-eraser-fill bg-white border-r-2"
             viewBox="0 0 16 16"
             id="svgEraser"
-          >
+            >
             <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z" />
           </svg>
 
@@ -246,11 +266,12 @@ export default function DrawingBoard({ socket, currentWord }) {
             className="bi bi-trash-fill bg-white"
             viewBox="0 0 16 16"
             id="svgCleanBoard"
-          >
+            >
             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
           </svg>
         </div>
       </div>
     </div>
-  );
-}
+    );
+  }
+  
