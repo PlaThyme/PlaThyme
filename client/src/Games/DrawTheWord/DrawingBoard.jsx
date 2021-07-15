@@ -3,9 +3,10 @@
  * https://dev.to/jerrymcdonald/creating-a-shareable-whiteboard-with-canvas-socket-io-and-react-2en
  * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
  */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import io from "socket.io-client";
-
+import { Dialog, Transition } from "@headlessui/react";
+import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
 
 /**
@@ -13,14 +14,15 @@ import "./DrawingBoardStyles.css";
  * @param {any} props
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
-export default function DrawingBoard({ socket, currentWord }) {
-  // const SERVER = "http://localhost:3001";
-  // let socket;
+export default function DrawingBoard({ socket }) {
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const [myTurn, setMyTurn] = useState(false);
   const [opac, setOpac] = useState("opacity-0");
-  const [selectedWord, setSelectedWord] = useState(null);
   const colorsRef = useRef(null);
+  const [selectedWord, setSelectedWord] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [wordOptions, setWordOptions] = useState(["", "", ""]);
+
   const colourPalletDict = {
     black: "#000000",
     white: "#ffffff",
@@ -44,14 +46,36 @@ export default function DrawingBoard({ socket, currentWord }) {
     lightPurple: "#d9c5f0",
   };
 
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const handleSelectEasy = () => {
+    handleWordSelect(wordOptions[0]);
+  };
+  const handleSelectMedium = () => {
+    handleWordSelect(wordOptions[1]);
+  };
+  const handleSelectHard = () => {
+    handleWordSelect(wordOptions[2]);
+  };
+
+  const handleWordSelect = (word) => {
+    setSelectedWord(word);
+    closeModal();
+    socket.emit("game-data", {
+      event: "word-selection",
+      word: word,
+    });
+  };
+
   useEffect(() => {
     //Game updates sent only to this client
     socket.on("update-game-player", (data) => {
       if (data.event === "your-turn") {
         setMyTurn(true);
-
-        //Show popup for word selection. Set the selected word.
-        //handleSelectedWord();
+        setWordOptions(data.words);
+        setIsOpen(true);
       }
     });
 
@@ -71,7 +95,7 @@ export default function DrawingBoard({ socket, currentWord }) {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-      if (data.event === "new-turn"){
+      if (data.event === "new-turn") {
         setMyTurn(false);
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
@@ -188,7 +212,7 @@ export default function DrawingBoard({ socket, currentWord }) {
         <p>Timer: 1:29</p>
       </div>
       <div className="grid-item item-2 text-white">
-        <p>{currentWord}</p>
+        {myTurn ? <p>{selectedWord}</p> : <></>}
       </div>
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
@@ -276,6 +300,78 @@ export default function DrawingBoard({ socket, currentWord }) {
           </svg>
         </div>
       </div>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-30 overflow-y-auto"
+          onClose={() => setIsOpen(false)}
+        >
+          <div className="h-screen px-4 text-center">
+            <Transition.Child as={Fragment}>
+              <Dialog.Overlay className="fixed inset-Y0" />
+            </Transition.Child>
+
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            ></span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-200"
+              enterFrom="opacity-0 scale-50"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-50"
+            >
+              <div className="inline-block max-w-sm p-4 my-5 overflow-hidden text-left align-middle transition-all transform bg-thyme-700 shadow-md rounded-lg">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-thyme-300"
+                >
+                  Select a word to draw
+                </Dialog.Title>
+                <div className="mt-2">
+                  <p className="text-md text-thyme-100">
+                    When selected, the round will begin.
+                  </p>
+                </div>
+
+                <div className="mt-4 flex py-6">
+                  <ToolTip text="Easy" className="justify-center">
+                    <button
+                      type="button"
+                      className="justify-center px-4 py-2 text-sm font-medium shadow-md text-thyme-900 bg-thyme-100 rounded-md hover:bg-thyme-200"
+                      onClick={handleSelectEasy}
+                    >
+                      {wordOptions[0]}
+                    </button>
+                  </ToolTip>
+                  <ToolTip text="Medium" className="justify-center">
+                    <button
+                      type="button"
+                      className="justify-center ml-2 px-4 py-2 text-sm font-medium shadow-md text-thyme-900 bg-thyme-100 rounded-md hover:bg-thyme-200"
+                      onClick={handleSelectMedium}
+                    >
+                      {wordOptions[1]}
+                    </button>
+                  </ToolTip>
+                  <ToolTip text="Hard" className="justify-center">
+                    <button
+                      type="button"
+                      className="justify-center ml-2 px-4 py-2 text-sm font-medium shadow-md text-thyme-900 bg-thyme-100 rounded-md hover:bg-thyme-200"
+                      onClick={handleSelectHard}
+                    >
+                      {wordOptions[2]}
+                    </button>
+                  </ToolTip>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 }
