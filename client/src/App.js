@@ -1,9 +1,11 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, Component } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
-
+import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
+import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import RandomWord from './components/RandomWord';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
@@ -16,6 +18,12 @@ let dialogText;
 let buttonText;
 
 export default function App() {
+  // return (
+  //   <>
+  //   <RandomWord/>
+  //   {/* <Carousel/> */}
+  //   </>
+  // )
 
   const [currentPlayer, setCurrentPlayer] = useState("none");
   const [gameInfo, setGameInfo] = useState({
