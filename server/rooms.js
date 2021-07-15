@@ -29,7 +29,7 @@ const getUser = (id) => {
 };
 
 const getUserByNameAndCode = (userName, roomCode) => {
-  return users.find((user) => user.roomCode === roomCode && user.name === userName);
+  return users.find((user) => (user.roomCode === roomCode && user.name === userName));
 }
 
 // get GameId for a Room, based on Room code
