@@ -1,10 +1,10 @@
-const {getUser} = require("../rooms.js");
+const {getUserByNameAndCode} = require("../rooms.js");
 
 //Generic interface for games.
 class Game{
     constructor (roomCode, socket, io, players) {
         this.roomCode = roomCode;  // String, room code is kept here.
-        this.players = [players]; //Array of players in this game.
+        this.players = players; //Array of players in this game.
         this.socket = socket;
         this.io = io;
     }
@@ -15,7 +15,9 @@ class Game{
     }
     //Call this function in your class via "super.sendDataToPlayer(playerName, data) to broadcast a game state update to a specific player.
     sendDataToPlayer(playerName, data){
-        socket.broadcast.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
+        if(playerName){
+            this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
+        }
     } 
 
 
