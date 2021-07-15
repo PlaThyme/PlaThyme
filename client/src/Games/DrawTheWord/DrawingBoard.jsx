@@ -9,14 +9,17 @@ import io from "socket.io-client";
 import "./DrawingBoardStyles.css";
 
 /**
- * 
- * @param {any} props 
+ *
+ * @param {any} props
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
 export default function DrawingBoard({ socket, currentWord }) {
   // const SERVER = "http://localhost:3001";
   // let socket;
   const [timeoutValue, setTimeoutValue] = useState(undefined);
+  const [myTurn, setMyTurn] = useState(false);
+  const [opac, setOpac] = useState("opacity-0");
+  const [selectedWord, setSelectedWord] = useState(null);
   const colorsRef = useRef(null);
   const colourPalletDict = {
     black: "#000000",
@@ -42,13 +45,19 @@ export default function DrawingBoard({ socket, currentWord }) {
   };
 
   useEffect(() => {
-    // socket = io(SERVER);
+    //Game updates sent only to this client
+    socket.on("update-game-player", (data) => {
+      if (data.event === "your-turn") {
+        setMyTurn(true);
 
-    // socket.on("connection", () => {});
+        //Show popup for word selection. Set the selected word.
+        //handleSelectedWord();
+      }
+    });
 
-
-    socket.on("update-game",(data) =>{
-      if(data.event === "canvas-data"){
+    //Game updates sent to everyone
+    socket.on("update-game", (data) => {
+      if (data.event === "canvas-data") {
         var image = new Image();
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
@@ -57,7 +66,13 @@ export default function DrawingBoard({ socket, currentWord }) {
         };
         image.src = data.image;
       }
-      if(data.event === "clear-canvas-data"){
+      if (data.event === "clear-canvas-data") {
+        var canvas = document.querySelector("#board");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      if (data.event === "new-turn"){
+        setMyTurn(false);
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -71,6 +86,8 @@ export default function DrawingBoard({ socket, currentWord }) {
     const svgEraser = document.getElementById("svgEraser");
     const svgCleanBoard = document.getElementById("svgCleanBoard");
     const strokeWidth = document.getElementById("strokeWidth");
+
+    myTurn ? setOpac("") : setOpac("opacity-0");
 
     var canvas = document.querySelector("#board");
     var ctx = canvas.getContext("2d");
@@ -86,7 +103,7 @@ export default function DrawingBoard({ socket, currentWord }) {
 
     const handleCleanBoard = (e) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      socket.emit("game-data", {event:"clear-canvas-data"});
+      socket.emit("game-data", { event: "clear-canvas-data" });
     };
     const handleColorUpdate = (e) => {
       strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
@@ -110,25 +127,30 @@ export default function DrawingBoard({ socket, currentWord }) {
     strokeWidth.addEventListener("change", handleLineWidthChange, false);
 
     const onPaint = () => {
-      ctx.beginPath();
-      ctx.moveTo(last_mouse.x, last_mouse.y);
-      ctx.lineTo(mouse.x, mouse.y);
-      ctx.lineWidth = lineWidthValue;
-      ctx.strokeStyle = strokeColor;
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.closePath();
-      ctx.stroke();
+      if (myTurn) {
+        ctx.beginPath();
+        ctx.moveTo(last_mouse.x, last_mouse.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.lineWidth = lineWidthValue;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.closePath();
+        ctx.stroke();
 
-      if (timeoutValue !== undefined) {
-        clearTimeout(timeoutValue);
+        if (timeoutValue !== undefined) {
+          clearTimeout(timeoutValue);
+        }
+        setTimeoutValue(
+          setTimeout(() => {
+            var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
+            socket.emit("game-data", {
+              event: "canvas-data",
+              image: base64ImageData,
+            });
+          }, 1000)
+        );
       }
-      setTimeoutValue(
-        setTimeout(() => {
-          var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
-          socket.emit("game-data",{event:"canvas-data", image:base64ImageData});
-        }, 1000)
-      );
     };
 
     canvas.addEventListener(
@@ -158,7 +180,7 @@ export default function DrawingBoard({ socket, currentWord }) {
       },
       false
     );
-  }, []);
+  }, [myTurn]);
 
   return (
     <div className="grid-container mt-20">
@@ -171,7 +193,10 @@ export default function DrawingBoard({ socket, currentWord }) {
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
       </div>
-      <div className="grid-item item-4 flex justify-between bg-thyme pt-1">
+
+      <div
+        className={`grid-item item-4 flex justify-between bg-thyme pt-1 ${opac}`}
+      >
         <div ref={colorsRef} className="colors">
           <div className="color black odd" />
           <div className="color white  even" />
