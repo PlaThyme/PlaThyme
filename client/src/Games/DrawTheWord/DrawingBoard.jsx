@@ -14,8 +14,6 @@ import "./DrawingBoardStyles.css";
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
 export default function DrawingBoard({ socket, currentWord }) {
-  // const SERVER = "http://localhost:3001";
-  // let socket;
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const [myTurn, setMyTurn] = useState(false);
   const [opac, setOpac] = useState("opacity-0");
@@ -71,7 +69,7 @@ export default function DrawingBoard({ socket, currentWord }) {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-      if (data.event === "new-turn"){
+      if (data.event === "new-turn") {
         setMyTurn(false);
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
