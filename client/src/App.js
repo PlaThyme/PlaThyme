@@ -1,10 +1,12 @@
 import React, { useState, useEffect, Fragment, Component } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
+
 import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import WaitRoom from './components/WaitRoom';
+
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
@@ -21,8 +23,10 @@ export default function App() {
   const [currentPlayer, setCurrentPlayer] = useState("none");
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
+    minPlayers: null,
     roomCode: null,
   });
+  const [startGame, setStartGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
@@ -45,7 +49,7 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
-      setGameInfo({ gameName: name, roomCode: gameData.code });
+      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code });
       setInGame(true);
     });
 
@@ -70,22 +74,39 @@ export default function App() {
     });
 
     return () => {
+      
       socket.emit("disconnect");
       socket.off();
     }
   }, [SERVER]);
+
+  useEffect(() => {
+      socket.on("update-game", (data) => {
+        if(data.event === "start-game"){
+          console.log("*** Inside App.jsx ****")
+          setStartGame(true);
+        }
+      })
+  }, []);
 
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
     setCurrentPlayer(playerName);
     const id = selectedGame.gameId;
-    socket.emit("newRoom", { name: playerName, gameId: id });
+    socket.emit("newRoom", { 
+      name: playerName, 
+      gameId: id, 
+      minPlayers:  selectedGame.minPlayers
+    });
   }
 
   const handleJoinGame = (playerName, roomCode) => {
     setCurrentPlayer(playerName);
-    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
+    socket.emit("joinGame", { 
+      name: playerName, 
+      roomCode: roomCode 
+    });
   }
 
   const handleSelectedGame = (gameName) => {
@@ -102,19 +123,24 @@ export default function App() {
             leaveGame={setInGame}
             socket={socket}
           >
-            { (gameInfo.gameName === "Draw The Word") ? 
+            { (gameInfo.gameName === "Draw The Word" && startGame === true) ? 
               <DrawTheWord socket={socket} />
+              : (gameInfo.gameName === "Draw The Word" && startGame === false) ? 
+              <WaitRoom />
               : <TestGame socket={socket}/> 
             }
           </GameRoom>
         </>
       ) : (
-        <SelectGame
-          handleSelectedGame={handleSelectedGame}
-          listofGames={listofGames}
-          createGame={handleCreateGame}
-          joinGame={handleJoinGame}
-        />
+        <>
+          <Carousel />
+          <SelectGame
+            handleSelectedGame={handleSelectedGame}
+            listofGames={listofGames}
+            createGame={handleCreateGame}
+            joinGame={handleJoinGame}
+          />
+        </>
       )}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
