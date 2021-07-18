@@ -93,12 +93,12 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
         onClick={() => openModal()}
         className=" text-thyme-lightest p-2 w-full text-xl rounded-t-lg bg-red-600 hover:bg-red-800"
       >
-        Leave Room..?
+        Leave Room
       </button>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="fixed inset-0 z-30 overflow-y-auto"
           onClose={() => setIsOpen(false)}
         >
           <div className="h-screen px-4 text-center">
