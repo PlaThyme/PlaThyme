@@ -16,11 +16,18 @@ class Game{
     //Call this function in your class via "super.sendDataToPlayer(playerName, data) to broadcast a game state update to a specific player.
     sendDataToPlayer(playerName, data){
         if(playerName){
-            this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
+            if(this.roomCode){
+                this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
+            }
         }
     } 
 
-
+    sendChat({sender, text}){
+        this.io.to(this.roomCode).emit("message", {
+            sender: sender,
+            text: text,
+        });
+    }
     
     //Impliment the following methods in subclass version of your game, if you want to use their functonality.
     

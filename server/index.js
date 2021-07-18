@@ -34,7 +34,11 @@ io.on("connection", (socket) => {
   socket.on("leaveGame", () => handleDisconnect());
   socket.on("disconnect", () => handleDisconnect());
   socket.on("joinGame", ({ name, roomCode }) => handleJoinGame({name, roomCode}));
-  socket.on('game-data', (data) =>{games[getUser(socket.id).roomCode].recieveData(data);}); // keep check for roomcode= undefined
+  socket.on('game-data', (data) =>{
+    if(getUser(socket.id)){
+      games[getUser(socket.id).roomCode].recieveData(data);
+    }
+  });
   
   
   //Below are the functions to to handle the socket.on events.
@@ -171,12 +175,12 @@ io.on("connection", (socket) => {
     //Get the room information for the client.
     const senderId = getUser(socket.id);
     //Forward the message to the game object, so it can use it.
-    games[senderId.roomCode].chatMessage({sender:message.sender,text:message.text});
     //Use the clients room code to re-transmit the message.
     io.to(senderId.roomCode).emit("message", {
       sender: message.sender,
       text: message.text,
     });
+    games[senderId.roomCode].chatMessage({sender:message.sender,text:message.text});
   }
 });
 
