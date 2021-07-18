@@ -17,18 +17,15 @@ class DrawTheWord extends Game {
       super.sendGameData(data);
     }
     if (data.event === "end-turn") {
-      super.sendGameData({ event: "turn-ended" });
       this.handleEndOfTurn();
     }
     if (data.event === "word-selection") {
       this.selectedWord = data.word;
-      super.sendGameData({ event: "begin-round" });
+      super.sendGameData({ event: "begin-round", timer:data.timer });
       this.turnStarted = true;
     }
     if (data.event === "time-out") {
-      this.turnStarted = false;
-      super.sendGameData({ event: "turn-ended" });
-      this.advanceTurnOrder();
+      this.handleEndOfTurn();
     }
   }
   newPlayer(playerName) {
@@ -76,7 +73,6 @@ class DrawTheWord extends Game {
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
   chatMessage(messageData) {
-    this.turnStarted = true; //Short circuit to test turn logic.
     if (messageData.sender !== this.turnOrder[0]) {
       if (this.turnStarted) {
         const splitWords = messageData.text.split(" ");

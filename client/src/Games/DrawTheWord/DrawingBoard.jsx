@@ -22,6 +22,8 @@ export default function DrawingBoard({ socket }) {
   const [selectedWord, setSelectedWord] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [wordOptions, setWordOptions] = useState(["", "", ""]);
+  const [countDown, setCountDown] = useState(0);
+  const [turnStarted, setTurnStarted] = useState(false);
 
   const colourPalletDict = {
     black: "#000000",
@@ -51,23 +53,48 @@ export default function DrawingBoard({ socket }) {
   };
 
   const handleSelectEasy = () => {
-    handleWordSelect(wordOptions[0]);
+    handleWordSelect(wordOptions[0],20);
   };
   const handleSelectMedium = () => {
-    handleWordSelect(wordOptions[1]);
+    handleWordSelect(wordOptions[1],30);
   };
   const handleSelectHard = () => {
-    handleWordSelect(wordOptions[2]);
+    handleWordSelect(wordOptions[2],40);
   };
 
-  const handleWordSelect = (word) => {
+  const handleWordSelect = (word,time) => {
     setSelectedWord(word);
     closeModal();
     socket.emit("game-data", {
       event: "word-selection",
       word: word,
+      timer: time,
     });
   };
+
+  const handleOutOfTime = () => {
+    socket.emit("game-data", {
+      event: "time-out",
+    });
+  };
+
+  //Timer Logic
+  useEffect(() =>{
+    let interval;
+    if(countDown < 0){
+      setCountDown(0);
+    }
+    if(turnStarted){
+      interval = setInterval(() =>{
+        if(countDown === 0){
+          setTurnStarted(false);
+          if(myTurn){handleOutOfTime();};
+        }
+        setCountDown((countDown) => countDown - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  },[turnStarted, countDown]);
 
   useEffect(() => {
     //Game updates sent only to this client
@@ -97,9 +124,17 @@ export default function DrawingBoard({ socket }) {
       }
       if (data.event === "new-turn") {
         setMyTurn(false);
+        setTurnStarted(false);
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      if (data.event === "begin-round"){
+        setCountDown(data.timer);
+        setTurnStarted(true);
+      }
+      if (data.event === "turn-ended"){
+        setCountDown(0);
       }
     });
   }, []);
@@ -209,7 +244,7 @@ export default function DrawingBoard({ socket }) {
   return (
     <div className="grid-container mt-20">
       <div className="grid-item item-1 text-white">
-        <p>Timer: 1:29</p>
+        <p>Time to Draw or Guess: {countDown}</p>
       </div>
       <div className="grid-item item-2 text-white">
         {myTurn ? <p>{selectedWord}</p> : <></>}
