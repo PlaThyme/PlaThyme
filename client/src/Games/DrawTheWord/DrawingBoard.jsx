@@ -4,10 +4,11 @@
  * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
  */
 import React, { useState, useEffect, useRef, Fragment } from "react";
-import io from "socket.io-client";
 import { Dialog, Transition } from "@headlessui/react";
+
 import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
+import WaitRoom from "../../components/WaitRoom";
 
 /**
  *
@@ -22,7 +23,7 @@ export default function DrawingBoard({ socket }) {
   const [selectedWord, setSelectedWord] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [wordOptions, setWordOptions] = useState(["", "", ""]);
-
+  const [blankWord, setBlankWord] = useState("");
   const colourPalletDict = {
     black: "#000000",
     white: "#ffffff",
@@ -46,29 +47,6 @@ export default function DrawingBoard({ socket }) {
     lightPurple: "#d9c5f0",
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const handleSelectEasy = () => {
-    handleWordSelect(wordOptions[0]);
-  };
-  const handleSelectMedium = () => {
-    handleWordSelect(wordOptions[1]);
-  };
-  const handleSelectHard = () => {
-    handleWordSelect(wordOptions[2]);
-  };
-
-  const handleWordSelect = (word) => {
-    setSelectedWord(word);
-    closeModal();
-    socket.emit("game-data", {
-      event: "word-selection",
-      word: word,
-    });
-  };
-
   useEffect(() => {
     //Game updates sent only to this client
     socket.on("update-game-player", (data) => {
@@ -82,9 +60,9 @@ export default function DrawingBoard({ socket }) {
     //Game updates sent to everyone
     socket.on("update-game", (data) => {
       if (data.event === "canvas-data") {
-        var image = new Image();
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
+        var image = new Image();
         image.onload = () => {
           ctx.drawImage(image, 0, 0);
         };
@@ -96,10 +74,18 @@ export default function DrawingBoard({ socket }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       if (data.event === "new-turn") {
-        setMyTurn(false);
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
+        // clear canvas when turn changes
+        setMyTurn(false);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      if (data.event === "show-blank-word") {
+        console.log("show-blank-word event --> ", data.selectedWordLength);
+        setBlankWord("_ ".repeat(data.selectedWordLength));
+      }
+      if (data.event === "waiting-for-players") {
+        console.log("inside waiting for players event --> ", data);
       }
     });
   }, []);
@@ -206,6 +192,31 @@ export default function DrawingBoard({ socket }) {
     );
   }, [myTurn]);
 
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const handleSelectEasy = () => {
+    handleWordSelect(wordOptions[0]);
+  };
+  const handleSelectMedium = () => {
+    handleWordSelect(wordOptions[1]);
+  };
+  const handleSelectHard = () => {
+    handleWordSelect(wordOptions[2]);
+  };
+
+  const handleWordSelect = (word) => {
+    setSelectedWord(word);
+    closeModal();
+    console.log("in frontend emit --> ", word, word.length);
+    socket.emit("game-data", {
+      event: "word-selection",
+      word: word,
+      wordLength: word.length,
+    });
+  };
+
   return (
     <div className="grid-container mt-20">
       <div className="grid-item item-1 text-white">
@@ -300,6 +311,7 @@ export default function DrawingBoard({ socket }) {
           </svg>
         </div>
       </div>
+
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
