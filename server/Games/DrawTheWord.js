@@ -9,6 +9,7 @@ class DrawTheWord extends Game {
     this.turnStarted = false;
     this.gameStarted = false;
     this.scores = {};
+    this.scores[this.turnOrder[0]] = 0;
     this.handleEndOfTurn();
   }
 
@@ -42,6 +43,10 @@ class DrawTheWord extends Game {
     console.log("inside startgame method --> ", this.players, this.players.length, this.minPlayers);
     super.sendGameData({event: "start-game"});
     // this.gameStarted = true;
+      //Send a request for the current player to select their word.
+    let words = this.generateWords();
+     const theirTurn = { event: "your-turn", words };
+    super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
 
   newPlayer(playerName) {

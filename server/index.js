@@ -81,6 +81,8 @@ io.on("connection", (socket) => {
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
     }
+    //Notify the game object that a new player has joined.
+      // games[roomCode].newPlayer(data.name)
     //Notify the new game object that its been started.
     if(games[roomCode].players.length === games[roomCode].minPlayers){
       games[roomCode].startGame();
