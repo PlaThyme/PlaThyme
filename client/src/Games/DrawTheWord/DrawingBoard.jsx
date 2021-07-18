@@ -81,8 +81,9 @@ export default function DrawingBoard({ socket }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       if (data.event === "show-blank-word") {
-        console.log("show-blank-word event --> ", data.selectedWordLength);
-        setBlankWord("_ ".repeat(data.selectedWordLength));
+        console.log("show-blank-word event --> ", data.wordLength, data);
+        setBlankWord("_ ".repeat(data.wordLength));
+        console.log("--> ", "_ ".repeat(data.wordLength));
       }
       if (data.event === "waiting-for-players") {
         console.log("inside waiting for players event --> ", data);
@@ -223,7 +224,7 @@ export default function DrawingBoard({ socket }) {
         <p>Timer: 1:29</p>
       </div>
       <div className="grid-item item-2 text-white">
-        {myTurn ? <p>{selectedWord}</p> : <></>}
+        {myTurn ? <p>{selectedWord}</p> : <p>{blankWord}</p>}
       </div>
       <div className="board-container sketch grid-item item-3" id="sketch">
         <canvas id="board" className="board" />
