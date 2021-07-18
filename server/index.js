@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
     //Create a new game object for the selected game, and call its start game function.
     if(data.gameId === 1){
       games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
-      console.log("game object--> ", games[roomCode]);
+      // console.log("game object--> ", games[roomCode]);
     }
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
@@ -135,14 +135,13 @@ io.on("connection", (socket) => {
 
       if(games[roomCode].players.length >= games[roomCode].minPlayers){
         games[roomCode].startGame();
-        console.log("sent start game event from join room fn.")
+        // console.log("sent start game event from join room fn.")
         // socket.emit("start-game", {});
       }
 
       //Send all players updated user list.
       io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
     }
-    console.log("all games --> ", games);
   };
 
  

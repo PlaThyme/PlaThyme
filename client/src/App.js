@@ -1,13 +1,14 @@
 import React, { useState, useEffect, Fragment, Component } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
+
 import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import WaitRoom from './components/WaitRoom';
+
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
-import WaitRoom from './components/WaitRoom';
 
 import './App.css';
 
@@ -51,11 +52,6 @@ export default function App() {
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code });
       setInGame(true);
     });
-
-    // socket.on("start-game", () => {
-    //   console.log("--- Inside App.jsx ---")
-    //   setStartGame(true);
-    // })
 
     function openModal() {
       setIsOpen(true);
@@ -130,18 +126,21 @@ export default function App() {
             { (gameInfo.gameName === "Draw The Word" && startGame === true) ? 
               <DrawTheWord socket={socket} />
               : (gameInfo.gameName === "Draw The Word" && startGame === false) ? 
-              <WaitRoom socket={socket}/>
+              <WaitRoom />
               : <TestGame socket={socket}/> 
             }
           </GameRoom>
         </>
       ) : (
-        <SelectGame
-          handleSelectedGame={handleSelectedGame}
-          listofGames={listofGames}
-          createGame={handleCreateGame}
-          joinGame={handleJoinGame}
-        />
+        <>
+          <Carousel />
+          <SelectGame
+            handleSelectedGame={handleSelectedGame}
+            listofGames={listofGames}
+            createGame={handleCreateGame}
+            joinGame={handleJoinGame}
+          />
+        </>
       )}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog

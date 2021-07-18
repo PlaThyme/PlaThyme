@@ -8,22 +8,19 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
-import WaitRoom from "../../components/WaitRoom";
 
 /**
- *
- * @param {any} props
+ * @param {any} socket -- this is the socket objesct using which client connected to server.
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
 export default function DrawingBoard({ socket }) {
   const [timeoutValue, setTimeoutValue] = useState(undefined);
   const [myTurn, setMyTurn] = useState(false);
-  const [opac, setOpac] = useState("opacity-0");
-  const colorsRef = useRef(null);
-  const [selectedWord, setSelectedWord] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [wordOptions, setWordOptions] = useState(["", "", ""]);
   const [blankWord, setBlankWord] = useState("");
+  const [selectedWord, setSelectedWord] = useState("");
+  const [wordOptions, setWordOptions] = useState(["", "", ""]);
+  const colorsRef = useRef(null);
   const colourPalletDict = {
     black: "#000000",
     white: "#ffffff",
@@ -59,9 +56,10 @@ export default function DrawingBoard({ socket }) {
 
     //Game updates sent to everyone
     socket.on("update-game", (data) => {
+      var canvas = document.querySelector("#board");
+      var ctx = canvas.getContext("2d");
+
       if (data.event === "canvas-data") {
-        var canvas = document.querySelector("#board");
-        var ctx = canvas.getContext("2d");
         var image = new Image();
         image.onload = () => {
           ctx.drawImage(image, 0, 0);
@@ -69,24 +67,14 @@ export default function DrawingBoard({ socket }) {
         image.src = data.image;
       }
       if (data.event === "clear-canvas-data") {
-        var canvas = document.querySelector("#board");
-        var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-      if (data.event === "new-turn") {
-        var canvas = document.querySelector("#board");
-        var ctx = canvas.getContext("2d");
-        // clear canvas when turn changes
+      if (data.event === "new-turn") {    // clear canvas when turn changes
         setMyTurn(false);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       if (data.event === "show-blank-word") {
-        console.log("show-blank-word event --> ", data.wordLength, data);
         setBlankWord("_ ".repeat(data.wordLength));
-        console.log("--> ", "_ ".repeat(data.wordLength));
-      }
-      if (data.event === "waiting-for-players") {
-        console.log("inside waiting for players event --> ", data);
       }
     });
   }, []);
@@ -96,25 +84,48 @@ export default function DrawingBoard({ socket }) {
     var ctx = canvas.getContext("2d");
     var sketch = document.querySelector("#sketch");
     var sketch_style = getComputedStyle(sketch);
+    var mouse = { x: 0, y: 0 };
+    var last_mouse = { x: 0, y: 0 };
+    var strokeColor = "#00000000";
+
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
+
+    const onPaint = () => {
+      if (myTurn) {
+        ctx.beginPath();
+        ctx.moveTo(last_mouse.x, last_mouse.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.lineWidth = lineWidthValue;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.closePath();
+        ctx.stroke();
+
+        if (timeoutValue !== undefined) {
+          clearTimeout(timeoutValue);
+        }
+        setTimeoutValue(
+          setTimeout(() => {
+            var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
+            socket.emit("game-data", {
+              event: "canvas-data",
+              image: base64ImageData,
+            });
+          }, 1000)
+        );
+      }
+    };
+
     if (myTurn) {
-      const colors = document.getElementsByClassName("color");
-      const svgPencil = document.getElementById("svgPencil");
-      const svgEraser = document.getElementById("svgEraser");
-      const svgCleanBoard = document.getElementById("svgCleanBoard");
-      const strokeWidth = document.getElementById("strokeWidth");
-
-      // myTurn ? setOpac("") : setOpac("opacity-0");
-
-      // var canvas = document.querySelector("#board");
-      // var ctx = canvas.getContext("2d");
-      // var sketch = document.querySelector("#sketch");
-      // var sketch_style = getComputedStyle(sketch);
-      var mouse = { x: 0, y: 0 };
-      var last_mouse = { x: 0, y: 0 };
+      var colors = document.getElementsByClassName("color");
+      var svgPencil = document.getElementById("svgPencil");
+      var svgEraser = document.getElementById("svgEraser");
+      var svgCleanBoard = document.getElementById("svgCleanBoard");
+      var strokeWidth = document.getElementById("strokeWidth");
       var lineWidthValue = 2;
-      var strokeColor = "#000000";
+      strokeColor = "#000000";
 
       const handleCleanBoard = (e) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -144,73 +155,40 @@ export default function DrawingBoard({ socket }) {
       );
       svgCleanBoard.addEventListener("click", handleCleanBoard, false);
       strokeWidth.addEventListener("change", handleLineWidthChange, false);
-      canvas.addEventListener(
-        "mousemove",
-        function (e) {
-          last_mouse.x = mouse.x;
-          last_mouse.y = mouse.y;
 
-          mouse.x = e.pageX - this.offsetLeft;
-          mouse.y = e.pageY - this.offsetTop;
-        },
-        false
-      );
-      canvas.addEventListener(
-        "mousedown",
-        function (e) {
-          canvas.addEventListener("mousemove", onPaint, false);
-        },
-        false
-      );
-      canvas.addEventListener(
-        "mouseup",
-        function () {
-          canvas.removeEventListener("mousemove", onPaint, false);
-        },
-        false
-      );
+      function mouseMoveAddEvent(e) {
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+
+        mouse.x = e.pageX - this.offsetLeft;
+        mouse.y = e.pageY - this.offsetTop;
+      }
+      function mouseDownAddEvent(e) {
+        canvas.addEventListener("mousemove", onPaint, false);
+      }
+      function mouseUpAddEvent(e) {
+        canvas.removeEventListener("mousemove", onPaint, false);
+      }
+
+      canvas.addEventListener("mousemove", mouseMoveAddEvent, false);
+      canvas.addEventListener("mousedown", mouseDownAddEvent, false);
+      canvas.addEventListener("mouseup", mouseUpAddEvent, false);
     }
 
-    const onPaint = () => {
-      ctx.beginPath();
-      ctx.moveTo(last_mouse.x, last_mouse.y);
-      ctx.lineTo(mouse.x, mouse.y);
-      ctx.lineWidth = lineWidthValue;
-      ctx.strokeStyle = strokeColor;
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.closePath();
-      ctx.stroke();
-
-      if (timeoutValue !== undefined) {
-        clearTimeout(timeoutValue);
-      }
-      setTimeoutValue(
-        setTimeout(() => {
-          var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
-          socket.emit("game-data", {
-            event: "canvas-data",
-            image: base64ImageData,
-          });
-        }, 1000)
-      );
-    };
+    if (!myTurn) {
+      console.log("--> inside !myTurn ", strokeColor, myTurn);
+      // canvas.removeEventListener("mousedown", mouseDownAddEvent, false);
+      // canvas.removeEventListener("mouseup", mouseUpAddEvent, false);
+      // canvas.removeEventListener("mousemove", mouseMoveAddEvent, false);
+      // canvas.removeEventListener("mousemove", onPaint, false);
+      strokeColor = "#00000000";
+    }
   }, [myTurn]);
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const handleSelectEasy = () => {
-    handleWordSelect(wordOptions[0], "easy");
-  };
-  const handleSelectMedium = () => {
-    handleWordSelect(wordOptions[1], "medium");
-  };
-  const handleSelectHard = () => {
-    handleWordSelect(wordOptions[2], "hard");
-  };
-
+  const closeModal = () => setIsOpen(false);
+  const handleSelectEasy = () => handleWordSelect(wordOptions[0], "easy");
+  const handleSelectMedium = () => handleWordSelect(wordOptions[1], "medium");
+  const handleSelectHard = () =>  handleWordSelect(wordOptions[2], "hard");
   const handleWordSelect = (word, difficulty) => {
     setSelectedWord(word);
     closeModal();
