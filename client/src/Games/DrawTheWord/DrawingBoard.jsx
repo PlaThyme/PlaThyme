@@ -47,36 +47,7 @@ export default function DrawingBoard({ socket }) {
     lightPurple: "#d9c5f0",
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const handleSelectEasy = () => {
-    handleWordSelect(wordOptions[0],20);
-  };
-  const handleSelectMedium = () => {
-    handleWordSelect(wordOptions[1],30);
-  };
-  const handleSelectHard = () => {
-    handleWordSelect(wordOptions[2],40);
-  };
-
-  const handleWordSelect = (word,time) => {
-    setSelectedWord(word);
-    closeModal();
-    socket.emit("game-data", {
-      event: "word-selection",
-      word: word,
-      timer: time,
-    });
-  };
-
-  const handleOutOfTime = () => {
-    socket.emit("game-data", {
-      event: "time-out",
-    });
-  };
-
+  
   //Timer Logic
   useEffect(() =>{
     let interval;
@@ -94,7 +65,7 @@ export default function DrawingBoard({ socket }) {
     }
     return () => clearInterval(interval);
   },[turnStarted, countDown]);
-
+  
   useEffect(() => {
     //Game updates sent only to this client
     socket.on("update-game-player", (data) => {
@@ -104,12 +75,12 @@ export default function DrawingBoard({ socket }) {
         setIsOpen(true);
       }
     });
-
+    
     //Game updates sent to everyone
     socket.on("update-game", (data) => {
       var canvas = document.querySelector("#board");
       var ctx = canvas.getContext("2d");
-
+      
       if (data.event === "canvas-data") {
         var image = new Image();
         image.onload = () => {
@@ -141,7 +112,7 @@ export default function DrawingBoard({ socket }) {
       }
     });
   }, []);
-
+  
   useEffect(() => {
     var canvas = document.querySelector("#board");
     var ctx = canvas.getContext("2d");
@@ -150,10 +121,10 @@ export default function DrawingBoard({ socket }) {
     var mouse = { x: 0, y: 0 };
     var last_mouse = { x: 0, y: 0 };
     var strokeColor = "#00000000";
-
+    
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
-
+    
     const onPaint = () => {
       if (myTurn) {
         ctx.beginPath();
@@ -165,7 +136,7 @@ export default function DrawingBoard({ socket }) {
         ctx.lineCap = "round";
         ctx.closePath();
         ctx.stroke();
-
+        
         if (timeoutValue !== undefined) {
           clearTimeout(timeoutValue);
         }
@@ -177,30 +148,30 @@ export default function DrawingBoard({ socket }) {
               image: base64ImageData,
             });
           }, 1000)
-        );
-      }
-    };
-
-    if (myTurn) {
-      var colors = document.getElementsByClassName("color");
-      var svgPencil = document.getElementById("svgPencil");
-      var svgEraser = document.getElementById("svgEraser");
-      var svgCleanBoard = document.getElementById("svgCleanBoard");
-      var strokeWidth = document.getElementById("strokeWidth");
-      var lineWidthValue = 2;
-      strokeColor = "#000000";
-
-      const handleCleanBoard = (e) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        socket.emit("game-data", { event: "clear-canvas-data" });
+          );
+        }
       };
-      const handleColorUpdate = (e) => {
-        strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
-      };
-      const handleLineWidthChange = (e) => {
-        lineWidthValue = e.target.value;
-      };
-
+      
+      if (myTurn) {
+        var colors = document.getElementsByClassName("color");
+        var svgPencil = document.getElementById("svgPencil");
+        var svgEraser = document.getElementById("svgEraser");
+        var svgCleanBoard = document.getElementById("svgCleanBoard");
+        var strokeWidth = document.getElementById("strokeWidth");
+        var lineWidthValue = 2;
+        strokeColor = "#000000";
+        
+        const handleCleanBoard = (e) => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          socket.emit("game-data", { event: "clear-canvas-data" });
+        };
+        const handleColorUpdate = (e) => {
+          strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
+        };
+        const handleLineWidthChange = (e) => {
+          lineWidthValue = e.target.value;
+        };
+        
       for (let i = 0; i < colors.length; i++) {
         colors[i].addEventListener("click", handleColorUpdate, false);
       }
@@ -210,29 +181,29 @@ export default function DrawingBoard({ socket }) {
           if (strokeColor === "#ffffff") strokeColor = "#000000";
         },
         false
-      );
-      svgEraser.addEventListener(
-        "click",
-        () => (strokeColor = "#ffffff"),
-        false
-      );
-      svgCleanBoard.addEventListener("click", handleCleanBoard, false);
-      strokeWidth.addEventListener("change", handleLineWidthChange, false);
-
-      function mouseMoveAddEvent(e) {
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-
-        mouse.x = e.pageX - this.offsetLeft;
-        mouse.y = e.pageY - this.offsetTop;
-      }
+        );
+        svgEraser.addEventListener(
+          "click",
+          () => (strokeColor = "#ffffff"),
+          false
+          );
+          svgCleanBoard.addEventListener("click", handleCleanBoard, false);
+          strokeWidth.addEventListener("change", handleLineWidthChange, false);
+          
+          function mouseMoveAddEvent(e) {
+            last_mouse.x = mouse.x;
+            last_mouse.y = mouse.y;
+            
+            mouse.x = e.pageX - this.offsetLeft;
+            mouse.y = e.pageY - this.offsetTop;
+          }
       function mouseDownAddEvent(e) {
         canvas.addEventListener("mousemove", onPaint, false);
       }
       function mouseUpAddEvent(e) {
         canvas.removeEventListener("mousemove", onPaint, false);
       }
-
+      
       canvas.addEventListener("mousemove", mouseMoveAddEvent, false);
       canvas.addEventListener("mousedown", mouseDownAddEvent, false);
       canvas.addEventListener("mouseup", mouseUpAddEvent, false);
@@ -247,12 +218,17 @@ export default function DrawingBoard({ socket }) {
       strokeColor = "#00000000";
     }
   }, [myTurn]);
-
+  
+  const handleOutOfTime = () => {
+    socket.emit("game-data", {
+      event: "time-out",
+    });
+  };
   const closeModal = () => setIsOpen(false);
-  const handleSelectEasy = () => handleWordSelect(wordOptions[0], "easy");
-  const handleSelectMedium = () => handleWordSelect(wordOptions[1], "medium");
-  const handleSelectHard = () => handleWordSelect(wordOptions[2], "hard");
-  const handleWordSelect = (word, difficulty) => {
+  const handleSelectEasy = () => handleWordSelect(wordOptions[0],20, "easy");
+  const handleSelectMedium = () => handleWordSelect(wordOptions[1],30, "medium");
+  const handleSelectHard = () => handleWordSelect(wordOptions[2],40, "hard");
+  const handleWordSelect = (word, time, difficulty) => {
     setSelectedWord(word);
     closeModal();
     console.log("in frontend emit --> ", word, word.length);
@@ -261,6 +237,7 @@ export default function DrawingBoard({ socket }) {
       word: word,
       wordLength: word.length,
       wordDifficulty: difficulty,
+      timer: time,
     });
   };
 
