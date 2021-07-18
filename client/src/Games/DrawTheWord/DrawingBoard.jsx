@@ -198,16 +198,16 @@ export default function DrawingBoard({ socket }) {
   };
 
   const handleSelectEasy = () => {
-    handleWordSelect(wordOptions[0]);
+    handleWordSelect(wordOptions[0], "easy");
   };
   const handleSelectMedium = () => {
-    handleWordSelect(wordOptions[1]);
+    handleWordSelect(wordOptions[1], "medium");
   };
   const handleSelectHard = () => {
-    handleWordSelect(wordOptions[2]);
+    handleWordSelect(wordOptions[2], "hard");
   };
 
-  const handleWordSelect = (word) => {
+  const handleWordSelect = (word, difficulty) => {
     setSelectedWord(word);
     closeModal();
     console.log("in frontend emit --> ", word, word.length);
@@ -215,6 +215,7 @@ export default function DrawingBoard({ socket }) {
       event: "word-selection",
       word: word,
       wordLength: word.length,
+      wordDifficulty: difficulty,
     });
   };
 

@@ -10,7 +10,9 @@ class DrawTheWord extends Game {
     this.gameStarted = false;
     this.scores = {};
     this.scores[this.turnOrder[0]] = 0;
+    this.selectedWordDifficulty = null;
     this.handleEndOfTurn();
+    this.scoreValues = {'easyPoint': 100, 'mediumPoint': 200, 'hardPoint': 300};
   }
 
   recieveData(data) {
@@ -27,6 +29,7 @@ class DrawTheWord extends Game {
     if (data.event === "word-selection") {
       this.selectedWord = data.word;
       this.selectedWordLength = data.wordLength;
+      this.selectedWordDifficulty = data.wordDifficulty;
       super.sendGameData({ event: "begin-round" });
       console.log("word length --> ", this.selectedWordLength, data);
       super.sendGameData({ event: "show-blank-word", wordLength: this.selectedWordLength, });
@@ -106,13 +109,24 @@ class DrawTheWord extends Game {
     this.turnStarted = true; //Short circuit to test turn logic.
     if (messageData.sender !== this.turnOrder[0]) {
       if (this.turnStarted) {
-        const splitWords = messageData.text.split(" ");
-        splitWords.forEach((word) => {
+          if(this.selectedWord !== null){
+            const splitWords = messageData.text.split(" ");
+             splitWords.forEach((word) => {
           if (word.toLowerCase() === this.selectedWord.toLowerCase()) {
             //SCORE UPDATE LOGIC GOES HERE
+            console.log("-- yes, coorect guess -- ", messageData.sender);
+            console.log("turn order --> ", this.turnOrder);
+            (this.selectedWordDifficulty === 'easy') ? 
+            this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["easyPoint"]
+            : (this.selectedWordDifficulty === 'medium') ?
+            this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["mediumPoint"]
+            : this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["hardPoint"]
+            console.log("Finally --> ", this.scores[messageData.sender]);
+            console.log("final scores ===  ", this.scores);
             this.handleEndOfTurn();
           }
         });
+          }
       }
     }
   }

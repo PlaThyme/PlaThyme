@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
   socket.on("leaveGame", () => handleDisconnect());
   socket.on("disconnect", () => handleDisconnect());
   socket.on("joinGame", ({ name, roomCode }) => handleJoinGame({name, roomCode}));
-  socket.on('game-data', (data) =>{games[getUser(socket.id).roomCode].recieveData(data);});
+  socket.on('game-data', (data) =>{games[getUser(socket.id).roomCode].recieveData(data);}); // keep check for roomcode= undefined
   
   
   //Below are the functions to to handle the socket.on events.
@@ -130,6 +130,7 @@ io.on("connection", (socket) => {
       socket.join(roomCode);
 
       //Notify the game object that a new player has joined.
+      // Test: enter wrong room code; got error. (add checks)
       games[roomCode].newPlayer(name)
 
       if(games[roomCode].players.length >= games[roomCode].minPlayers){
