@@ -1,12 +1,18 @@
 const Game = require("./Game");
 class DrawTheWord extends Game {
-  constructor(roomCode, socket, io, players) {
-    super(roomCode, socket, io, players);
+  constructor(roomCode, socket, io, players, minPlayers) {
+    super(roomCode, socket, io, players, minPlayers);
     this.turnOrder = players;
+    this.minPlayers = minPlayers;
     this.selectedWord = null;
+    this.selectedWordLength = 0;
     this.turnStarted = false;
+    this.gameStarted = false;
     this.scores = {};
+    this.scores[this.turnOrder[0]] = 0;
+    this.selectedWordDifficulty = null;
     this.handleEndOfTurn();
+    this.scoreValues = {'easyPoint': 100, 'mediumPoint': 200, 'hardPoint': 300};
   }
 
   recieveData(data) {
@@ -22,7 +28,11 @@ class DrawTheWord extends Game {
     }
     if (data.event === "word-selection") {
       this.selectedWord = data.word;
+      this.selectedWordLength = data.wordLength;
+      this.selectedWordDifficulty = data.wordDifficulty;
       super.sendGameData({ event: "begin-round" });
+      // console.log("word length --> ", this.selectedWordLength, data);
+      super.sendGameData({ event: "show-blank-word", wordLength: this.selectedWordLength, });
       this.turnStarted = true;
     }
     if (data.event === "time-out") {
@@ -31,12 +41,29 @@ class DrawTheWord extends Game {
       this.advanceTurnOrder();
     }
   }
+
+  startGame() {
+    // console.log("inside startgame method --> ", this.players, this.players.length, this.minPlayers);
+    super.sendGameData({event: "start-game"});
+    this.gameStarted = true;
+      //Send a request for the current player to select their word.
+    if(this.turnOrder.length === this.minPlayers){
+         let words = this.generateWords();
+    const theirTurn = { event: "your-turn", words };
+    super.sendDataToPlayer(this.turnOrder[0], theirTurn);
+    }
+    if(this.gameStarted === true && this.turnOrder.length > this.minPlayers){
+        super.sendGameData({ event: "show-blank-word", wordLength: this.selectedWordLength });
+    }
+  }
+
   newPlayer(playerName) {
     if (playerName) {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
     }
   }
+
   disconnection(playerName) {
     if (playerName === this.turnOrder[0]) {
       //Do something about current player disconnection.
@@ -63,11 +90,15 @@ class DrawTheWord extends Game {
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
+
   advanceTurnOrder() {
     const lastPlayer = this.turnOrder.shift();
     this.turnOrder.push(lastPlayer);
   }
+
   handleEndOfTurn() {
+    //   const cancelTheirTurn = { event: "not-your-turn" };
+    //   super.sendDataToPlayer(this.turnOrder[0], cancelTheirTurn);
     this.turnStarted = false;
     this.advanceTurnOrder();
     super.sendGameData({ event: "new-turn" });
@@ -75,17 +106,29 @@ class DrawTheWord extends Game {
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
+
   chatMessage(messageData) {
     this.turnStarted = true; //Short circuit to test turn logic.
     if (messageData.sender !== this.turnOrder[0]) {
       if (this.turnStarted) {
-        const splitWords = messageData.text.split(" ");
-        splitWords.forEach((word) => {
+          if(this.selectedWord !== null){
+            const splitWords = messageData.text.split(" ");
+             splitWords.forEach((word) => {
           if (word.toLowerCase() === this.selectedWord.toLowerCase()) {
             //SCORE UPDATE LOGIC GOES HERE
+            // console.log("-- yes, coorect guess -- ", messageData.sender);
+            // console.log("turn order --> ", this.turnOrder);
+            (this.selectedWordDifficulty === 'easy') ? 
+            this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["easyPoint"]
+            : (this.selectedWordDifficulty === 'medium') ?
+            this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["mediumPoint"]
+            : this.scores[messageData.sender] = this.scores[messageData.sender] + this.scoreValues["hardPoint"]
+            // console.log("Finally --> ", this.scores[messageData.sender]);
+            // console.log("final scores ===  ", this.scores);
             this.handleEndOfTurn();
           }
         });
+          }
       }
     }
   }

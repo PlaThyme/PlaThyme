@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
   socket.on("leaveGame", () => handleDisconnect());
   socket.on("disconnect", () => handleDisconnect());
   socket.on("joinGame", ({ name, roomCode }) => handleJoinGame({name, roomCode}));
-  socket.on('game-data', (data) =>{games[getUser(socket.id).roomCode].recieveData(data);});
+  socket.on('game-data', (data) =>{games[getUser(socket.id).roomCode].recieveData(data);}); // keep check for roomcode= undefined
   
   
   //Below are the functions to to handle the socket.on events.
@@ -55,6 +55,7 @@ io.on("connection", (socket) => {
       playerName: data.name,
       code: roomCode,
       gameId: data.gameId,
+      minPlayers: data.minPlayers,
     };
 
     //Adds user, game to room tracking.
@@ -62,6 +63,7 @@ io.on("connection", (socket) => {
       id: socket.id,
       name: data.name,
       gameId: data.gameId,
+      minPlayers: data.minPlayers,
       roomCode: roomCode,
     });
 
@@ -73,13 +75,20 @@ io.on("connection", (socket) => {
     //When Making a game, the game must be added to the list below for its creation with its matching ID.
     //Create a new game object for the selected game, and call its start game function.
     if(data.gameId === 1){
-      games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name]);
+      games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
+      // console.log("game object--> ", games[roomCode]);
     }
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
     }
+    //Notify the game object that a new player has joined.
+      // games[roomCode].newPlayer(data.name)
     //Notify the new game object that its been started.
-    games[roomCode].startGame();
+    if(games[roomCode].players.length === games[roomCode].minPlayers){
+      games[roomCode].startGame();
+      socket.emit("start-game", {});
+    }
+
 
     //Send all players updated user list.
     io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
@@ -121,7 +130,14 @@ io.on("connection", (socket) => {
       socket.join(roomCode);
 
       //Notify the game object that a new player has joined.
+      // Test: enter wrong room code; got error. (add checks)
       games[roomCode].newPlayer(name)
+
+      if(games[roomCode].players.length >= games[roomCode].minPlayers){
+        games[roomCode].startGame();
+        // console.log("sent start game event from join room fn.")
+        // socket.emit("start-game", {});
+      }
 
       //Send all players updated user list.
       io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
