@@ -42,12 +42,15 @@ class DrawTheWord extends Game {
   startGame() {
     console.log("inside startgame method --> ", this.players, this.players.length, this.minPlayers);
     super.sendGameData({event: "start-game"});
-    // this.gameStarted = true;
+    this.gameStarted = true;
       //Send a request for the current player to select their word.
     if(this.turnOrder.length === this.minPlayers){
          let words = this.generateWords();
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
+    }
+    if(this.gameStarted === true && this.turnOrder.length > this.minPlayers){
+        super.sendGameData({ event: "show-blank-word", wordLength: this.selectedWordLength });
     }
   }
 
