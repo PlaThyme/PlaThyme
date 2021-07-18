@@ -44,9 +44,11 @@ class DrawTheWord extends Game {
     super.sendGameData({event: "start-game"});
     // this.gameStarted = true;
       //Send a request for the current player to select their word.
-    let words = this.generateWords();
-     const theirTurn = { event: "your-turn", words };
+    if(this.turnOrder.length === this.minPlayers){
+         let words = this.generateWords();
+    const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
+    }
   }
 
   newPlayer(playerName) {
