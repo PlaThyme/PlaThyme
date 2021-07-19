@@ -12,7 +12,7 @@ const joinRoom = ({ id, name, gameId, roomCode }) => {
     return { error: "dup" };
   }
 
-  const user = { id, name, gameId, roomCode };
+  const user = { id, name, gameId, roomCode, score: 0 };
   users.push(user);
   return { user };
 };
@@ -29,8 +29,10 @@ const getUser = (id) => {
 };
 
 const getUserByNameAndCode = (userName, roomCode) => {
-  return users.find((user) => (user.roomCode === roomCode && user.name === userName));
-}
+  return users.find(
+    (user) => user.roomCode === roomCode && user.name === userName
+  );
+};
 
 // get GameId for a Room, based on Room code
 const getGameId = (roomCode) => {
@@ -42,8 +44,18 @@ const getGameId = (roomCode) => {
 };
 
 const getUsersInRoom = (roomCode) => {
-  return users.filter((user) => user.roomCode === roomCode).map(user => user.name);
+  const allUsers = users.filter((user) => user.roomCode === roomCode);
+  let namesAndScores = [];
+  allUsers.forEach((user) => {
+    namesAndScores.push({ name: user.name, score: user.score });
+  });
+  return namesAndScores;
 };
+
+const updateScore = (roomCode, playerName, score) => {
+  let toUpdate = users.find((user) => user.roomCode === roomCode && user.name === playerName);
+  toUpdate.score = score;
+}
 
 const numUsersInRoom = (roomCode) => {
   return users.filter((user) => user.roomCode === roomCode).length;
@@ -57,4 +69,5 @@ module.exports = {
   numUsersInRoom,
   getUsersInRoom,
   getUserByNameAndCode,
+  updateScore,
 };

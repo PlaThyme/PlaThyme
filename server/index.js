@@ -95,6 +95,8 @@ io.on("connection", (socket) => {
 
 
     //Send all players updated user list.
+    const users = getUsersInRoom(roomCode);
+    console.log(users);
     io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
   }
 
