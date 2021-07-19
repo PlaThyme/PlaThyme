@@ -243,6 +243,13 @@ export default function DrawingBoard({ socket }) {
 
   return (
     <div className="grid-container mt-20">
+      {myTurn ? (
+        <>
+        </>
+      ) : (
+        <div className="board-overlay">
+        </div>
+      )}
       <div className="grid-item item-1 text-white">
         <p>Time to Draw or Guess: {countDown}</p>
       </div>
