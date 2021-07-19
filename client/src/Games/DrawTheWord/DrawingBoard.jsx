@@ -92,20 +92,16 @@ export default function DrawingBoard({ socket }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       if (data.event === "new-turn") {
-        // clear canvas when turn changes
         setMyTurn(false);
         setTurnStarted(false);
+      }
+      if (data.event === "begin-round"){
+        //clear canvas before new round begins.
         var canvas = document.querySelector("#board");
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-      if (data.event === "begin-round"){
         setCountDown(data.timer);
         setTurnStarted(true);
-      }
-      if (data.event === "turn-ended"){
-        setCountDown(0);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       if (data.event === "show-blank-word") {
         setBlankWord("_ ".repeat(data.wordLength));

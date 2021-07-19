@@ -80,7 +80,6 @@ class DrawTheWord extends Game {
         );
         return;
       }
-      super.sendGameData({ event: "turn-ended" });
       this.advanceTurnOrder();
     }
 
