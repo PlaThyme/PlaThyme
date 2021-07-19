@@ -1,4 +1,5 @@
 const Game = require("./Game");
+// const words = require("./words.json")
 class DrawTheWord extends Game {
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
