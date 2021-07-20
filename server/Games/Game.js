@@ -1,4 +1,4 @@
-const {getUserByNameAndCode} = require("../rooms.js");
+const {getUserByNameAndCode, updateScore, getUsersInRoom} = require("../rooms.js");
 
 //Generic interface for games.
 class Game{
@@ -20,7 +20,14 @@ class Game{
                 this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
             }
         }
-    } 
+    }
+
+
+    //Pass the player name and their current score. This will update the player list.
+    updatePlayerScore(playerName, score){
+        updateScore(this.roomCode, playerName, score);
+        this.io.to(this.roomCode).emit("userData", getUsersInRoom(roomCode));
+    }
 
     sendChat({sender, text}){
         this.io.to(this.roomCode).emit("message", {
