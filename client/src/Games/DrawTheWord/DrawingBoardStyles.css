@@ -76,3 +76,9 @@ div.grid-item.item-4{
 .item-2{
   text-align: center;
 }
+.board-overlay{
+  position: absolute;
+  z-index: 50;
+  width: 800px;
+  height: 700px;
+}

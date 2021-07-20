@@ -81,7 +81,6 @@ class DrawTheWord extends Game {
         );
         return;
       }
-      super.sendGameData({ event: "turn-ended" });
       this.advanceTurnOrder();
     }
 
@@ -139,6 +138,7 @@ class DrawTheWord extends Game {
                 sender: "Score Keeper",
                 text: `${messageData.sender} has gotten it correct! They have been awarded ${pts} points!`,
               });
+              super.updatePlayerScore(messageData.sender, this.scores[messageData.sender]);
               this.handleEndOfTurn();
             }
           });
