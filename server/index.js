@@ -78,10 +78,17 @@ io.on("connection", (socket) => {
 
     //When Making a game, the game must be added to the list below for its creation with its matching ID.
     //Create a new game object for the selected game, and call its start game function.
-    if(data.gameId === 1){
-      games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
-      // console.log("game object--> ", games[roomCode]);
+    switch(data.gameId){
+      case 1:
+        games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
+        break;
+      case 2:
+        games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
+        break;
+      default:
+        break;
     }
+
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
     }
@@ -139,8 +146,6 @@ io.on("connection", (socket) => {
 
       if(games[roomCode].players.length >= games[roomCode].minPlayers){
         games[roomCode].startGame();
-        // console.log("sent start game event from join room fn.")
-        // socket.emit("start-game", {});
       }
 
       //Send all players updated user list.
@@ -166,7 +171,9 @@ io.on("connection", (socket) => {
       //Notify game object that the player has left.
       games[userName.roomCode].disconnection(userName.name)
     }
-    //TODO: If going with game API, make this delete empty game.
+    if(numUsersInRoom(userName.roomCode === 0)){
+      delete games[userName.roomCode]
+    }
   }  
 
 
