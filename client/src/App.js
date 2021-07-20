@@ -7,6 +7,7 @@ import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
 import WaitRoom from './components/WaitRoom';
 
+import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
@@ -131,7 +132,7 @@ export default function App() {
             }
           </GameRoom>
         </>
-      ) : (
+       ) : (
         <>
           <Carousel />
           <SelectGame
@@ -151,7 +152,7 @@ export default function App() {
           <div className="min-h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
               <Dialog.Overlay className="fixed inset-0" />
-            </Transition.Child>
+            </Transition.Child> 
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span

@@ -1,19 +1,81 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
+
+import React from "react";
 import "./EnigmaBreakerStyle.css";
+import { RadioGroup } from "@headlessui/react";
 
 const EnigmaBreaker = () => {
-    return (
-        <div className="enigma-grid">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione at animi aspernatur, temporibus iste sint obcaecati ullam dolorem iusto possimus. Adipisci explicabo officiis assumenda? Assumenda, maiores inventore. Ipsam, id nam.</div>
-            <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, et! Maiores, aliquam. Nesciunt natus hic ex beatae similique dolorum ea sapiente, fuga minus, pariatur, autem eligendi amet eius quidem velit?</div>
-            <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, praesentium? Deleniti, velit ex optio facere laborum voluptas neque commodi culpa exercitationem fuga reiciendis, inventore autem iure quos laboriosam, magni fugit.</div>
-            <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus incidunt harum cum iste. Sequi eveniet quod reiciendis eum ducimus perferendis! Id perspiciatis commodi voluptatibus vel, veniam ad numquam dolores eos!</div>
-            <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Modi quidem non hic, reprehenderit qui laborum beatae eos molestias fugiat praesentium sint reiciendis voluptate natus quibusdam unde harum, facilis laboriosam numquam.</div>
-        </div>
-    )
-}
+  const [selected, setSelected] = useState("redHistory");
 
-export default EnigmaBreaker
+  return (
+    <div className="enigma-grid">
+      <div className="words-box">
+        <h1 className="text-center text-3xl">Word 1</h1>
+        <h1 className="text-center text-3xl">Word 2</h1>
+        <h1 className="text-center text-3xl">Word 3</h1>
+        <h1 className="text-center text-3xl">Word 4</h1>
+      </div>
+      <div className="input-container">
+        <div className="red-input-container">
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+        </div>
+
+        <div className="blue-input-container">
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+          <div>Here</div>
+        </div>
+      </div>
+      <div>status box</div>
+      <div>
+        <RadioGroup
+          className="flex flex-row w-full"
+          value={selected}
+          onChange={setSelected}
+        >
+          <RadioGroup.Option value="redHistory" className="flex w-3/6">
+            {({ checked }) => (
+              <button
+                onClick={() => (true)}
+                className={`${
+                  checked ? "bg-thyme" : "bg-thyme-dark"
+                } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
+              >
+                Red History
+              </button>
+            )}
+          </RadioGroup.Option>
+          <RadioGroup.Option value="blueHistory" className="flex w-3/6">
+            {({ checked }) => (
+              <button
+                onClick={() => (false)}
+                className={`${
+                  checked ? "bg-thyme" : "bg-thyme-dark"
+                } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
+              >
+                Blue History
+              </button>
+            )}
+          </RadioGroup.Option>
+        </RadioGroup>
+      </div>
+      <div></div>
+    </div>
+  );
+};
+
+export default EnigmaBreaker;

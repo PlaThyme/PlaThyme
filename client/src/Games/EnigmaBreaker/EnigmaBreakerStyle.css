@@ -1,12 +1,47 @@
 .enigma-grid{
   display: grid;
   width: 1000px;
-  height: 700px;
-  grid-template-columns: auto;
+  height: 650px;
+  grid-template-rows: 10% 20% 8% 5% 57%;
 }
 .enigma-grid > div{
   background:#eee;
 }
 .enigma-grid > div:nth-child(odd){
+  background:#AAA;
+}
+
+.words-box{
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  justify-content: center;
+  align-content: center;
+}
+
+.input-container{
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.red-input-container{
+  display: grid;
+  grid-template-columns: 82% 9% 9%;
+}
+.blue-input-container{
+  display: grid;
+  grid-template-columns: 9% 9% 82%;
+}
+
+
+.red-input-container > div{
+  background:#eee;
+}
+.red-input-container > div:nth-child(odd){
+  background:#AAA;
+}
+.blue-input-container > div{
+  background:#eee;
+}
+.blue-input-container > div:nth-child(odd){
   background:#AAA;
 }
