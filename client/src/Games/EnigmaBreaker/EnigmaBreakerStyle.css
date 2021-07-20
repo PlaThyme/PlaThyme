@@ -1,0 +1,12 @@
+.enigma-grid{
+  display: grid;
+  width: 1000px;
+  height: 700px;
+  grid-template-columns: auto;
+}
+.enigma-grid > div{
+  background:#eee;
+}
+.enigma-grid > div:nth-child(odd){
+  background:#AAA;
+}
