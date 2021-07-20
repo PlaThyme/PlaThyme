@@ -96,6 +96,7 @@ export default function DrawingBoard({ socket }) {
       if (data.event === "new-turn") {
         setMyTurn(false);
         setTurnStarted(false);
+        setStatusMessage("Word selection in progress");
       }
       if (data.event === "begin-round"){
         //clear canvas before new round begins.
@@ -104,8 +105,7 @@ export default function DrawingBoard({ socket }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setCountDown(data.timer);
         setTurnStarted(true);
-        
-        myTurn ? setStatusMessage("Your Turn To Draw!") : setStatusMessage("Your Turn To Guess!");
+        myTurn ? setStatusMessage("Draw This word:") : setStatusMessage("Guess the word!");
       }
       if (data.event === "show-blank-word") {
         setBlankWord("_ ".repeat(data.wordLength));
@@ -254,7 +254,7 @@ export default function DrawingBoard({ socket }) {
         <p>Time to Draw or Guess: {countDown}</p>
       </div>
       <div className="grid-item item-2 text-white">
-      {myTurn ? (<p>"Your turn to draw!"</p>) : (<p>{statusMessage}</p>)}
+      {myTurn ? (<p>Your turn to draw!</p>) : (<p>{statusMessage}</p>)}
       </div>
       <div className="grid-item item-3 text-white">
         {myTurn ? <p>{selectedWord}</p> : <p>{blankWord}</p>}
