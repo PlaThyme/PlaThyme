@@ -72,9 +72,10 @@ export default function DrawingBoard({ socket }) {
     socket.on("update-game-player", (data) => {
       if (data.event === "your-turn") {
         setMyTurn(true);
+        setStatusMessage("Your Turn To Draw!");
         setWordOptions(data.words);
         setIsOpen(true);
-        myTurn ? setStatusMessage("Your Turn To Draw!") : setStatusMessage("Your Turn To Guess!");
+        setStatusMessage("Draw this word:")
       }
     });
     
@@ -104,10 +105,10 @@ export default function DrawingBoard({ socket }) {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setCountDown(data.timer);
-        setTurnStarted(true);
-        myTurn ? setStatusMessage("Draw This word:") : setStatusMessage("Guess the word!");
+        setTurnStarted(true);        
       }
       if (data.event === "show-blank-word") {
+        setStatusMessage("Guess the word!");
         setBlankWord("_ ".repeat(data.wordLength));
       }
     });
