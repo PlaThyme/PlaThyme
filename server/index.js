@@ -78,9 +78,10 @@ io.on("connection", (socket) => {
 
     //When Making a game, the game must be added to the list below for its creation with its matching ID.
     //Create a new game object for the selected game, and call its start game function.
-    if(data.gameId === 1){
-      games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
-        /** 
+    switch(data.gameId){
+      case 1:
+        games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
+         /** 
          * Notify the new game object that its been started.
          * "DrawTheWord" game has a "waitingRoom". (the game will not start till all the minimum players join the `GameRoom`), 
          * events related to that are implemented within startGame() within game logic file (DrawTheWord.js). 
@@ -89,7 +90,14 @@ io.on("connection", (socket) => {
           games[roomCode].startGame();
           socket.emit("start-game", {}); // informs App.js to render game component.
         }
+        break;
+      case 2:
+        games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
+        break;
+      default:
+        break;
     }
+
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
     }
@@ -106,6 +114,7 @@ io.on("connection", (socket) => {
     //Make sure game room exists.
     if (gid === null) {
       socket.emit("error", { error: "gid" });
+      return;
     }
 
     //Try to join the user to the room.
@@ -119,6 +128,7 @@ io.on("connection", (socket) => {
     //Check for duplicate user.
     if (error.error === "dup") {
       socket.emit("error", { error: "dup" });
+      return;
     }
     
     //If the user name is valid, join the player to the room, aand
@@ -163,8 +173,10 @@ io.on("connection", (socket) => {
       io.to(userName.roomCode).emit("userData", getUsersInRoom(userName.roomCode));
       //Notify game object that the player has left.
       games[userName.roomCode].disconnection(userName.name)
+      if(numUsersInRoom(userName.roomCode === 0)){
+        delete games[userName.roomCode]
+      }
     }
-    //TODO: If going with game API, make this delete empty game.
   }  
 
 

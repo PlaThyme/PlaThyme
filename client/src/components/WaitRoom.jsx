@@ -5,7 +5,7 @@ import React from "react";
  */
 export default function WaitRoom() {
   return (
-    <div className="mt-40">
+    <div>
       <h1 className="text-white text-center">Game will start soon.</h1>
       <h1 className="text-white text-center">
         Waiting for all players to join ...

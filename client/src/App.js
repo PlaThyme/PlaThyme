@@ -18,34 +18,6 @@ let title;
 let dialogText;
 let buttonText;
 
-// export default function App() {
-//  // Enter the new game in this Dictionary.
-//   const [listofGames, setListofGames] = useState([
-//     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-//     { gameId: 2, gameName: "TestGame", minPlayers: 3 },
-//     { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-//     { gameId: 4, gameName: "Uno", minPlayers: 2 },
-//   ]);
-//   const handleCreateGame = (playerName, selectedGame) => {
-//   console.log("inside handle create game");
-//     }
-//       const handleJoinGame = (playerName, selectedGame) => {
-//   console.log("inside join create game");
-//     }
-//   return(
-//    <div className="App font-mono bg-thyme-darkest h-screen">
-//       <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
-//       <SelectGame
-//         listofGames={listofGames}
-//         createGame={handleCreateGame}
-//         joinGame={handleJoinGame}
-//        />
-//        <Carousel />
-//     </div>
-//   )
-
-// }
-
 export default function App() {
 
   // Enter the new game in this Dictionary.
@@ -62,6 +34,7 @@ export default function App() {
     gameName: null,
     minPlayers: null,
     roomCode: null,
+    gameId: null,
   });
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
@@ -79,7 +52,7 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
-      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code });
+      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
 
@@ -135,6 +108,23 @@ export default function App() {
     });
   }
 
+  const renderGame = (gameId) => {
+    switch(gameId){
+      case 1:
+        if(startGame === true){
+          return <DrawTheWord socket={socket}/>;
+        }
+        return <WaitRoom/>;
+      case 2:
+        return <TestGame socket={socket}/>;
+      case 3:
+        break;
+      default:
+        break;
+    }
+    return <></>;
+  }
+
   return (
     <div className="App font-mono bg-thyme-darkest">
 
@@ -147,11 +137,8 @@ export default function App() {
             leaveGame={setInGame}
             socket={socket}
           >
-            { (gameInfo.gameName === "Draw The Word" && startGame === true) ? 
-              <DrawTheWord socket={socket} />
-              : (gameInfo.gameName === "Draw The Word" && startGame === false) ? 
-              <WaitRoom />
-              : <TestGame socket={socket}/> 
+            { 
+              renderGame(gameInfo.gameId)
             }
           </GameRoom>
         </>

@@ -22,6 +22,8 @@ export default function DrawingBoard({ socket }) {
   const [wordOptions, setWordOptions] = useState(["", "", ""]);
   const [countDown, setCountDown] = useState(0);
   const [turnStarted, setTurnStarted] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+
   const colorsRef = useRef(null);
   const colourPalletDict = {
     black: "#000000",
@@ -71,8 +73,10 @@ export default function DrawingBoard({ socket }) {
     socket.on("update-game-player", (data) => {
       if (data.event === "your-turn") {
         setMyTurn(true);
+        setStatusMessage("Your Turn To Draw!");
         setWordOptions(data.words);
         setIsOpen(true);
+        setStatusMessage("Draw this word:");
       }
     });
 
@@ -97,6 +101,7 @@ export default function DrawingBoard({ socket }) {
       if (data.event === "new-turn") {
         setMyTurn(false);
         setTurnStarted(false);
+        setStatusMessage("Word selection in progress");
       }
       // clear canvas before new round begins.
       if (data.event === "begin-round") {
@@ -108,6 +113,7 @@ export default function DrawingBoard({ socket }) {
       }
       // show blanks for other players if its not their turn.
       if (data.event === "show-blank-word") {
+        setStatusMessage("Guess the word!");
         setBlankWord("_ ".repeat(data.wordLength));
       }
     });
@@ -209,7 +215,6 @@ export default function DrawingBoard({ socket }) {
       canvas.addEventListener("mousedown", mouseDownAddEvent, false);
       canvas.addEventListener("mouseup", mouseUpAddEvent, false);
     }
-
   }, [myTurn]);
 
   /** Handle functions for "Draw the word" Game */
@@ -220,7 +225,8 @@ export default function DrawingBoard({ socket }) {
   };
   const closeModal = () => setIsOpen(false);
   const handleSelectEasy = () => handleWordSelect(wordOptions[0], 20, "easy");
-  const handleSelectMedium = () =>  handleWordSelect(wordOptions[1], 30, "medium");
+  const handleSelectMedium = () =>
+    handleWordSelect(wordOptions[1], 30, "medium");
   const handleSelectHard = () => handleWordSelect(wordOptions[2], 40, "hard");
   const handleWordSelect = (word, time, difficulty) => {
     setSelectedWord(word);
@@ -239,16 +245,19 @@ export default function DrawingBoard({ socket }) {
     <div className="grid-container mt-20">
       {myTurn ? <></> : <div className="board-overlay"></div>}
       <div className="grid-item item-1 text-white">
-        <p>Time to Draw or Guess: {countDown}</p>
+        <p>Timer: {countDown}</p>
       </div>
       <div className="grid-item item-2 text-white">
+        {myTurn ? <p>Your turn to draw!</p> : <p>{statusMessage}</p>}
+      </div>
+      <div className="grid-item item-3 text-white">
         {myTurn ? <p>{selectedWord}</p> : <p>{blankWord}</p>}
       </div>
-      <div className="board-container sketch grid-item item-3" id="sketch">
+      <div className="board-container sketch grid-item item-4" id="sketch">
         <canvas id="board" className="board" />
       </div>
       {myTurn ? (
-        <div className={`grid-item item-4 flex justify-between bg-thyme pt-1`}>
+        <div className={`grid-item item-5 flex justify-between bg-thyme pt-1`}>
           <div ref={colorsRef} className="colors">
             <div className="color black odd" />
             <div className="color white  even" />
@@ -331,7 +340,7 @@ export default function DrawingBoard({ socket }) {
       ) : (
         <></>
       )}
-      
+
       {/** Modal Dialog for displaying words, messages and errors. */}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
