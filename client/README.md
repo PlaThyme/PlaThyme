@@ -1,4 +1,4 @@
-# Game FrontEnd
+# PlaThyme FrontEnd
 
 * This `README` provides information about how to add you `game *Front End*` to this project when you contribute to this Repo and some additional notes and Rules.
 
