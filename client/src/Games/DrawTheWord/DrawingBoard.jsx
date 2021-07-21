@@ -243,7 +243,7 @@ export default function DrawingBoard({ socket }) {
   };
 
   return (
-    <div className="grid-container mt-20">
+    <div className="grid-container">
       {myTurn ? (
         <>
         </>
