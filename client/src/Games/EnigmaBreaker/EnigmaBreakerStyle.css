@@ -4,12 +4,12 @@
   height: 650px;
   grid-template-rows: 10% 20% 8% 5% 57%;
 }
-.enigma-grid > div{
+/* .enigma-grid > div{
   background:#eee;
 }
 .enigma-grid > div:nth-child(odd){
   background:#AAA;
-}
+} */
 
 .words-box{
   display: grid;
@@ -49,6 +49,27 @@
 .enigma-tabs{
   display:grid;
   grid-template-columns: 50% 50%;
-  justify-content: center;
-  align-content: center;
+}
+
+.e-tab{
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  text-align: center;
+}
+
+.hist-btn{
+  width: 98%;
+  padding-bottom: 2px;
+
+}
+
+.history-lists{
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+}
+
+.word-history{
+  margin: 5px;
+  background-color: aliceblue;
 }

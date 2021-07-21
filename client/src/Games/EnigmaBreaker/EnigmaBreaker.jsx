@@ -10,10 +10,10 @@ const EnigmaBreaker = ({socket}) => {
   return (
     <div className="enigma-grid">
       <div className="words-box">
-        <h1 className="text-center text-3xl">Word 1</h1>
-        <h1 className="text-center text-3xl">Word 2</h1>
-        <h1 className="text-center text-3xl">Word 3</h1>
-        <h1 className="text-center text-3xl">Word 4</h1>
+        <h1 className="text-center text-3xl bg-green-900 rounded-lg mx-2">Word 1</h1>
+        <h1 className="text-center text-3xl bg-green-900 rounded-lg mx-2">Word 2</h1>
+        <h1 className="text-center text-3xl bg-green-900 rounded-lg mx-2">Word 3</h1>
+        <h1 className="text-center text-3xl bg-green-900 rounded-lg mx-2">Word 4</h1>
       </div>
       <div className="input-container">
         <div className="red-input-container">
@@ -41,7 +41,6 @@ const EnigmaBreaker = ({socket}) => {
         </div>
       </div>
       <div>status box</div>
-      <div>
         <RadioGroup
           className="enigma-tabs"
           value={selected}
@@ -51,9 +50,9 @@ const EnigmaBreaker = ({socket}) => {
             {({ checked }) => (
               <button
                 onClick={() => (true)}
-                className={`${
-                  checked ? "bg-red-500" : "bg-red-800"
-                } p-2 text-2xl hover:bg-red-200 rounded-b-lg`}
+                className={`hist-btn rounded-t-md ${
+                  checked ? "bg-red-600 text-gray-100" : "bg-red-800 text-black"
+                } text-2xl hover:bg-red-200`}
               >
                 Red History
               </button>
@@ -63,17 +62,21 @@ const EnigmaBreaker = ({socket}) => {
             {({ checked }) => (
               <button
                 onClick={() => (false)}
-                className={`${
-                  checked ? "bg-blue-500" : "bg-blue-800"
-                } p-2 text-2xl hover:bg-blue-200 rounded-b-lg`}
+                className={`hist-btn rounded-t-md ${
+                  checked ? "bg-blue-600 text-gray-100" : "bg-blue-800 text-black"
+                } text-2xl hover:bg-blue-200`}
               >
                 Blue History
               </button>
             )}
           </RadioGroup.Option>
         </RadioGroup>
+      <div className={`history-lists ${(selected === "redHistory" ? "bg-red-900" : "bg-blue-900")}`}>
+        <div className={`word-history ${(selected === "redHistory" ? "bg-red-50" : "bg-blue-50")}`}>List 1</div>
+        <div className={`word-history ${(selected === "redHistory" ? "bg-red-50" : "bg-blue-50")}`}>List 2</div>
+        <div className={`word-history ${(selected === "redHistory" ? "bg-red-50" : "bg-blue-50")}`}>List 3</div>
+        <div className={`word-history ${(selected === "redHistory" ? "bg-red-50" : "bg-blue-50")}`}>List 4</div>
       </div>
-      <div></div>
     </div>
   );
 };

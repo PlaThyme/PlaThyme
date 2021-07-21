@@ -130,7 +130,7 @@ export default function App() {
     <div className="App font-mono bg-thyme-darkest">
 
       {/** Game Room of Selected Game */}
-      {inGame ? (
+      {/* {inGame ? (
         <>
           <GameRoom
             gameInfo={gameInfo}
@@ -156,7 +156,15 @@ export default function App() {
           />
           <Carousel />
         </div>
-      )}
+      )} */}
+                <GameRoom
+            gameInfo={gameInfo}
+            currentPlayer={currentPlayer}
+            leaveGame={setInGame}
+            socket={socket}
+          >
+            <EnigmaBreaker/>
+          </GameRoom>
 
       {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
