@@ -113,6 +113,7 @@ io.on("connection", (socket) => {
     //Make sure game room exists.
     if (gid === null) {
       socket.emit("error", { error: "gid" });
+      return;
     }
 
     //Try to join the user to the room.
@@ -126,6 +127,7 @@ io.on("connection", (socket) => {
     //Check for duplicate user.
     if (error.error === "dup") {
       socket.emit("error", { error: "dup" });
+      return;
     }
     
     //If the user name is valid, join the player to the room, aand
