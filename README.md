@@ -4,7 +4,7 @@
 * Michael Fulton
 
 # PlaThyme
-It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game, create a private room and start playing games. The site shall be able to host open source games created by contributors. Initially we are aiming on making one game collaboratively. This will help us nail down the creation process, and create documentation for it. Following this, additional games will be created, each with each of the games being created individually by each of the initial contributors.
+It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game, create a private room and start playing games. The site shall be able to host open source games created by contributors. 
 
 # Technologies and Environment
 * [React](https://reactjs.org/docs/getting-started.html)
@@ -21,13 +21,16 @@ It is a multiplayer web game hosting site. We are aiming to create a website whe
 * JSX
 
 # Project Goals
-* able to set a server and client communications
-* create private rooms and play multiplayer game
+We are planning to do this in `2 steps`. 
+1. Initially we are aiming on making one game collaboratively. This will help us nail down the creation process, Developing a Game API which will handle integrating new games, and create documentation for it. 
+2. Following this, additional games will be created individually by each of the initial contributors, using the Game API developed in step 1.
 
 # Project Roadmap
 * Repository creation and initial commit -- Done
 * Landing page and game selection menu / lobby + Private Room & game container.
-* Server API, Socket.io implementation.
+* set up a server and client communications (Server API, Socket.io implementation)
+* create private rooms and play multiplayer game
+
 * first game creation: __Draw the Word__
 * Future work: Additional game ideas: 
   1 __Draw the word, down the line__
