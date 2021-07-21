@@ -1,6 +1,12 @@
 const Game = require("./Game");
-// const words = require("./words.json")
+/**
+ * This is a backend implementation for `DrawTheWord` game. It contains all the Game logic.
+ * This class uses the `Game.js` class to implement certain game features.
+ */
 class DrawTheWord extends Game {
+  /** 
+   * All the game variables required by `DrawTheWord` are initialized here. 
+  **/
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
     this.turnOrder = players;
@@ -16,6 +22,10 @@ class DrawTheWord extends Game {
     this.scoreValues = { easyPoint: 100, mediumPoint: 200, hardPoint: 300 };
   }
 
+  /**
+   * Handle the data received from clients through `events`. 
+   * This function deals with what to do with the data received form clients.
+   * */
   recieveData(data) {
     if (data.event === "canvas-data") {
       super.sendGameData(data);
@@ -46,8 +56,10 @@ class DrawTheWord extends Game {
     }
   }
 
+  /**
+   * when minimum number of players join the GameRoom, start the game.
+   */
   startGame() {
-    // console.log("inside startgame method --> ", this.players, this.players.length, this.minPlayers);
     super.sendGameData({ event: "start-game" });
     this.gameStarted = true;
     //Send a request for the current player to select their word.
@@ -64,6 +76,10 @@ class DrawTheWord extends Game {
     }
   }
 
+  /**
+   * When a new player joins the room, add that player name to the players list.
+   * @param {String} playerName - name of the player
+   */
   newPlayer(playerName) {
     if (playerName) {
       this.turnOrder.push(playerName);
@@ -71,6 +87,11 @@ class DrawTheWord extends Game {
     }
   }
 
+  /**
+   * if its a current players turn, and the player gets disconnected, 
+   * safely remove that player from the list and pass the turn to nexrt playe in the list.
+   * @param {String} playerName - name of the player.
+   */
   disconnection(playerName) {
     if (playerName === this.turnOrder[0]) {
       //Do something about current player disconnection.
@@ -88,6 +109,14 @@ class DrawTheWord extends Game {
     this.turnOrder = this.turnOrder.filter((player) => player !== playerName);
     this.scores[playerName] = 0;
 
+    // if game started and player count drops below min players.
+    if(this.gameStarted === true && this.turnOrder.length < this.minPlayers){
+       super.sendChat({
+        sender: "*Warning*",
+        text: "Players count less than minimum number of players.",
+      });
+    }
+
     //Start a new turn
     super.sendGameData({ event: "new-turn" });
 
@@ -97,11 +126,18 @@ class DrawTheWord extends Game {
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
 
+  /**
+   * Shift the latest player to the back of the list.
+   */
   advanceTurnOrder() {
     const lastPlayer = this.turnOrder.shift();
     this.turnOrder.push(lastPlayer);
   }
 
+  /**
+   * When a current players turn ends. 
+   * adjust the players order in the list, inform users about the current players turn through `GameKeeper` message and an event to the current player.
+   */
   handleEndOfTurn() {
     this.turnStarted = false;
     this.advanceTurnOrder();
@@ -115,6 +151,11 @@ class DrawTheWord extends Game {
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
   }
 
+  /**
+   * This function is used for doing string comparision of what the user entered in the chat and the actual word.
+   * The player who guessed correctly, will be awarded points based on the difficulty of the word they guessed.
+   * @param {String} messageData 
+   */
   chatMessage(messageData) {
     if (messageData.sender !== this.turnOrder[0]) {
       if (this.turnStarted) {
@@ -146,6 +187,11 @@ class DrawTheWord extends Game {
       }
     }
   }
+
+  /**
+   * This function is used to randomly generate 3 words from each list. which will be sent to current user to choose form and draw.
+   * @returns list of 3 words randomly selected.
+   */
   generateWords() {
     const easywords = ["cheese", "bone", "socks", "leaf", "whale", "pie", "shirt", "orange", "lollipop", "bed", "mouth", "person", "horse", "snake", "jar", "spoon", "lamp", "kite", "monkey", "swing", "cloud", "snowman", "baby", "eyes", "pen", "giraffe", "grapes", "book", "ocean", "star", "cupcake", "cow", "lips", "worm", "sun", "basketball", "hat", "bus", "chair", "purse", "head", "spider", "shoe", "ghost", "coat", "chicken", "heart", "jellyfish", "tree", "seashell", "duck", "bracelet", "grass", "jacket", "slide", "doll", "spider", "clock", "cup", "bridge", "apple", "balloon", "drum", "ears", "egg", "bread", "nose", "house", "beach", "airplane", "inchworm", "hippo", "light", "turtle", "ball", "carrot", "cherry", "ice", "pencil", "circle", "bed", "ant", "girl", "glasses", "flower", "mouse", "banana", "alligator", "bell", "robot", "smile", "bike", "rocket", "dinosaur", "dog", "bunny", "cookie", "bowl", "apple", "door"]
     const mediumwords = ["horse", "door", "song", "trip", "backbone", "bomb", "round", "treasure", "garbage", "park", "whistle", "palace", "baseball", "coal", "queen", "dominoes", "photograph", "computer", "hockey", "aircraft", "pepper", "key", "iPad", "whisk", "cake", "circus", "battery", "mailman", "cowboy", "password", "bicycle", "skate", "electricity", "lightsaber", "nature", "shallow", "toast", "outside", "America", "roller", "blading", "gingerbread", "man", "bowtie", "light", "bulb", "platypus", "music", "sailboat", "popsicle", "knee", "pineapple", "tusk", "sprinkler", "money", "spool", "lighthouse", "doormat", "face", "flute", "owl", "gate", "suitcase", "bathroom", "scale", "peach", "newspaper", "watering", "can", "hook", "school", "beaver", "camera", "hair", "dryer", "mushroom", "quilt", "chalk", "dollar", "soda", "chin", "swing", "garden", "ticket", "boot", "cello", "rain", "clam", "pelican", "stingray", "nail", "sheep", "stoplight", "coconut", "crib", "hippopotamus", "ring", "video", "camera", "snowflake"]
