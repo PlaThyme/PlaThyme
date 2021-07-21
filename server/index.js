@@ -170,9 +170,9 @@ io.on("connection", (socket) => {
       io.to(userName.roomCode).emit("userData", getUsersInRoom(userName.roomCode));
       //Notify game object that the player has left.
       games[userName.roomCode].disconnection(userName.name)
-    }
-    if(numUsersInRoom(userName.roomCode === 0)){
-      delete games[userName.roomCode]
+      if(numUsersInRoom(userName.roomCode === 0)){
+        delete games[userName.roomCode]
+      }
     }
   }  
 

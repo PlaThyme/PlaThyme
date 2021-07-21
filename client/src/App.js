@@ -25,13 +25,14 @@ export default function App() {
     gameName: null,
     minPlayers: null,
     roomCode: null,
+    gameId: null,
   });
   const [startGame, setStartGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "TestGame", minPlayers: 3 },
-    { gameId: 3, gameName: "game 2", minPlayers: 2 },
+    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
     { gameId: 4, gameName: "game 4", minPlayers: 1 },
   ]);
   const [selectedGame, setSelectedGame] = useState({
@@ -49,7 +50,7 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
-      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code });
+      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
 
@@ -112,6 +113,23 @@ export default function App() {
   const handleSelectedGame = (gameName) => {
     setSelectedGame(gameName);
   };
+  
+  const renderGame = (gameId) => {
+    switch(gameId){
+      case 1:
+        if(startGame === true){
+          return <DrawTheWord socket={socket}/>;
+        }
+        return <WaitRoom/>;
+      case 2:
+        return <TestGame socket={socket}/>;
+      case 3:
+        break;
+      default:
+        break;
+    }
+    return <></>;
+  }
 
   return (
     <div className="App font-mono bg-thyme-darkest">
@@ -123,11 +141,8 @@ export default function App() {
             leaveGame={setInGame}
             socket={socket}
           >
-            { (gameInfo.gameName === "Draw The Word" && startGame === true) ? 
-              <DrawTheWord socket={socket} />
-              : (gameInfo.gameName === "Draw The Word" && startGame === false) ? 
-              <WaitRoom />
-              : <TestGame socket={socket}/> 
+            { 
+              renderGame(gameInfo.gameId)
             }
           </GameRoom>
         </>
