@@ -243,7 +243,7 @@ export default function DrawingBoard({ socket }) {
   };
 
   return (
-    <div className="grid-container mt-20">
+    <div className="grid-container">
       {myTurn ? (
         <>
         </>
@@ -252,7 +252,7 @@ export default function DrawingBoard({ socket }) {
         </div>
       )}
       <div className="grid-item item-1 text-white">
-        <p>Time to Draw or Guess: {countDown}</p>
+        <p>Timer: {countDown}</p>
       </div>
       <div className="grid-item item-2 text-white">
       {myTurn ? (<p>Your turn to draw!</p>) : (<p>{statusMessage}</p>)}

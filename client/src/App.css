@@ -7,3 +7,9 @@
     overflow-x: hidden;
     scroll-snap-type: x mandatory;
   }
+
+.game-box{
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
