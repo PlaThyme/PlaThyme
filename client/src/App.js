@@ -134,7 +134,7 @@ export default function App() {
 
   return (
     <div className="App font-mono bg-thyme-darkest">
-      {inGame ? (
+      {/* {inGame ? (
         <>
           <GameRoom
             gameInfo={gameInfo}
@@ -143,7 +143,7 @@ export default function App() {
             socket={socket}
           >
             { 
-              renderGame(gameInfo.gameId)
+              // renderGame(gameInfo.gameId)
             }
           </GameRoom>
         </>
@@ -157,7 +157,15 @@ export default function App() {
             joinGame={handleJoinGame}
           />
         </>
-      )}
+      )} */}
+      <GameRoom
+        gameInfo={gameInfo}
+        currentPlayer={currentPlayer}
+        leaveGame={setInGame}
+        socket={socket}
+      >
+        <EnigmaBreaker/>
+      </GameRoom>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"

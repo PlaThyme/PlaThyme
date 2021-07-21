@@ -43,29 +43,29 @@ const EnigmaBreaker = ({socket}) => {
       <div>status box</div>
       <div>
         <RadioGroup
-          className="flex flex-row w-full"
+          className="enigma-tabs"
           value={selected}
           onChange={setSelected}
         >
-          <RadioGroup.Option value="redHistory" className="flex w-3/6">
+          <RadioGroup.Option value="redHistory" className="e-tab">
             {({ checked }) => (
               <button
                 onClick={() => (true)}
                 className={`${
-                  checked ? "bg-thyme" : "bg-thyme-dark"
-                } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
+                  checked ? "bg-red-500" : "bg-red-800"
+                } p-2 text-2xl hover:bg-red-200 rounded-b-lg`}
               >
                 Red History
               </button>
             )}
           </RadioGroup.Option>
-          <RadioGroup.Option value="blueHistory" className="flex w-3/6">
+          <RadioGroup.Option value="blueHistory" className="e-tab">
             {({ checked }) => (
               <button
                 onClick={() => (false)}
                 className={`${
-                  checked ? "bg-thyme" : "bg-thyme-dark"
-                } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
+                  checked ? "bg-blue-500" : "bg-blue-800"
+                } p-2 text-2xl hover:bg-blue-200 rounded-b-lg`}
               >
                 Blue History
               </button>

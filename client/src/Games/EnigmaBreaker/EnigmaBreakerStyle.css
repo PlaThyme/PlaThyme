@@ -45,3 +45,10 @@
 .blue-input-container > div:nth-child(odd){
   background:#AAA;
 }
+
+.enigma-tabs{
+  display:grid;
+  grid-template-columns: 50% 50%;
+  justify-content: center;
+  align-content: center;
+}
