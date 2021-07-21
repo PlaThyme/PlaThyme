@@ -79,7 +79,7 @@ div.grid-item.item-4{
 }
 .board-overlay{
   position: absolute;
-  z-index: 50;
+  z-index: 20;
   width: 800px;
   height: 700px;
 }
