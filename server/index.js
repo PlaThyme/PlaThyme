@@ -80,19 +80,19 @@ io.on("connection", (socket) => {
     //Create a new game object for the selected game, and call its start game function.
     if(data.gameId === 1){
       games[roomCode] = new DrawTheWord(roomCode, socket, io, [data.name], data.minPlayers);
-      // console.log("game object--> ", games[roomCode]);
+        /** 
+         * Notify the new game object that its been started.
+         * "DrawTheWord" game has a "waitingRoom". (the game will not start till all the minimum players join the `GameRoom`), 
+         * events related to that are implemented within startGame() within game logic file (DrawTheWord.js). 
+         * */
+        if(games[roomCode].players.length === games[roomCode].minPlayers){
+          games[roomCode].startGame();
+          socket.emit("start-game", {}); // informs App.js to render game component.
+        }
     }
     if(data.gameId === 2){
       games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
     }
-    //Notify the game object that a new player has joined.
-      // games[roomCode].newPlayer(data.name)
-    //Notify the new game object that its been started.
-    if(games[roomCode].players.length === games[roomCode].minPlayers){
-      games[roomCode].startGame();
-      socket.emit("start-game", {});
-    }
-
 
     //Send all players updated user list.
     io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
@@ -137,10 +137,8 @@ io.on("connection", (socket) => {
       // Test: enter wrong room code; got error. (add checks)
       games[roomCode].newPlayer(name)
 
-      if(games[roomCode].players.length >= games[roomCode].minPlayers){
+      if(games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1){
         games[roomCode].startGame();
-        // console.log("sent start game event from join room fn.")
-        // socket.emit("start-game", {});
       }
 
       //Send all players updated user list.
