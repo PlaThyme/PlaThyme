@@ -4,7 +4,7 @@ import React from "react";
 import "./EnigmaBreakerStyle.css";
 import { RadioGroup } from "@headlessui/react";
 
-const EnigmaBreaker = () => {
+const EnigmaBreaker = ({socket}) => {
   const [selected, setSelected] = useState("redHistory");
 
   return (
