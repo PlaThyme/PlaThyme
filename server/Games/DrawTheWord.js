@@ -1,4 +1,5 @@
 const Game = require("./Game");
+// const words = require("./words.json")
 class DrawTheWord extends Game {
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
@@ -105,10 +106,10 @@ class DrawTheWord extends Game {
     this.turnStarted = false;
     this.advanceTurnOrder();
     super.sendGameData({ event: "new-turn" });
-    super.sendChat({
-      sender: "GameKeeper",
-      text: `${this.turnOrder[0]}'s turn. They are selecting a word.`,
-    });
+    // super.sendChat({
+    //   sender: "GameKeeper",
+    //   text: `${this.turnOrder[0]}'s turn.`,
+    // });
     let words = this.generateWords(); //three words plz.
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
@@ -135,7 +136,7 @@ class DrawTheWord extends Game {
                 this.scores[messageData.sender] + pts;
               super.sendChat({
                 sender: "Score Keeper",
-                text: `${messageData.sender} has gotten it correct! They have been awarded ${pts} points!`,
+                text: `${messageData.sender} wins! +${pts} points`,
               });
               super.updatePlayerScore(messageData.sender, this.scores[messageData.sender]);
               this.handleEndOfTurn();

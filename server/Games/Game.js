@@ -38,7 +38,9 @@ class Game{
     
     //Impliment the following methods in subclass version of your game, if you want to use their functonality.
     
-    startGame(){}                           // Will be run after a new game is created, and the minimum players is reached. (minimum players as defined in App.js)
+    startGame(){                           // Will be run after a new game is created, and the minimum players is reached. (minimum players as defined in App.js)
+        this.sendGameData({ event: "start-game" });
+    }
     newPlayer(playerName){this.players.push(playerName)}               // When a new player joins room, this method will be called. The string name of the new player will be passed into the funciton. By default player will be added to list.
     disconnection(playerName){this.players = this.players.filter((player) => player !== playerName)}             // This will be called when a player disconnects. String containing players name will be passed in. By default removes player from list.
     recieveData(data){}                   // When data is recieved from a client in a room, this method is called with the data sent by the client.
