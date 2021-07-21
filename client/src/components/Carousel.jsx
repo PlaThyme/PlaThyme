@@ -1,6 +1,9 @@
 import React from 'react'; 
-import "./Carousel.css";
+
 import demo1 from "../images/demo.gif";
+
+import "./Carousel.css";
+
 const images = [
   demo1,
   "https://placekitten.com/102/100",

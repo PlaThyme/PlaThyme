@@ -70,9 +70,11 @@ export default function App() {
   useEffect(() => {
     const openModal = () =>  setIsOpen(true);
 
+    // Socket Connection
     socket = io(SERVER);
     socket.on("connection", () => {});
 
+    // Socket events
     socket.on("gameData", (gameData) => {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
@@ -135,6 +137,8 @@ export default function App() {
 
   return (
     <div className="App font-mono bg-thyme-darkest">
+
+      {/** Game Room of Selected Game */}
       {inGame ? (
         <>
           <GameRoom
@@ -151,7 +155,10 @@ export default function App() {
             }
           </GameRoom>
         </>
-      ) : (
+      ) 
+      : 
+      // Landing page for user to select Game from dropdown 
+      (
         <div className="App font-mono bg-thyme-darkest h-screen">
           <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
           <SelectGame
@@ -163,7 +170,7 @@ export default function App() {
         </div>
       )}
 
-      {/* modal Dialog, will be displayed when any error occured */}
+      {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -175,7 +182,7 @@ export default function App() {
               <Dialog.Overlay className="fixed inset-0" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
+            {/** This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"

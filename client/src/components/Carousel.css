@@ -1,5 +1,7 @@
+/**
+* CSS for Carosel pics
+*/
 .object-contain{
-  /* width: 300px ; */
   height: 450px;
 }
 img.object-contain{

@@ -4,6 +4,7 @@ import { Dialog, Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 
 export default function SelectGame({ listofGames, createGame, joinGame }) {
+  // Constant variables
   const [selected, setSelected] = useState({
     gameId: 0,
     gameName: "Select a Game",
@@ -14,6 +15,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
   const nameRef = useRef();
   const codeRef = useRef();
 
+  // Handle Functions
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
   const handleCreateRoom = () => setSelectedOption("create-room");
@@ -34,6 +36,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
   return (
     <div className="mt-8">
       <div className="sm:w-5/6 md:w-1/4 lg:w-1/3 mx-auto">
+        {/** DropDown for selecting games */}
         <Listbox value={selected} onChange={setSelected}>
           <div className="relative mt-4">
             <Listbox.Button className="relative w-full border-2 py-2 pl-3 pr-10 text-gray-900 bg-thyme-lightest text-left justify-around bg-thyme-default shadow-md cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
@@ -92,6 +95,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
           </div>
         </Listbox>
 
+        {/** Error Handling: Show the Model Dialog when there is some Error */}
         <Transition appear show={isOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -103,7 +107,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
                 <Dialog.Overlay className="fixed inset-0" />
               </Transition.Child>
 
-              {/* This element is to trick the browser into centering the modal contents. */}
+              {/** This element is to trick the browser into centering the modal contents. */}
               <span
                 className="inline-block h-screen align-middle"
                 aria-hidden="true"
@@ -147,6 +151,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
           </Dialog>
         </Transition>
 
+        {/** To display minimum number of players for a selected Game */}
         <p className="text-center text-thyme-light py-2">
           Minimum Number of Players:{" "}
           <span className="bg-gray-900 text-thyme-lightest">
@@ -155,6 +160,8 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
         </p>
       </div>
 
+      {/** Forms for user to Create a Game Room or Join a Game Room by entering a Room Code */}
+      {/* Button to switch between Forms */}
       <div className=" flex justify-center mt-8 md:w-3/4 mx-auto lg:w-1/2">
         <button
           className={
@@ -177,7 +184,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
           Join Room
         </button>
       </div>
-
+      {/* 1. Create Room Form  */}
       {selectedOption === "create-room" ? (
         <div className="bg-thyme p-4 shadow md:w-3/4 mx-auto lg:w-1/2">
           <form onSubmit={handleCreateNewRoom} action="">
@@ -198,6 +205,7 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
           </form>
         </div>
       ) : (
+        // 2.  Join Room Form
         <div className="bg-thyme p-4 shadow md:w-3/4 mx-auto lg:w-1/2">
           <form onSubmit={handeJoinExistingRoom} action="">
             <div className="mb-5">
