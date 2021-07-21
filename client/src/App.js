@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, Component } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
 
@@ -20,6 +20,15 @@ let buttonText;
 
 export default function App() {
 
+  // Enter the new game in this Dictionary.
+  const [listofGames, setListofGames] = useState([
+    { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
+    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
+    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
+    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+  ]);
+
+  // Game and player Info
   const [currentPlayer, setCurrentPlayer] = useState("none");
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
@@ -28,24 +37,17 @@ export default function App() {
     gameId: null,
   });
   const [startGame, setStartGame] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [listofGames, setListofGames] = useState([
-    { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
-    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "game 4", minPlayers: 1 },
-  ]);
-  const [selectedGame, setSelectedGame] = useState({
-    gameId: 0,
-    gameName: "Game Name",
-    minPlayers: "Min Players",
-  });
   const [inGame, setInGame] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    const openModal = () =>  setIsOpen(true);
+
+    // Socket Connection
     socket = io(SERVER);
     socket.on("connection", () => {});
 
+    // Socket events
     socket.on("gameData", (gameData) => {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
@@ -53,10 +55,6 @@ export default function App() {
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
-
-    function openModal() {
-      setIsOpen(true);
-    }
 
     socket.on("error", (error) => {
       if (error.error === "dup") {
@@ -74,17 +72,17 @@ export default function App() {
       error = null;
     });
 
-    return () => {
-      
+    // Component DidUnmount, clear setup.
+    return () => {  
       socket.emit("disconnect");
       socket.off();
     }
   }, [SERVER]);
 
+  // broadcast message to all players
   useEffect(() => {
       socket.on("update-game", (data) => {
         if(data.event === "start-game"){
-          console.log("*** Inside App.jsx ****")
           setStartGame(true);
         }
       })
@@ -110,10 +108,6 @@ export default function App() {
     });
   }
 
-  const handleSelectedGame = (gameName) => {
-    setSelectedGame(gameName);
-  };
-  
   const renderGame = (gameId) => {
     switch(gameId){
       case 1:
@@ -133,6 +127,8 @@ export default function App() {
 
   return (
     <div className="App font-mono bg-thyme-darkest">
+
+      {/** Game Room of Selected Game */}
       {inGame ? (
         <>
           <GameRoom
@@ -146,17 +142,22 @@ export default function App() {
             }
           </GameRoom>
         </>
-      ) : (
-        <>
-          <Carousel />
+      ) 
+      : 
+      // Landing page for user to select Game from dropdown 
+      (
+        <div className="App font-mono bg-thyme-darkest h-screen">
+          <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
           <SelectGame
-            handleSelectedGame={handleSelectedGame}
             listofGames={listofGames}
             createGame={handleCreateGame}
             joinGame={handleJoinGame}
           />
-        </>
+          <Carousel />
+        </div>
       )}
+
+      {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -168,7 +169,7 @@ export default function App() {
               <Dialog.Overlay className="fixed inset-0" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
+            {/** This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"

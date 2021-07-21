@@ -35,6 +35,9 @@ svg{
   padding: 6px;
 }
 
+/**
+* CSS for Colour Pallet.
+*/
 .color.black {background-color: #000000; }
 .color.white {background-color: #ffffff; }
 .color.darkGray {background-color: #6e6e6e; }
@@ -56,6 +59,9 @@ svg{
 .color.purple {background-color: #6e00e3; }
 .color.lightPurple {background-color: #d9c5f0; }
 
+/**
+* Grid stricture for Game Container for "Draw The word" Game.
+*/
 .grid-container{
   display: grid;
   width: 800px;
