@@ -119,7 +119,7 @@ export default function App() {
       case 2:
         return <TestGame socket={socket}/>;
       case 3:
-        return <EnigmaBreaker socket={socket}/>;
+        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       default:
         break;
     }

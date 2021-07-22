@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import { EyeOffIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import React from "react";
 import "./EnigmaBreakerStyle.css";
 import { RadioGroup } from "@headlessui/react";
 import NumberSelector from "./NumberSelector";
 
-const EnigmaBreaker = ({ socket }) => {
+const EnigmaBreaker = ({ socket, playerName}) => {
   const [selected, setSelected] = useState("redHistory");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
@@ -19,8 +20,41 @@ const EnigmaBreaker = ({ socket }) => {
   const [blueOneActual, setBlueOneActual] = useState("1");
   const [blueTwoActual, setBlueTwoActual] = useState("2");
   const [blueThreeActual, setBlueThreeActual] = useState("3");
+  const [isOpen, setIsOpen] = useState(true);
+  const [myTeam, setMyTeam] = useState("");
 
 
+  useEffect(() => {
+    socket.on("update-game",(data) => {
+      if(data.event === "team-info"){
+        setMyTeam(data.team);
+      }
+    });
+
+
+
+  },[]);
+
+  useEffect(() => {
+
+  },[]);
+
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const joinRed = () => {
+    socket.emit("game-data",{event:"join-team", team:"red",playerName:playerName});
+  }
+
+  const joinBlue = () => {
+    socket.emit("game-data",{event:"join-team", team:"blue",playerName:playerName});
+  }
+
+  const joinAny = () => {
+    socket.emit("game-data",{event:"join-team", team:"any",playerName:playerName});
+  }
 
 
   return (
@@ -60,21 +94,57 @@ const EnigmaBreaker = ({ socket }) => {
           <div className="icon-box">
             <EyeOffIcon className="bg-red-200 rounded-xl" />
           </div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={redOne} setSelected={setRedOne} color="red"/>
+            <NumberSelector
+              selected={redOne}
+              setSelected={setRedOne}
+              color="red"
+            />
           </div>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redOneActual}</div></div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={redTwo} setSelected={setRedTwo} color="red"/>
+            <div className="text-center bg-red-200 rounded-xl mx-3">
+              {redOneActual}
+            </div>
           </div>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redTwoActual}</div></div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={redThree} setSelected={setRedThree} color="red"/>
+            <NumberSelector
+              selected={redTwo}
+              setSelected={setRedTwo}
+              color="red"
+            />
           </div>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redThreeActual}</div></div>
+          <div className="grid justify-content-center content-center">
+            <div className="text-center bg-red-200 rounded-xl mx-3">
+              {redTwoActual}
+            </div>
+          </div>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
+          <div className="grid justify-content-center content-center">
+            <NumberSelector
+              selected={redThree}
+              setSelected={setRedThree}
+              color="red"
+            />
+          </div>
+          <div className="grid justify-content-center content-center">
+            <div className="text-center bg-red-200 rounded-xl mx-3">
+              {redThreeActual}
+            </div>
+          </div>
         </div>
 
         <div className="blue-input-container">
@@ -89,21 +159,57 @@ const EnigmaBreaker = ({ socket }) => {
               Blue Hints
             </div>
           </div>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={blueOne} setSelected={setBlueOne} color="blue"/>
+            <div className="text-center bg-blue-200 rounded-xl mx-3">
+              {blueOneActual}
+            </div>
           </div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={blueTwo} setSelected={setBlueTwo} color="blue"/>
+            <NumberSelector
+              selected={blueOne}
+              setSelected={setBlueOne}
+              color="blue"
+            />
           </div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
-          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
           <div className="grid justify-content-center content-center">
-            <NumberSelector selected={blueThree} setSelected={setBlueThree} color="blue"/>
+            <div className="text-center bg-blue-200 rounded-xl mx-3">
+              {blueOneActual}
+            </div>
           </div>
-          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector
+              selected={blueTwo}
+              setSelected={setBlueTwo}
+              color="blue"
+            />
+          </div>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
+          <div className="grid justify-content-center content-center">
+            <div className="text-center bg-blue-200 rounded-xl mx-3">
+              {blueOneActual}
+            </div>
+          </div>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector
+              selected={blueThree}
+              setSelected={setBlueThree}
+              color="blue"
+            />
+          </div>
+          <input
+            className="m-2 px-1"
+            type="text"
+            placeholder="Hint goes here"
+          />
         </div>
       </div>
       <div className="status-box">status box</div>
@@ -171,6 +277,69 @@ const EnigmaBreaker = ({ socket }) => {
           List 4
         </div>
       </div>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={() => {}}
+        >
+          <div className="min-h-screen px-4 text-center">
+            <Transition.Child as={Fragment}>
+              <Dialog.Overlay className="fixed inset-0 bg-gray-800 opacity-60" />
+            </Transition.Child>
+
+            {/** This element is to trick the browser into centering the modal contents. */}
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-200"
+              enterFrom="opacity-0 scale-50"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-50"
+            >
+              <div className="inline-block max-w-md p-4 my-5 overflow-hidden text-left align-middle transition-all transform bg-gray-700 shadow-md rounded-lg">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-100"
+                >
+                  Pick a Team
+                </Dialog.Title>
+                <div className="mt-4 w-full flex">
+                  <button
+                    type="button"
+                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-red-900 bg-red-100 rounded-md hover:bg-red-200"
+                    onClick={joinRed}
+                  >
+                    Red Team
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-blue-900 bg-blue-100 rounded-md hover:bg-blue-200"
+                    onClick={joinBlue}
+                  >
+                    Blue Team
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-gray-900 bg-gray-100 rounded-md hover:bg-gray-200"
+                    onClick={joinAny}
+                  >
+                    Pick For Me
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };
