@@ -1,5 +1,4 @@
 //PlayerList takes in an array of players and displays them in a list.
-//TODO Make Leave Room button fuctional.
 import { useState, Fragment, useEffect } from "react";
 import { Dialog, RadioGroup, Transition} from "@headlessui/react";
 
