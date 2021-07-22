@@ -6,7 +6,7 @@ import "./EnigmaBreakerStyle.css";
 import { RadioGroup } from "@headlessui/react";
 import NumberSelector from "./NumberSelector";
 
-const EnigmaBreaker = ({ socket, playerName}) => {
+const EnigmaBreaker = ({ socket, playerName }) => {
   const [selected, setSelected] = useState("redHistory");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
@@ -14,50 +14,72 @@ const EnigmaBreaker = ({ socket, playerName}) => {
   const [blueOne, setBlueOne] = useState("0");
   const [blueTwo, setBlueTwo] = useState("0");
   const [blueThree, setBlueThree] = useState("0");
-  const [redOneActual, setRedOneActual] = useState("1");
-  const [redTwoActual, setRedTwoActual] = useState("2");
-  const [redThreeActual, setRedThreeActual] = useState("3");
-  const [blueOneActual, setBlueOneActual] = useState("1");
-  const [blueTwoActual, setBlueTwoActual] = useState("2");
-  const [blueThreeActual, setBlueThreeActual] = useState("3");
-  const [isOpen, setIsOpen] = useState(true);
-  const [myTeam, setMyTeam] = useState("");
-
+  const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
+  const [isOpen, setIsOpen] = useState(true); ///////////////
+  const [myTeam, setMyTeam] = useState(""); /////////////
+  const [blueHints, setBlueHints] = useState({});
+  const [redHints, setRedHints] = useState({});
+  const [currentHints, setCurrentHints] = useState([]);
 
   useEffect(() => {
-    // socket.on("update-game",(data) => {
-    //   if(data.event === "team-info"){
-    //     setMyTeam(data.team);
-    //   }
-    // });
-  },[]);
+    socket.on("update-game", (data) => {
+      if (data.event === "team-info") {
+        console.log(data);
+        setMyTeam(data.team);
+        setIsOpen(false);
+      }
+      if (data.event === "update-hints") {
+        setBlueHints(data.blueHints);
+        setRedHints(data.redHints);
+      }
+      if (data.event === "make-guess") {
+        setCurrentHints(data.hints);
+      }
+      if (data.event === "updateActuals"){
+        setActualNums(data.nums)
+      }
+    });
+  }, []);
 
   useEffect(() => {
-    if(myTeam === ""){
+    if (myTeam === "") {
       setIsOpen(true);
     }
-    if(myTeam === "red"){
-      
+    if (myTeam === "red") {
+      setSelected("redHistory");
     }
-  },[myTeam]);
-
+    if (myTeam === "blue") {
+      setSelected("blueHistory");
+    }
+  }, [myTeam]);
 
   const closeModal = () => {
     setIsOpen(false);
   };
 
   const joinRed = () => {
-    socket.emit("game-data",{event:"join-team", team:"red",playerName:playerName});
-  }
+    socket.emit("game-data", {
+      event: "join-team",
+      team: "red",
+      playerName: playerName,
+    });
+  };
 
   const joinBlue = () => {
-    socket.emit("game-data",{event:"join-team", team:"blue",playerName:playerName});
-  }
+    socket.emit("game-data", {
+      event: "join-team",
+      team: "blue",
+      playerName: playerName,
+    });
+  };
 
   const joinAny = () => {
-    socket.emit("game-data",{event:"join-team", team:"any",playerName:playerName});
-  }
-
+    socket.emit("game-data", {
+      event: "join-team",
+      team: "any",
+      playerName: playerName,
+    });
+  };
 
   return (
     <div className="enigma-grid">
@@ -110,7 +132,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
-              {redOneActual}
+              {actualNums[0]}
             </div>
           </div>
           <input
@@ -127,7 +149,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
-              {redTwoActual}
+              {actualNums[1]}
             </div>
           </div>
           <input
@@ -144,7 +166,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
-              {redThreeActual}
+              {actualNums[2]}
             </div>
           </div>
         </div>
@@ -163,7 +185,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
-              {blueOneActual}
+              {actualNums[3]}
             </div>
           </div>
           <div className="grid justify-content-center content-center">
@@ -180,7 +202,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           />
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
-              {blueOneActual}
+              {actualNums[4]}
             </div>
           </div>
           <div className="grid justify-content-center content-center">
@@ -197,7 +219,7 @@ const EnigmaBreaker = ({ socket, playerName}) => {
           />
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
-              {blueOneActual}
+              {actualNums[5]}
             </div>
           </div>
           <div className="grid justify-content-center content-center">

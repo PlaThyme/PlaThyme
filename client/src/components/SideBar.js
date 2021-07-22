@@ -28,11 +28,11 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
   }
 
   //This is used to recieve chat messages.
-  // useEffect(() => {
-  //   socket.on("message", (message) => {
-  //     setMessages((messages) => [...messages, message]);
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+  }, []);
 
   return (
     <div className="flex-col flex w-full">

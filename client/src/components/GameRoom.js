@@ -8,11 +8,11 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
 
   const [allUsers, setAllUsers] = useState([]);
 
-  // useEffect(() => {
-  //   socket.on("userData", (users) => {
-  //     setAllUsers(users);
-  //   })
-  // }, []);
+  useEffect(() => {
+    socket.on("userData", (users) => {
+      setAllUsers(users);
+    })
+  }, []);
   
   return (
     <div className="flex flex-col h-screen max-h-screen w-full">
