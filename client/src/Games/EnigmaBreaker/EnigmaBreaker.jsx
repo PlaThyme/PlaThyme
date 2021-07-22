@@ -3,9 +3,25 @@ import { EyeOffIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import React from "react";
 import "./EnigmaBreakerStyle.css";
 import { RadioGroup } from "@headlessui/react";
+import NumberSelector from "./NumberSelector";
 
 const EnigmaBreaker = ({ socket }) => {
   const [selected, setSelected] = useState("redHistory");
+  const [redOne, setRedOne] = useState("0");
+  const [redTwo, setRedTwo] = useState("0");
+  const [redThree, setRedThree] = useState("0");
+  const [blueOne, setBlueOne] = useState("0");
+  const [blueTwo, setBlueTwo] = useState("0");
+  const [blueThree, setBlueThree] = useState("0");
+  const [redOneActual, setRedOneActual] = useState("1");
+  const [redTwoActual, setRedTwoActual] = useState("2");
+  const [redThreeActual, setRedThreeActual] = useState("3");
+  const [blueOneActual, setBlueOneActual] = useState("1");
+  const [blueTwoActual, setBlueTwoActual] = useState("2");
+  const [blueThreeActual, setBlueThreeActual] = useState("3");
+
+
+
 
   return (
     <div className="enigma-grid">
@@ -44,15 +60,21 @@ const EnigmaBreaker = ({ socket }) => {
           <div className="icon-box">
             <EyeOffIcon className="bg-red-200 rounded-xl" />
           </div>
-          <input className="m-2" type="text" />
-          <div>Here</div>
-          <div>Here</div>
-          <input className="m-2" type="text" />
-          <div>Here</div>
-          <div>Here</div>
-          <input className="m-2" type="text" />
-          <div>Here</div>
-          <div>Here</div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={redOne} setSelected={setRedOne} color="red"/>
+          </div>
+          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redOneActual}</div></div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={redTwo} setSelected={setRedTwo} color="red"/>
+          </div>
+          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redTwoActual}</div></div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={redThree} setSelected={setRedThree} color="red"/>
+          </div>
+          <div className="grid justify-content-center content-center"><div className="text-center bg-red-200 rounded-xl mx-3">{redThreeActual}</div></div>
         </div>
 
         <div className="blue-input-container">
@@ -67,18 +89,24 @@ const EnigmaBreaker = ({ socket }) => {
               Blue Hints
             </div>
           </div>
-          <div>Here</div>
-          <div>Here</div>
-          <input className="m-2" type="text" />
-          <div>Here</div>
-          <div>Here</div>
-          <input className="m-2" type="text" />
-          <div>Here</div>
-          <div>Here</div>
-          <input className="m-2" type="text" />
+          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={blueOne} setSelected={setBlueOne} color="blue"/>
+          </div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={blueTwo} setSelected={setBlueTwo} color="blue"/>
+          </div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
+          <div className="grid justify-content-center content-center"><div className="text-center bg-blue-200 rounded-xl mx-3">{blueOneActual}</div></div>
+          <div className="grid justify-content-center content-center">
+            <NumberSelector selected={blueThree} setSelected={setBlueThree} color="blue"/>
+          </div>
+          <input className="m-2 px-1" type="text" placeholder="Hint goes here"/>
         </div>
       </div>
-      <div>status box</div>
+      <div className="status-box">status box</div>
       <RadioGroup
         className="enigma-tabs"
         value={selected}
@@ -99,7 +127,7 @@ const EnigmaBreaker = ({ socket }) => {
         <RadioGroup.Option value="blueHistory" className="e-tab">
           {({ checked }) => (
             <button
-              onClick={() => false}
+              onClick={() => true}
               className={`hist-btn rounded-t-md ${
                 checked ? "bg-blue-600 text-gray-100" : "bg-blue-800 text-black"
               } text-2xl hover:bg-blue-200`}

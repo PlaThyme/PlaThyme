@@ -115,3 +115,9 @@
   margin: 5px;
   background-color: aliceblue;
 }
+
+.status-box{
+  background-color: rgb(105, 105, 105);
+  border-radius: 10px;
+  margin-bottom: 4px;
+  }
