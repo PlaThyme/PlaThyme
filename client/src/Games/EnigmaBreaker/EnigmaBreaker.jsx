@@ -25,19 +25,21 @@ const EnigmaBreaker = ({ socket, playerName}) => {
 
 
   useEffect(() => {
-    socket.on("update-game",(data) => {
-      if(data.event === "team-info"){
-        setMyTeam(data.team);
-      }
-    });
-
-
-
+    // socket.on("update-game",(data) => {
+    //   if(data.event === "team-info"){
+    //     setMyTeam(data.team);
+    //   }
+    // });
   },[]);
 
   useEffect(() => {
-
-  },[]);
+    if(myTeam === ""){
+      setIsOpen(true);
+    }
+    if(myTeam === "red"){
+      
+    }
+  },[myTeam]);
 
 
   const closeModal = () => {
