@@ -1,21 +1,68 @@
 .enigma-grid{
   display: grid;
-  width: 1000px;
-  height: 650px;
-  grid-template-rows: 10% 20% 8% 5% 57%;
+  width: 1200px;
+  height: 850px;
+  grid-template-rows: 7% 20% 8% 3.5% 58.5%;
 }
-/* .enigma-grid > div{
-  background:#eee;
-}
-.enigma-grid > div:nth-child(odd){
-  background:#AAA;
-} */
 
 .words-box{
   display: grid;
   grid-template-columns: 25% 25% 25% 25%;
+  border-radius: 15px;
+  background-color: rgb(130, 131, 130);
+  background:linear-gradient(45deg, #DDD 20% #999 50% #DDD 80%);
   justify-content: center;
   align-content: center;
+}
+
+.word-border{
+  border-radius: 90% / 15%;
+  position: relative;
+  color: white;
+  margin-left: 12px;
+  margin-right: 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background: linear-gradient(90deg, #ddd 15%, #999 30%, #999 70%, #ddd 85%);
+  border-left: 6px solid #666;
+  border-right: 6px solid #666;
+}
+
+.word-border::before{
+    box-sizing: content-box;
+    position: absolute;
+    content: "";
+    top: 1%;
+    right: -5%;
+    bottom: 1%;
+    left: -5%;
+    border: none;
+    border-radius: 5% / 50%;
+    background: linear-gradient(#ddd 5%, #999 20%, #999 80%, #ddd 95%);
+    border-left: 5px solid #666;
+    border-right: 5px solid #666;
+}
+
+.word-screen{
+  border-radius: 30% / 10%;
+  position: relative;
+  background: radial-gradient(rgba(0, 0, 0, 0), black), repeating-linear-gradient(0deg, #000, #000 3px, rgb(0, 255, 0) 4px );
+  color: rgb(0, 255, 0);
+}
+
+.word-screen::before{
+  border-radius: 80% / 10%;
+  content: "";
+  position: absolute;
+  margin: 10;
+  background: radial-gradient(rgba(0, 0, 0, 0), black), repeating-linear-gradient(0deg, #000, #000 3px, rgb(0, 255, 0) 4px );
+  color: rgb(0, 255, 0);
+}
+
+.icon-box{
+  display: grid;
+  align-content: center;
+  justify-content: center;
 }
 
 .input-container{
@@ -26,24 +73,22 @@
 .red-input-container{
   display: grid;
   grid-template-columns: 82% 9% 9%;
+  grid-template-rows: 13% 29% 29% 29%;
+    border: 2px solid rgb(150, 0, 0);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 3px;
+  background-color: rgb(100, 0, 0);
 }
 .blue-input-container{
   display: grid;
   grid-template-columns: 9% 9% 82%;
-}
-
-
-.red-input-container > div{
-  background:#eee;
-}
-.red-input-container > div:nth-child(odd){
-  background:#AAA;
-}
-.blue-input-container > div{
-  background:#eee;
-}
-.blue-input-container > div:nth-child(odd){
-  background:#AAA;
+  grid-template-rows: 13% 29% 29% 29%;
+  border: 2px solid rgb(0,0,150);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 3px;
+  background-color: rgb(0, 0, 100);
 }
 
 .enigma-tabs{
@@ -52,15 +97,12 @@
 }
 
 .e-tab{
-  margin-left: auto;
-  margin-right: auto;
   width: 100%;
   text-align: center;
 }
 
 .hist-btn{
   width: 98%;
-  padding-bottom: 2px;
 
 }
 
