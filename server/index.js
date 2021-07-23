@@ -171,10 +171,12 @@ io.on("connection", (socket) => {
       });
       //Send all players updated user list.
       io.to(userName.roomCode).emit("userData", getUsersInRoom(userName.roomCode));
-      //Notify game object that the player has left.
-      games[userName.roomCode].disconnection(userName.name)
-      if(numUsersInRoom(userName.roomCode === 0)){
-        delete games[userName.roomCode]
+      //Notify game object that the player has left, if the game exists.
+      if(games[userName.roomCode]){
+        games[userName.roomCode].disconnection(userName.name)
+        if(numUsersInRoom(userName.roomCode === 0)){
+          delete games[userName.roomCode]
+        }
       }
     }
   }  
