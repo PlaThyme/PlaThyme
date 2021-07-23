@@ -51,13 +51,15 @@ describe("DrawTheWord", () => {
         joinRoom(player1);
         joinRoom(player2);
         joinRoom(player3);
+        testGame.newPlayer(player2.name);
+        testGame.newPlayer(player3.name);
         assert.equal("Player1",testGame.turnOrder[0]);
     });
 
-    it("Testing end of turn", (done) => {
-        clientSocket.on("update-game-player", (data) => {
+    it("Testing end of turn, turn advancing.", (done) => {
+        clientSocket2.on("update-game-player", (data) => {
             if(data.event === "your-turn"){
-                assert.equal("Player1",testGame.turnOrder[0]);
+                assert.equal("Player2",testGame.turnOrder[0]);
                 assert.isNotNull(data.words);
                 done();
             }
