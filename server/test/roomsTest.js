@@ -18,6 +18,7 @@ describe('Rooms', () => {
     //Join room tests
     it('joinRoom should return the user provided.', () => {
       assert.equal("Test Name", joinRoom(user1).name);
+      assert.equal("Test Name 2", joinRoom(user3).name);
     });
     it('joinRoom with duplicate name in same room should return error.', () => {
       assert.equal("dup", joinRoom(user2).error);
