@@ -9,7 +9,7 @@ class DrawTheWord extends Game {
   **/
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
-    this.turnOrder = players;
+    this.turnOrder = [players];
     this.minPlayers = minPlayers;
     this.selectedWord = null;
     this.selectedWordLength = 0;
