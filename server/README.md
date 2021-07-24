@@ -37,7 +37,7 @@ class MyGame extends Game {
   }
   //add my game methods here
 }
-module.exports = MyGame
+module.exports = MyGame;
 ```
 
 So as you can see above, the MyGame class is extending the Game class, and calls its contructor. The rest of the actual game creation is up to you. 
