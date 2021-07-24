@@ -86,7 +86,6 @@ class DrawTheWord extends Game {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
     }
-    console.log(this.turnOrder);
   }
 
   /**
