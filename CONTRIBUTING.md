@@ -58,7 +58,7 @@ To aid you, the Game class has functionality to simplify communications, and int
 
 __Detailed discription of `Game.js` methods is provided [here](https://github.com/PlaThyme/PlaThyme/tree/Dev/server/README.md).__
 
-
+#  Issues and Pull Requests
 # How to file a bug report?
 
 # How to suggest a new feature?
