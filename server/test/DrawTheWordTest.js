@@ -116,7 +116,8 @@ describe("DrawTheWord", () => {
 
     it("Chat message parsing awards points to correct answer", () =>{
       testGame.chatMessage({sender:"Player1", text:"Sample"});
-      assert.equal(300, testGame.scores["Player1"]);
+      assert.equal(200, testGame.scores["Player1"]);
+      assert.equal(300, testGame.scores["Player2"]);
     });
 
     it("Ensure time out is handled correctly, turn order advances", (done) => {
