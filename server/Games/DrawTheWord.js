@@ -50,7 +50,7 @@ class DrawTheWord extends Game {
     if (data.event === "time-out") {
       super.sendChat({
         sender: "Score Keeper",
-        text: "No one got it correct, time ran out!",
+        text: `No one got it correct, time ran out! The word was "${this.selectedWord}"`,
       });
       this.handleEndOfTurn();
     }
@@ -169,12 +169,14 @@ class DrawTheWord extends Game {
               pts = this.scoreValues["hardPoint"];
             }
             this.scores[messageData.sender] =
-              this.scores[messageData.sender] + pts;
+              this.scores[messageData.sender] + 200;
+            this.scores[this.turnOrder[0]] = this.scores[this.turnOrder[0]] + pts;
             super.sendChat({
               sender: "Score Keeper",
-              text: `${messageData.sender} wins! +${pts} points`,
+              text: `${messageData.sender} gets 200 points. ${this.turnOrder[0]} gets ${pts} points. The word was "${this.selectedWord}"`,
             });
             super.updatePlayerScore(messageData.sender, this.scores[messageData.sender]);
+            super.updatePlayerScore(this.turnOrder[0], this.scores[this.turnOrder[0]]);
             this.handleEndOfTurn();
           }
         }
