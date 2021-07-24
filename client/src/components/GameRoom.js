@@ -9,7 +9,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
   const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
-    socket.on('userData',(users) => {
+    socket.on("userData", (users) => {
       setAllUsers(users);
     })
   }, []);
@@ -35,7 +35,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
         </div>
       </nav>
       <div className="flex inline h-full">
-        <div className="grid justify-items-center bg-gray-800 flex-grow">
+        <div className="game-box bg-gray-800 flex-grow">
           {children}
         </div>
         <div className="flex bg-gray-900">

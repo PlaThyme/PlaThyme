@@ -2,9 +2,13 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
 import io from "socket.io-client";
 
+import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import DrawingBoard from './Games/DrawTheWord/DrawingBoard';
+import WaitRoom from './components/WaitRoom';
+
+import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
+import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
 
@@ -16,40 +20,41 @@ let buttonText;
 
 export default function App() {
 
+  // Enter the new game in this Dictionary.
+  const [listofGames, setListofGames] = useState([
+    { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
+    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
+    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
+    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+  ]);
+
+  // Game and player Info
   const [currentPlayer, setCurrentPlayer] = useState("none");
   const [gameInfo, setGameInfo] = useState({
     gameName: null,
+    minPlayers: null,
     roomCode: null,
+    gameId: null,
   });
-  const [isOpen, setIsOpen] = useState(false);
-  const [listofGames, setListofGames] = useState([
-    { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "game 1", minPlayers: 3 },
-    { gameId: 3, gameName: "game 2", minPlayers: 2 },
-    { gameId: 4, gameName: "game 4", minPlayers: 1 },
-  ]);
-  const [selectedGame, setSelectedGame] = useState({
-    gameId: 0,
-    gameName: "Game Name",
-    minPlayers: "Min Players",
-  });
+  const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    const openModal = () =>  setIsOpen(true);
+
+    // Socket Connection
     socket = io(SERVER);
     socket.on("connection", () => {});
 
+    // Socket events
     socket.on("gameData", (gameData) => {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
-      setGameInfo({ gameName: name, roomCode: gameData.code });
+      setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
-
-    function openModal() {
-      setIsOpen(true);
-    }
 
     socket.on("error", (error) => {
       if (error.error === "dup") {
@@ -67,31 +72,63 @@ export default function App() {
       error = null;
     });
 
-    return () => {
+    // Component DidUnmount, clear setup.
+    return () => {  
       socket.emit("disconnect");
       socket.off();
     }
   }, [SERVER]);
+
+  // broadcast message to all players
+  useEffect(() => {
+      socket.on("update-game", (data) => {
+        if(data.event === "start-game"){
+          setStartGame(true);
+        }
+      })
+  }, []);
 
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
     setCurrentPlayer(playerName);
     const id = selectedGame.gameId;
-    socket.emit("newRoom", { name: playerName, gameId: id });
+    socket.emit("newRoom", { 
+      name: playerName, 
+      gameId: id, 
+      minPlayers:  selectedGame.minPlayers
+    });
   }
 
   const handleJoinGame = (playerName, roomCode) => {
     setCurrentPlayer(playerName);
-    socket.emit("joinGame", { name: playerName, roomCode: roomCode });
+    socket.emit("joinGame", { 
+      name: playerName, 
+      roomCode: roomCode 
+    });
   }
 
-  const handleSelectedGame = (gameName) => {
-    setSelectedGame(gameName);
-  };
+  const renderGame = (gameId) => {
+    switch(gameId){
+      case 1:
+        if(startGame === true){
+          return <DrawTheWord socket={socket}/>;
+        }
+        return <WaitRoom/>;
+      case 2:
+        return <TestGame socket={socket}/>;
+      case 3:
+        break;
+      default:
+        break;
+    }
+    return <></>;
+  }
 
   return (
     <div className="App font-mono bg-thyme-darkest">
+
+      {/** Game Room of Selected Game */}
       {inGame ? (
         <>
           <GameRoom
@@ -100,21 +137,27 @@ export default function App() {
             leaveGame={setInGame}
             socket={socket}
           >
-            {/* { (selectedGame.gameName === "Draw The Word") ? 
-              <DrawingBoard />
-              : <></> 
-            } */}
-            <DrawingBoard currentWord={"SomeWord"}/>
+            { 
+              renderGame(gameInfo.gameId)
+            }
           </GameRoom>
         </>
-      ) : (
-        <SelectGame
-          handleSelectedGame={handleSelectedGame}
-          listofGames={listofGames}
-          createGame={handleCreateGame}
-          joinGame={handleJoinGame}
-        />
+      ) 
+      : 
+      // Landing page for user to select Game from dropdown 
+      (
+        <div className="App font-mono bg-thyme-darkest h-screen">
+          <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
+          <SelectGame
+            listofGames={listofGames}
+            createGame={handleCreateGame}
+            joinGame={handleJoinGame}
+          />
+          <Carousel />
+        </div>
       )}
+
+      {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -126,7 +169,7 @@ export default function App() {
               <Dialog.Overlay className="fixed inset-0" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
+            {/** This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
