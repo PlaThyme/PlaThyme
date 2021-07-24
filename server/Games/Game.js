@@ -4,7 +4,7 @@ const {getUserByNameAndCode, updateScore, getUsersInRoom} = require("../rooms.js
 class Game{
     constructor (roomCode, socket, io, players) {
         this.roomCode = roomCode;  // String, room code is kept here.
-        this.players = players; //Array of players in this game.
+        this.players = [players]; //Array of players in this game.
         this.socket = socket;
         this.io = io;
     }
@@ -26,7 +26,7 @@ class Game{
     //Pass the player name and their current score. This will update the player list.
     updatePlayerScore(playerName, score){
         updateScore(this.roomCode, playerName, score);
-        this.io.to(this.roomCode).emit("userData", getUsersInRoom(roomCode));
+        this.io.to(this.roomCode).emit("userData", getUsersInRoom(this.roomCode));
     }
 
     sendChat({sender, text}){

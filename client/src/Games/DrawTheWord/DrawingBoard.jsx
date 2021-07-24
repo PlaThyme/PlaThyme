@@ -14,7 +14,6 @@ import "./DrawingBoardStyles.css";
  * @returns This function will return Timer, Guessing Word, White Board and colour pallet for 'Draw the Word' Game.
  */
 export default function DrawingBoard({ socket }) {
-  const [timeoutValue, setTimeoutValue] = useState(undefined);
   const [myTurn, setMyTurn] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [blankWord, setBlankWord] = useState("");
@@ -118,7 +117,7 @@ export default function DrawingBoard({ socket }) {
       }
     });
   }, []);
-
+  
   // Logic for drawing on canvas.
   useEffect(() => {
     var canvas = document.querySelector("#board");
@@ -128,7 +127,8 @@ export default function DrawingBoard({ socket }) {
     var mouse = { x: 0, y: 0 };
     var last_mouse = { x: 0, y: 0 };
     var strokeColor = "#00000000";
-
+    let timeoutValue;
+    
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
@@ -147,15 +147,13 @@ export default function DrawingBoard({ socket }) {
         if (timeoutValue !== undefined) {
           clearTimeout(timeoutValue);
         }
-        setTimeoutValue(
-          setTimeout(() => {
-            var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
-            socket.emit("game-data", {
-              event: "canvas-data",
-              image: base64ImageData,
-            });
-          }, 1000)
-        );
+        timeoutValue = setTimeout(() => {
+          var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
+          socket.emit("game-data", {
+            event: "canvas-data",
+            image: base64ImageData,
+          });
+        }, 200);
       }
     };
 
