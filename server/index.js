@@ -20,7 +20,8 @@ const {
 const games = {};
 
 //Get sockets running
-const io = require("socket.io")(http);
+const io = require("socket.io")(http, {cors:{origin:'*'}});
+app.use(cors());
 
 //Handle all events related to a socket connection.
 io.on("connection", (socket) => {

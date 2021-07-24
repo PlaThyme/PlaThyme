@@ -1,0 +1,41 @@
+{
+  "name": "PlaThyme",
+  "version": "1.0.0",
+  "description": "Game Hosting Site",
+  "main": "./server/index.js",
+  "scripts": {
+    "start": "node ./server/index",
+    "build": "npm install && cd ./client && npm install && npm run build",
+    "qbuild": "cd ./client && npm run build",
+    "buildnrun": "cd ./client && npm run build && cd ../server && npm start",
+    "test": "mocha || true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlaThyme/PlaThyme.git"
+  },
+  "keywords": [
+    "games",
+    "enigma",
+    "react"
+  ],
+  "author": "Sree Vandana Nadipalli, Michael Fulton, Zachariah Santangelo",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PlaThyme/PlaThyme/issues"
+  },
+  "homepage": "https://github.com/PlaThyme/PlaThyme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.9",
+    "socket.io": "^4.1.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.0.2",
+    "socket.io-client": "^4.1.3"
+  }
+}
