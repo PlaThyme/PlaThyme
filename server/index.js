@@ -32,9 +32,7 @@ io.on("connection", (socket) => {
   socket.on("messageSend", (message) => handleMessageSend(message));
   socket.on("leaveGame", () => handleDisconnect());
   socket.on("disconnect", () => handleDisconnect());
-  socket.on("joinGame", ({ name, roomCode }) =>
-    handleJoinGame({ name, roomCode })
-  );
+  socket.on("joinGame", ({ name, roomCode }) => handleJoinGame({ name, roomCode }));
   socket.on("game-data", (data) => {
     try{
 
@@ -84,13 +82,7 @@ io.on("connection", (socket) => {
     //Create a new game object for the selected game, and call its start game function.
     switch (data.gameId) {
       case 1:
-        games[roomCode] = new DrawTheWord(
-          roomCode,
-          socket,
-          io,
-          [data.name],
-          data.minPlayers
-        );
+        games[roomCode] = new DrawTheWord(roomCode, socket, io, data.name, data.minPlayers );
         /**
          * Notify the new game object that its been started.
          * "DrawTheWord" game has a "waitingRoom". (the game will not start till all the minimum players join the `GameRoom`),
@@ -102,14 +94,14 @@ io.on("connection", (socket) => {
         }
         break;
       case 2:
-        games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
+        games[roomCode] = new TestGame(roomCode, socket, io, data.name);
         break;
       default:
         break;
     }
 
     if (data.gameId === 2) {
-      games[roomCode] = new TestGame(roomCode, socket, io, [data.name]);
+      games[roomCode] = new TestGame(roomCode, socket, io, data.name);
     }
 
     //Send all players updated user list.
@@ -157,10 +149,7 @@ io.on("connection", (socket) => {
         // Test: enter wrong room code; got error. (add checks)
         games[roomCode].newPlayer(name);
 
-        if (
-          games[roomCode].players.length >= games[roomCode].minPlayers &&
-          gid === 1
-        ) {
+        if ( games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1) {
           games[roomCode].startGame();
         }
 

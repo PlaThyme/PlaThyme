@@ -81,10 +81,12 @@ class DrawTheWord extends Game {
    * @param {String} playerName - name of the player
    */
   newPlayer(playerName) {
+    super.newPlayer(playerName);
     if (playerName) {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
     }
+    console.log(this.turnOrder);
   }
 
   /**
@@ -142,10 +144,6 @@ class DrawTheWord extends Game {
     this.turnStarted = false;
     this.advanceTurnOrder();
     super.sendGameData({ event: "new-turn" });
-    // super.sendChat({
-    //   sender: "GameKeeper",
-    //   text: `${this.turnOrder[0]}'s turn.`,
-    // });
     let words = this.generateWords(); //three words plz.
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
