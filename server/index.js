@@ -70,8 +70,8 @@ io.on("connection", (socket) => {
       id: socket.id,
       name: data.name,
       gameId: data.gameId,
-      minPlayers: data.minPlayers,
       roomCode: roomCode,
+      score: 0,
     });
 
     //Transmit the game info to the client, and join them to the socket channel for the roomCode.
@@ -125,6 +125,7 @@ io.on("connection", (socket) => {
         gameId: gid,
         name: name,
         roomCode: roomCode,
+        score: 0,
       });
 
       //Check for duplicate user.
