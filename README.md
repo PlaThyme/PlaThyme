@@ -16,6 +16,7 @@ Remote working made many of us start playing online games with our collegues or 
 * [Heroku](https://www.heroku.com/) 
 * [VS Code](https://code.visualstudio.com/)
 * [TailwindCSS](https://tailwindcss.com/docs/guides/create-react-app)
+* [Mocha](https://mochajs.org/)
 
 # Programming Languages
 * JavaScript
@@ -43,6 +44,13 @@ We are planning to do this in `2 steps`.
 Description of each game can be found [here](https://github.com/PlaThyme/PlaThyme/tree/main/client/README.md)
 
 # How to set up your environment and run tests
+
+## Set-Up Environment
+
+## Testing Strategy
+Unit tests have been created for the back end code. More should continue to be made as code is created. Ideally, front end unit tests should be created too, but due to time constraints haven't been made yet. Unit tests for any game back end is required due to the potential for crashing the server. We're using Mocha for the unit testing framework, and Chai for the assert library.
+
+In addition to unit tests, all code is required to be reviewed by someone else before it may be pulled into the dev branch. Then after general functionality testing has been complete and the code is deemed acceptable it may be then pulled to main.
 
 # How to Contribute
  To integrate your Game into this platform. You need to add `frontend` part of your code to `client` folder and `backend` part of your code to `server` folder. 
