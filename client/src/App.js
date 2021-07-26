@@ -26,7 +26,7 @@ export default function App() {
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "TestGame", minPlayers: 3 },
     { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+    { gameId: 4, gameName: "Card game", minPlayers: 2 },
   ]);
 
   // Game and player Info
