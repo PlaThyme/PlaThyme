@@ -1,12 +1,13 @@
 import React from 'react'; 
 
-import demo1 from "../images/demo.gif";
+import demo1 from "../images/drawing.gif";
+import demo2 from "../images/plathyme.png"
 
 import "./Carousel.css";
 
 const images = [
   demo1,
-  "https://placekitten.com/102/100",
+  demo2,
   "https://placekitten.com/103/100",
 ];
 
@@ -62,12 +63,12 @@ const Carousel = () => {
   );
 
   return (
-    <div className="flex justify-center w-screen  items-center mt-8 ">
+    <div className="flex justify-center items-center mt-8 ">
       <div>{sliderControl(true)}</div>
-      <div className="relative ">
+      <div className="relative max-w-screen-sm">
         <div className="carousel border-8 border-thyme text-center ">
           {images.map((img, i) => (
-            <div className="w-full  flex-shrink-0" key={img} ref={imgrefs[i]}>
+            <div className="w-full  flex-shrink-0 max-h-80" key={img} ref={imgrefs[i]}>
               <img
                 src={img}
                 alt=""
