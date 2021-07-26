@@ -15,31 +15,31 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [blueTwo, setBlueTwo] = useState("0");
   const [blueThree, setBlueThree] = useState("0");
   const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
-  const [isOpen, setIsOpen] = useState(true); ///////////////
-  const [myTeam, setMyTeam] = useState(""); /////////////
+  const [isOpen, setIsOpen] = useState(false); ///////////////
+  const [myTeam, setMyTeam] = useState("red"); /////////////
   const [blueHints, setBlueHints] = useState({});
   const [redHints, setRedHints] = useState({});
   const [currentHints, setCurrentHints] = useState([]);
 
-  useEffect(() => {
-    socket.on("update-game", (data) => {
-      if (data.event === "team-info") {
-        console.log(data);
-        setMyTeam(data.team);
-        setIsOpen(false);
-      }
-      if (data.event === "update-hints") {
-        setBlueHints(data.blueHints);
-        setRedHints(data.redHints);
-      }
-      if (data.event === "make-guess") {
-        setCurrentHints(data.hints);
-      }
-      if (data.event === "updateActuals"){
-        setActualNums(data.nums)
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on("update-game", (data) => {
+  //     if (data.event === "team-info") {
+  //       console.log(data);
+  //       setMyTeam(data.team);
+  //       setIsOpen(false);
+  //     }
+  //     if (data.event === "update-hints") {
+  //       setBlueHints(data.blueHints);
+  //       setRedHints(data.redHints);
+  //     }
+  //     if (data.event === "make-guess") {
+  //       setCurrentHints(data.hints);
+  //     }
+  //     if (data.event === "updateActuals") {
+  //       setActualNums(data.nums);
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (myTeam === "") {
@@ -236,7 +236,35 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           />
         </div>
       </div>
-      <div className="status-box">status box</div>
+      <div className="status-box">
+                  <div className="num-border">
+            <h1 className="word-screen text-center text-4xl bg-green-900">
+              E
+            </h1>
+          </div>
+        <div className="code-box bg-gray-900 rounded-2xl border-2 border-gray-100">
+          <div className="num-border">
+            <h1 className="word-screen text-center text-4xl bg-green-900">
+              E
+            </h1>
+          </div>
+          <div className="num-border">
+            <h1 className="word-screen text-center text-4xl bg-green-900">
+              R
+            </h1>
+          </div>
+          <div className="num-border">
+            <h1 className="word-screen text-center text-4xl bg-green-900">
+              R
+            </h1>
+          </div>
+          <div className="num-border">
+            <h1 className="word-screen text-center text-4xl bg-green-900">
+              !
+            </h1>
+          </div>
+        </div>
+      </div>
       <RadioGroup
         className="enigma-tabs"
         value={selected}

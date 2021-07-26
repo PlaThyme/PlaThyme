@@ -13,9 +13,9 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
   
   //This is used to recieve chat messages.
   useEffect(() => {
-    socket.on("message", (message) => {
-      setMessages((messages) => [...messages, message]);
-    });
+    // socket.on("message", (message) => {
+    //   setMessages((messages) => [...messages, message]);
+    // });
   }, []);
 
   //The following 3 functions are usef to create and handle the confirmation popup for leaving.

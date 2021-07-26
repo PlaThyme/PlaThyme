@@ -9,9 +9,9 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
   const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
-    socket.on("userData", (users) => {
-      setAllUsers(users);
-    })
+    // socket.on("userData", (users) => {
+    //   setAllUsers(users);
+    // })
   }, []);
   
   return (
