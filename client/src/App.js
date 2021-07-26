@@ -12,6 +12,7 @@ import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
+import { TruckIcon } from '@heroicons/react/solid';
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -92,19 +93,21 @@ export default function App() {
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
-    setCurrentPlayer(playerName);
+    let truncName = playerName.slice(0,14);
+    setCurrentPlayer(truncName);
     const id = selectedGame.gameId;
     socket.emit("newRoom", { 
-      name: playerName, 
+      name: truncName, 
       gameId: id, 
       minPlayers:  selectedGame.minPlayers
     });
   }
 
   const handleJoinGame = (playerName, roomCode) => {
-    setCurrentPlayer(playerName);
+    let truncName = playerName.slice(0,14);
+    setCurrentPlayer(truncName);
     socket.emit("joinGame", { 
-      name: playerName, 
+      name: truncName, 
       roomCode: roomCode 
     });
   }
