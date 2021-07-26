@@ -4,7 +4,7 @@ This `README` provides information about [`All methods in Game.js class`](#-how-
 
 If your game is multiplayer, or requires a server to make decisions, keep score, relay messages between players, etc, you’ll need to build out a back end. For ease of game creation, we’ve made a class that your game can extend which you can use to encapsulate your game’s needs, as well as keeping our own server code clean. So I’ll cover all the changes each game must put in, and then I’ll cover the functionality of the __Game__ class.
 
-# __How to use `Game.js`__
+# How to use `Game.js`
 
 The Game class has a number of built in functions for your game to use, as well as a number of methods which the server will call when specific events occur that could be useful in your game. 
 
@@ -17,7 +17,7 @@ _Default properties of a game are:_
 _*The last two, the `socket`, and `io` are used for communications between the server and the client.*_ 
 You don't need to mess with those last two if you don't want to. 
 
-### The `functionailty` of each method is included below. 
+## The `functionailty` of each method is included below. 
 
 ### 1. __startGame()__ 
 

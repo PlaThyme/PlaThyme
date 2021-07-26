@@ -1,7 +1,7 @@
-# __How to Contribute to PlaThyme__
+# How to Contribute to PlaThyme
  To integrate your Game into this platform. You need to add `frontend` part of your code to `client` folder and `backend` part of your code to `server` folder.  
 
-## __Build Your Game's Front End__
+## Build Your Game's Front End
 Your game will certainly will have a frontend part to it. 
 __To integrate new game in this project. Follow these steps.__
 
@@ -14,7 +14,7 @@ __To integrate new game in this project. Follow these steps.__
 4. Call your Game component inside `renderGame` switch case, present in `App.js`.
 
 
-## __Build Your Game’s Back End__
+## Build Your Game’s Back End
 If your game is multiplayer, or requires a server to make decisions, keep score, relay messages between players, etc, you’ll need to build out a back end. For ease of game creation, we’ve made a class that your game can extend which you can use to encapsulate your game’s needs, as well as keeping our own server code clean. So I’ll cover all the changes each game must put in, and then I’ll cover the functionality of the __Game__ class.
 
 __Below are the things required to be included in your game's back end.__
