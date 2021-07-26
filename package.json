@@ -2,12 +2,12 @@
   "name": "PlaThyme",
   "version": "1.0.0",
   "description": "Game Hosting Site",
-  "main": "index.js",
+  "main": "./server/index.js",
   "scripts": {
-    "start": "node ./index",
-    "build": "npm install && cd ../client && npm install && npm run build",
-    "qbuild": "cd ../client && npm run build",
-    "buildnrun": "cd ../client && npm run build && cd ../server && npm start",
+    "start": "node ./server/index",
+    "build": "npm install && cd ./client && npm install && npm run build",
+    "qbuild": "cd ./client && npm run build",
+    "buildnrun": "cd ./client && npm run build && cd ../server && npm start",
     "test": "mocha || true"
   },
   "repository": {

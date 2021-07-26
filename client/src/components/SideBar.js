@@ -5,12 +5,18 @@ import { Dialog, RadioGroup, Transition} from "@headlessui/react";
 import Chat from "./Chat";
 
 const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
-
+  
   const [selected, setSelected] = useState("chatBtn");
   const [showPlayers, setPlayersChat] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-
+  
+  //This is used to recieve chat messages.
+  useEffect(() => {
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+  }, []);
 
   //The following 3 functions are usef to create and handle the confirmation popup for leaving.
   const handleLeaveGame = () => {
@@ -26,12 +32,6 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
     setIsOpen(true);
   }
 
-  //This is used to recieve chat messages.
-  useEffect(() => {
-    socket.on("message", (message) => {
-      setMessages((messages) => [...messages, message]);
-    });
-  }, []);
 
   return (
     <div className="flex-col flex w-full">

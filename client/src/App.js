@@ -6,6 +6,7 @@ import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
 import WaitRoom from './components/WaitRoom';
+import logo from './images/plathyme.png';
 
 import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
@@ -148,7 +149,7 @@ export default function App() {
       // Landing page for user to select Game from dropdown 
       (
         <div className="App font-mono bg-thyme-darkest h-screen">
-          <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
+          <img src={logo} alt="PlaThyme" className="w-80 block m-auto"></img>
           <SelectGame
             listofGames={listofGames}
             createGame={handleCreateGame}

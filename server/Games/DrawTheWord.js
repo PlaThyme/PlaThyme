@@ -9,7 +9,7 @@ class DrawTheWord extends Game {
   **/
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
-    this.turnOrder = players;
+    this.turnOrder = [players];
     this.minPlayers = minPlayers;
     this.selectedWord = null;
     this.selectedWordLength = 0;
@@ -50,7 +50,7 @@ class DrawTheWord extends Game {
     if (data.event === "time-out") {
       super.sendChat({
         sender: "Score Keeper",
-        text: "No one got it correct, time ran out!",
+        text: `No one got it correct, time ran out! The word was "${this.selectedWord}"`,
       });
       this.handleEndOfTurn();
     }
@@ -81,6 +81,7 @@ class DrawTheWord extends Game {
    * @param {String} playerName - name of the player
    */
   newPlayer(playerName) {
+    super.newPlayer(playerName);
     if (playerName) {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
@@ -142,10 +143,6 @@ class DrawTheWord extends Game {
     this.turnStarted = false;
     this.advanceTurnOrder();
     super.sendGameData({ event: "new-turn" });
-    // super.sendChat({
-    //   sender: "GameKeeper",
-    //   text: `${this.turnOrder[0]}'s turn.`,
-    // });
     let words = this.generateWords(); //three words plz.
     const theirTurn = { event: "your-turn", words };
     super.sendDataToPlayer(this.turnOrder[0], theirTurn);
@@ -159,30 +156,29 @@ class DrawTheWord extends Game {
   chatMessage(messageData) {
     if (messageData.sender !== this.turnOrder[0]) {
       if (this.turnStarted) {
-        if (this.selectedWord !== null) {
-          const splitWords = messageData.text.split(" ");
-          splitWords.forEach((word) => {
-            if (word.toLowerCase() === this.selectedWord.toLowerCase()) {
-              let pts;
-              if (this.selectedWordDifficulty === "easy") {
-                pts = this.scoreValues["easyPoint"];
-              }
-              if (this.selectedWordDifficulty === "medium") {
-                pts = this.scoreValues["mediumPoint"];
-              }
-              if (this.selectedWordDifficulty === "hard") {
-                pts = this.scoreValues["hardPoint"];
-              }
-              this.scores[messageData.sender] =
-                this.scores[messageData.sender] + pts;
-              super.sendChat({
-                sender: "Score Keeper",
-                text: `${messageData.sender} wins! +${pts} points`,
-              });
-              super.updatePlayerScore(messageData.sender, this.scores[messageData.sender]);
-              this.handleEndOfTurn();
+        if (this.selectedWord !== undefined) {
+          if(messageData.text.toLowerCase() === this.selectedWord.toLowerCase()){
+            let pts;
+            if (this.selectedWordDifficulty === "easy") {
+              pts = this.scoreValues["easyPoint"];
             }
-          });
+            if (this.selectedWordDifficulty === "medium") {
+              pts = this.scoreValues["mediumPoint"];
+            }
+            if (this.selectedWordDifficulty === "hard") {
+              pts = this.scoreValues["hardPoint"];
+            }
+            this.scores[messageData.sender] =
+              this.scores[messageData.sender] + 200;
+            this.scores[this.turnOrder[0]] = this.scores[this.turnOrder[0]] + pts;
+            super.sendChat({
+              sender: "Score Keeper",
+              text: `${messageData.sender} gets 200 points. ${this.turnOrder[0]} gets ${pts} points. The word was "${this.selectedWord}"`,
+            });
+            super.updatePlayerScore(messageData.sender, this.scores[messageData.sender]);
+            super.updatePlayerScore(this.turnOrder[0], this.scores[this.turnOrder[0]]);
+            this.handleEndOfTurn();
+          }
         }
       }
     }
@@ -204,9 +200,9 @@ class DrawTheWord extends Game {
       mediumwords[randint2],
       hardwords[randint3],
     ];
-    easywords.splice(randint);
-    mediumwords.splice(randint2);
-    hardwords.splice(randint3);
+    easywords.splice(randint, 1);
+    mediumwords.splice(randint2, 1);
+    hardwords.splice(randint3, 1);
     return randomWords;
   }
 }
