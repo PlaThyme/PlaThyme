@@ -12,51 +12,17 @@ class EnigmaBreaker extends Game {
     this.blueNum = 0;
     this.redSel = ["0", "0", "0"];
     this.blueSel = ["0", "0", "0"];
+    this.statusMessage = "Waiting for more players...";
+    this.started = false;
   }
 
   recieveData(data) {
     if (data.event === "join-team") {
-      if (data.team === "red") {
-        this.teams[data.playerName] = "red";
-        this.redNum += 1;
-        this.redTurnOrder.push(data.playerName);
-      }
-      if (data.team === "blue") {
-        this.teams[data.playerName] = "blue";
-        this.blueNum += 1;
-        this.blueTurnOrder.push(data.playerName);
-      }
-      if (data.team === "any") {
-        if (this.redNum > this.blueNum) {
-          this.teams[data.playerName] = "blue";
-          this.blueNum += 1;
-          this.blueTurnOrder.push(data.playerName);
-        } else {
-          this.teams[data.playerName] = "red";
-          this.redNum += 1;
-          this.redTurnOrder.push(data.playerName);
-        }
-      }
-      if (this.teams[data.playerName] === "red") {
-        super.sendDataToPlayer(data.playerName, {
-          event: "team-info",
-          team: "red",
-          selections: this.redSel,
-        });
-      }
-      if (this.teams[data.playerName] === "blue") {
-        super.sendDataToPlayer(data.playerName, {
-          event: "team-info",
-          team: "blue",
-          selections: this.blueSel,
-        });
-      }
+      this.handleJoinTeam(data);
     }
-
     if (data.event === "team-chat") {
       this.handleTeamChat(data);
     }
-
     if (data.event === "submit-hint") {
     }
     if (data.event === "red-selections") {
@@ -66,20 +32,20 @@ class EnigmaBreaker extends Game {
       this.handleBlueSelections(data);
     }
   }
-  handleTeamChat(data){
-    if(data.team === "red"){
+  handleTeamChat(data) {
+    if (data.team === "red") {
       for (let i = 0; i < this.redTurnOrder.length; i++) {
         super.sendDataToPlayer(this.redTurnOrder[i], {
           event: "team-chat",
-          message: data.message
+          message: data.message,
         });
       }
     }
-    if(data.team === "blue"){
+    if (data.team === "blue") {
       for (let i = 0; i < this.blueTurnOrder.length; i++) {
         super.sendDataToPlayer(this.blueTurnOrder[i], {
           event: "team-chat",
-          message: data.message
+          message: data.message,
         });
       }
     }
@@ -109,5 +75,45 @@ class EnigmaBreaker extends Game {
     }
   }
   handleEndOfTurn() {}
+  handleStartTurn() {}
+  handleJoinTeam(data) {
+    if (data.team === "red") {
+      this.teams[data.playerName] = "red";
+      this.redNum += 1;
+      this.redTurnOrder.push(data.playerName);
+    }
+    if (data.team === "blue") {
+      this.teams[data.playerName] = "blue";
+      this.blueNum += 1;
+      this.blueTurnOrder.push(data.playerName);
+    }
+    if (data.team === "any") {
+      if (this.redNum > this.blueNum) {
+        this.teams[data.playerName] = "blue";
+        this.blueNum += 1;
+        this.blueTurnOrder.push(data.playerName);
+      } else {
+        this.teams[data.playerName] = "red";
+        this.redNum += 1;
+        this.redTurnOrder.push(data.playerName);
+      }
+    }
+    if (this.teams[data.playerName] === "red") {
+      super.sendDataToPlayer(data.playerName, {
+        event: "team-info",
+        team: "red",
+        selections: this.redSel,
+        status: this.statusMessage,
+      });
+    }
+    if (this.teams[data.playerName] === "blue") {
+      super.sendDataToPlayer(data.playerName, {
+        event: "team-info",
+        team: "blue",
+        selections: this.blueSel,
+        status: this.statusMessage,
+      });
+    }
+  }
 }
 module.exports = EnigmaBreaker;
