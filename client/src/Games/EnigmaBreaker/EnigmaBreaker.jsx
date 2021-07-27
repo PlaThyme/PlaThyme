@@ -23,7 +23,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     "Buffering...",
     "Buffering...",
   ]);
-  const [coder, setCoder] = useState(true);
+  const [coder, setCoder] = useState(false);///////////////
   const [statusMessage, setStatusMessage] = useState("Place holder");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
@@ -33,19 +33,14 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [blueThree, setBlueThree] = useState("0");
   const [teamChat, setTeamChat] = useState("Sample Team Chat");
   const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
-  const [isOpen, setIsOpen] = useState(false); ///////////////
-  const [myTeam, setMyTeam] = useState("blue"); /////////////
+  const [isOpen, setIsOpen] = useState(true); ///////////////
+  const [myTeam, setMyTeam] = useState(""); /////////////
   const [blueHints, setBlueHints] = useState({});
   const [redHints, setRedHints] = useState({});
   const [currentHints, setCurrentHints] = useState([]);
 
   useEffect(() => {
     socket.on("update-game", (data) => {
-      if (data.event === "team-info") {
-        console.log(data);
-        setMyTeam(data.team);
-        setIsOpen(false);
-      }
       if (data.event === "update-hints") {
         setBlueHints(data.blueHints);
         setRedHints(data.redHints);
@@ -59,6 +54,20 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       
     });
     socket.on("update-game-player",(data) => {
+      if (data.event === "team-info") {
+        setMyTeam(data.team);
+        setIsOpen(false);
+        if(data.team === "red"){
+          setRedOne(data.selections[0]);
+          setRedTwo(data.selections[1]);
+          setRedThree(data.selections[2]);
+        }
+        if(data.team === "blue"){
+          setBlueOne(data.selections[0]);
+          setBlueTwo(data.selections[1]);
+          setBlueThree(data.selections[2]);
+        }
+      }
       if (data.event === "selections"){
         if(myTeam === "red"){
           setRedOne(data.selections[0]);
@@ -72,7 +81,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         }
       }
     });
-  }, []);
+  }, [redOne, blueOne]);
 
 
   useEffect(() => {
@@ -128,40 +137,42 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   const updateRedOne = (num) => {
     setRedOne(num);
-    updateSelections();
+    updateSelections(0,num);
   };
   const updateRedTwo = (num) => {
     setRedTwo(num);
-    updateSelections();
+    updateSelections(1,num);
   };
   const updateRedThree = (num) => {
     setRedThree(num);
-    updateSelections();
+    updateSelections(2,num);
   };
   const updateBlueOne = (num) => {
     setBlueOne(num);
-    updateSelections();
+    updateSelections(0,num);
   };
   const updateBlueTwo = (num) => {
     setBlueTwo(num);
-    updateSelections();
+    updateSelections(1,num);
   };
   const updateBlueThree = (num) => {
     setBlueThree(num);
-    updateSelections();
+    updateSelections(2,num);
   };
   
-  const updateSelections = () => {
+  const updateSelections = (index, num) => {
     if(myTeam === "red"){
       socket.emit("game-data", {
         event:"red-selections",
-        selections:[redOne, redTwo, redThree]
+        index: index,
+        num: num
       });
     }
     if(myTeam === "blue"){
       socket.emit("game-data", {
         event:"blue-selections",
-        selections:[blueOne, blueTwo, blueThree]
+        index: index,
+        num: num
       });
     }
   };
