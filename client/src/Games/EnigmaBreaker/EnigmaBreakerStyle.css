@@ -16,42 +16,23 @@
 }
 
 .word-border{
-  border-radius: 90% / 15%;
-  position: relative;
-  color: white;
-  margin-left: 12px;
-  margin-right: 12px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  background: linear-gradient(90deg, #ddd 15%, #999 30%, #999 70%, #ddd 85%);
-  border-left: 6px solid #666;
-  border-right: 6px solid #666;
-}
-
-.word-border::before{
-    box-sizing: content-box;
-    position: absolute;
-    content: "";
-    top: 1%;
-    right: -5%;
-    bottom: 1%;
-    left: -5%;
-    border: none;
-    border-radius: 5% / 50%;
-    background: linear-gradient(#ddd 5%, #999 20%, #999 80%, #ddd 95%);
-    border-left: 5px solid #666;
-    border-right: 5px solid #666;
+  border:9px solid transparent;
+  border-image: url('./border.png') round;
+  border-image-slice: 100 fill;
+  border-image-repeat: stretch;
+  border-radius: 10% / 10%;
+  background-color: #000;
+  margin-left:3px;
+  margin-right:3px;
 }
 
 .word-screen{
-  border-radius: 30% / 10%;
   position: relative;
   background: radial-gradient(rgba(0, 0, 0, 0), black), repeating-linear-gradient(0deg, #000, #000 3px, rgb(0, 255, 0) 4px );
   color: rgb(0, 255, 0);
 }
 
 .word-screen::before{
-  border-radius: 80% / 10%;
   content: "";
   position: absolute;
   margin: 10;
@@ -118,7 +99,7 @@
 
 .status-box{
   display: grid;
-  grid-template-columns: 20% 20% 40% 20%;
+  grid-template-columns: 15% 25% 10% 35% 15%;
   background-color: rgb(53, 53, 53);
   border-radius: 10px;
   margin-bottom: 4px;
@@ -127,7 +108,12 @@
 .code-box{
   display: grid;
   align-content: center;
-  grid-template-columns: 25% 25% 25% 25%;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
+  border:10px solid transparent;
+  border-image: url('./screwborder.png') round;
+  border-image-slice: 100 fill;
+  border-image-repeat: stretch;
 }
 
 
@@ -157,4 +143,35 @@
     background: linear-gradient(#ddd 5%, #999 20%, #999 80%, #ddd 95%);
     border-left: 2px solid #666;
     border-right: 2px solid #666;
+}
+
+.confirm-button{
+  text-align: center;
+  width: 100%;
+  color: rgb(0,255,0);
+  background-color: rgb(0, 87, 0);
+  border-radius: 5px;
+  border: 2px;
+  border: solid;
+  border-color: rgb(0, 167, 0);
+}
+
+.confirm-button:hover{
+  color: rgb(0, 53, 0);
+  background-color: rgb(0, 255, 0);
+  border-color: rgb(0, 58, 0);
+}
+
+.confirm-box{
+  border:10px solid transparent;
+  border-image: url('./screwborder.png') round;
+  border-image-slice: 100 fill;
+  border-image-repeat: stretch;
+}
+
+.team-chat{
+  background-color: rgba(0, 90, 0, 0.4);
+  border-color: rgb(0,200,0);
+  border: 1px solid;
+  border-radius: 4px;
 }

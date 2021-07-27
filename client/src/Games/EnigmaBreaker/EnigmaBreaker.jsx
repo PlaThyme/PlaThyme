@@ -7,39 +7,73 @@ import { RadioGroup } from "@headlessui/react";
 import NumberSelector from "./NumberSelector";
 
 const EnigmaBreaker = ({ socket, playerName }) => {
+  const miss = "☠️";
+  const hit = "💾";
+  const [blueScore, setBlueScore] = useState([0,2])
+  const [redScore, setRedScore] = useState([2,2])
+  const [words, setWords] = useState(["first", "second", "third", "fourth"]);
   const [selected, setSelected] = useState("redHistory");
+  const [blueHint, setBlueHint] = useState([
+    "Buffering...",
+    "Buffering...",
+    "Buffering...",
+  ]);
+  const [redHint, setRedHint] = useState([
+    "Buffering...",
+    "Buffering...",
+    "Buffering...",
+  ]);
+  const [coder, setCoder] = useState(true);
+  const [statusMessage, setStatusMessage] = useState("Place holder");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
   const [redThree, setRedThree] = useState("0");
   const [blueOne, setBlueOne] = useState("0");
   const [blueTwo, setBlueTwo] = useState("0");
   const [blueThree, setBlueThree] = useState("0");
+  const [teamChat, setTeamChat] = useState("Sample Team Chat");
   const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
   const [isOpen, setIsOpen] = useState(false); ///////////////
-  const [myTeam, setMyTeam] = useState("red"); /////////////
+  const [myTeam, setMyTeam] = useState("blue"); /////////////
   const [blueHints, setBlueHints] = useState({});
   const [redHints, setRedHints] = useState({});
   const [currentHints, setCurrentHints] = useState([]);
 
-  // useEffect(() => {
-  //   socket.on("update-game", (data) => {
-  //     if (data.event === "team-info") {
-  //       console.log(data);
-  //       setMyTeam(data.team);
-  //       setIsOpen(false);
-  //     }
-  //     if (data.event === "update-hints") {
-  //       setBlueHints(data.blueHints);
-  //       setRedHints(data.redHints);
-  //     }
-  //     if (data.event === "make-guess") {
-  //       setCurrentHints(data.hints);
-  //     }
-  //     if (data.event === "updateActuals") {
-  //       setActualNums(data.nums);
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("update-game", (data) => {
+      if (data.event === "team-info") {
+        console.log(data);
+        setMyTeam(data.team);
+        setIsOpen(false);
+      }
+      if (data.event === "update-hints") {
+        setBlueHints(data.blueHints);
+        setRedHints(data.redHints);
+      }
+      if (data.event === "make-guess") {
+        setCurrentHints(data.hints);
+      }
+      if (data.event === "updateActuals") {
+        setActualNums(data.nums);
+      }
+      
+    });
+    socket.on("update-game-player",(data) => {
+      if (data.event === "selections"){
+        if(myTeam === "red"){
+          setRedOne(data.selections[0]);
+          setRedTwo(data.selections[1]);
+          setRedThree(data.selections[2]);
+        }
+        if(myTeam === "blue"){
+          setBlueOne(data.selections[0]);
+          setBlueTwo(data.selections[1]);
+          setBlueThree(data.selections[2]);
+        }
+      }
+    });
+  }, []);
+
 
   useEffect(() => {
     if (myTeam === "") {
@@ -81,27 +115,82 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     });
   };
 
+  const displayScore = (score) =>{
+    let text = "";
+    for(let i = 0; i < score[0]; i++){
+      text += hit;
+    }
+    for(let i = 0; i < score[1]; i++){
+      text += miss;
+    }
+    return text;
+  };
+
+  const updateRedOne = (num) => {
+    setRedOne(num);
+    updateSelections();
+  };
+  const updateRedTwo = (num) => {
+    setRedTwo(num);
+    updateSelections();
+  };
+  const updateRedThree = (num) => {
+    setRedThree(num);
+    updateSelections();
+  };
+  const updateBlueOne = (num) => {
+    setBlueOne(num);
+    updateSelections();
+  };
+  const updateBlueTwo = (num) => {
+    setBlueTwo(num);
+    updateSelections();
+  };
+  const updateBlueThree = (num) => {
+    setBlueThree(num);
+    updateSelections();
+  };
+  
+  const updateSelections = () => {
+    if(myTeam === "red"){
+      socket.emit("game-data", {
+        event:"red-selections",
+        selections:[redOne, redTwo, redThree]
+      });
+    }
+    if(myTeam === "blue"){
+      socket.emit("game-data", {
+        event:"blue-selections",
+        selections:[blueOne, blueTwo, blueThree]
+      });
+    }
+  };
+
+  const handleConfirm = () => {
+    
+  }
+
   return (
     <div className="enigma-grid">
       <div className="words-box">
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
-            Word 1
+            1: {words[0]}
           </h1>
         </div>
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
-            Word 2
+            2: {words[1]}
           </h1>
         </div>
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
-            Word 3
+            3: {words[2]}
           </h1>
         </div>
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
-            Word 4
+            4: {words[3]}
           </h1>
         </div>
       </div>
@@ -118,51 +207,75 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           <div className="icon-box">
             <EyeOffIcon className="bg-red-200 rounded-xl" />
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
-          <div className="grid justify-content-center content-center">
-            <NumberSelector
-              selected={redOne}
-              setSelected={setRedOne}
-              color="red"
+          {myTeam === "red" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
             />
+          ) : (
+            <div className="bg-gray-200 m-2">{redHint[0]}</div>
+          )}
+          <div className="grid justify-content-center content-center">
+            {myTeam === "red" && coder === false ? (
+              <NumberSelector
+                selected={redOne}
+                setSelected={updateRedOne}
+                color="red"
+              />
+            ) : (
+              <div></div>
+            )}
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
               {actualNums[0]}
             </div>
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
-          <div className="grid justify-content-center content-center">
-            <NumberSelector
-              selected={redTwo}
-              setSelected={setRedTwo}
-              color="red"
+          {myTeam === "red" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
             />
+          ) : (
+            <div className="bg-gray-200 m-2">{redHint[1]}</div>
+          )}
+          <div className="grid justify-content-center content-center">
+            {myTeam === "red" && coder === false ? (
+              <NumberSelector
+                selected={redTwo}
+                setSelected={updateRedTwo}
+                color="red"
+              />
+            ) : (
+              <div></div>
+            )}
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
               {actualNums[1]}
             </div>
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
-          <div className="grid justify-content-center content-center">
-            <NumberSelector
-              selected={redThree}
-              setSelected={setRedThree}
-              color="red"
+          {myTeam === "red" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
             />
+          ) : (
+            <div className="bg-gray-200 m-2">{redHint[2]}</div>
+          )}
+          <div className="grid justify-content-center content-center">
+            {myTeam === "red" && coder === false ? (
+              <NumberSelector
+                selected={redThree}
+                setSelected={updateRedThree}
+                color="red"
+              />
+            ) : (
+              <div></div>
+            )}
           </div>
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-red-200 rounded-xl mx-3">
@@ -189,79 +302,113 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             </div>
           </div>
           <div className="grid justify-content-center content-center">
+            {myTeam === "blue" && coder === false ? (
             <NumberSelector
               selected={blueOne}
-              setSelected={setBlueOne}
+              setSelected={updateBlueOne}
               color="blue"
             />
+            ) : (
+              <div></div>
+            )}
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
+          {myTeam === "blue" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
+            />
+          ) : (
+            <div className="bg-gray-200 m-2">{blueHint[0]}</div>
+          )}
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
               {actualNums[4]}
             </div>
           </div>
           <div className="grid justify-content-center content-center">
+            {myTeam === "blue" && coder === false ? (
             <NumberSelector
               selected={blueTwo}
-              setSelected={setBlueTwo}
+              setSelected={updateBlueTwo}
               color="blue"
             />
+            ) : (
+              <div></div>
+            )}
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
+          {myTeam === "blue" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
+            />
+          ) : (
+            <div className="bg-gray-200 m-2">{blueHint[1]}</div>
+          )}
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
               {actualNums[5]}
             </div>
           </div>
           <div className="grid justify-content-center content-center">
+            {myTeam === "blue" && coder === false ? (
             <NumberSelector
               selected={blueThree}
-              setSelected={setBlueThree}
+              setSelected={updateBlueThree}
               color="blue"
             />
+            ) : (
+              <div></div>
+            )}
           </div>
-          <input
-            className="m-2 px-1"
-            type="text"
-            placeholder="Hint goes here"
-          />
+          {myTeam === "blue" && coder === true ? (
+            <input
+              className="m-2 px-1"
+              type="text"
+              placeholder="Hint goes here"
+            />
+          ) : (
+            <div className="bg-gray-200 m-2">{blueHint[2]}</div>
+          )}
         </div>
       </div>
       <div className="status-box">
-                  <div className="num-border">
-            <h1 className="word-screen text-center text-4xl bg-green-900">
-              E
-            </h1>
-          </div>
-        <div className="code-box bg-gray-900 rounded-2xl border-2 border-gray-100">
+        <div className="code-box bg-gray-900">
           <div className="num-border">
-            <h1 className="word-screen text-center text-4xl bg-green-900">
+            <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
               E
             </h1>
           </div>
           <div className="num-border">
-            <h1 className="word-screen text-center text-4xl bg-green-900">
+            <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
               R
             </h1>
           </div>
           <div className="num-border">
-            <h1 className="word-screen text-center text-4xl bg-green-900">
+            <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
               R
             </h1>
           </div>
-          <div className="num-border">
-            <h1 className="word-screen text-center text-4xl bg-green-900">
-              !
-            </h1>
+        </div>
+        <div className="word-border h-max-full">
+          <div className="word-screen h-full">{statusMessage}</div>
+        </div>
+        <div className="confirm-box bg-black h-full">
+          <button type="button" className="confirm-button w-full h-full">
+            {`[Confirm]`}
+          </button>
+        </div>
+        <div className="word-border h-max-full">
+          <div className="word-screen h-full">
+            <div>{`:>${teamChat}_`}</div>
+            <input className="team-chat w-full px-1"></input>
+          </div>
+        </div>
+        <div className="word-border h-max-full">
+          <div className="word-screen h-full">
+            <div>{`Blue:${displayScore(blueScore)}`}</div>
+            <div>{`Red: ${displayScore(redScore)}`}</div>
           </div>
         </div>
       </div>
