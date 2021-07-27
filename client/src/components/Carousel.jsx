@@ -1,14 +1,15 @@
 import React from 'react'; 
 
 import demo1 from "../images/drawing.gif";
-import demo2 from "../images/plathyme.png"
+import demo2 from "../images/enigma.gif";
+import demo3 from "../images/eb.PNG";
 
 import "./Carousel.css";
 
 const images = [
   demo1,
   demo2,
-  "https://placekitten.com/103/100",
+  demo3,
 ];
 
 const Carousel = () => {
