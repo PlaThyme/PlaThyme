@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { EyeOffIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import React from "react";
@@ -188,11 +188,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const sendChat = (e) => {
     e.preventDefault();
     if(chatRef.current.value){
+      let truncMessage = chatRef.current.value.slice(0,41);
       socket.emit('game-data', {
         event:"team-chat",
         team:myTeam,
-        message:chatRef.current.value
+        message:truncMessage
       });
+      document.getElementById('teamChatBox').reset();
     }
   }
   const handleConfirm = () => {};
@@ -430,11 +432,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           <div className="word-screen h-full">
             {coder ? (
               <>
+                <div>{">Communications Failure..._"}</div>
+                <div className="team-chat w-full px-1">...........</div>
+              </>
+            ) : (
+              <>
                 <div>{`:>${teamChat}_`}</div>
-                <form onSubmit={sendChat}>
+                <form 
+                  onSubmit={sendChat}
+                  id="teamChatBox">
                   <input
                     type="text"
-                    id="teamChat"
                     placeholder="team chat here"
                     required
                     ref={chatRef}
@@ -442,11 +450,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     className="team-chat w-full px-1"
                   ></input>
                 </form>
-              </>
-            ) : (
-              <>
-                <div>{">Communications Failure..._"}</div>
-                <div className="team-chat w-full px-1">...........</div>
               </>
             )}
           </div>
