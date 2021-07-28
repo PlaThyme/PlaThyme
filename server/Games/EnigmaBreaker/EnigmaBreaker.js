@@ -1,4 +1,5 @@
-const Game = require("./Game");
+const Game = require("../Game");
+const wordsList = require("./wordsList")
 
 class EnigmaBreaker extends Game {
   constructor(roomCode, socket, io, players) {
@@ -14,6 +15,9 @@ class EnigmaBreaker extends Game {
     this.blueSel = ["0", "0", "0"];
     this.statusMessage = "Waiting for more players...";
     this.started = false;
+    this.words = wordsList;
+    this.redWords = this.generateWords();
+    this.blueWords = this.generateWords();
   }
 
   recieveData(data) {
@@ -74,8 +78,38 @@ class EnigmaBreaker extends Game {
       });
     }
   }
+  generateWords(){
+    let encoded = []
+    let rand = Math.floor(Math.random() * this.words.length);
+    encoded.push(this.words.splice(rand, 1));
+    rand = Math.floor(Math.random() * this.words.length);
+    encoded.push(this.words.splice(rand, 1));
+    rand = Math.floor(Math.random() * this.words.length);
+    encoded.push(this.words.splice(rand, 1));
+    rand = Math.floor(Math.random() * this.words.length);
+    encoded.push(this.words.splice(rand, 1));
+    return encoded;
+  }
+
   handleEndOfTurn() {}
-  handleStartTurn() {}
+  handleNewGame(){}
+  
+  handleStartTurn() {
+    this.redSel = ["0", "0", "0"];
+    this.blueSel = ["0", "0", "0"];
+
+    super.sendGameData("new-turn",{
+      selections:this.redSel,
+    });
+    super.sendDataToPlayer(this.redTurnOrder[0], {
+      event:"your-turn",
+      words:this.generateWords(),
+    });
+    super.sendDataToPlayer(this.blueTurnOrder[0], {
+      event:"your-turn",
+      words:this.generateWords(),
+    });
+  }
   handleJoinTeam(data) {
     if (data.team === "red") {
       this.teams[data.playerName] = "red";
@@ -104,6 +138,7 @@ class EnigmaBreaker extends Game {
         team: "red",
         selections: this.redSel,
         status: this.statusMessage,
+        wordList: this.redWords,
       });
     }
     if (this.teams[data.playerName] === "blue") {
@@ -112,6 +147,7 @@ class EnigmaBreaker extends Game {
         team: "blue",
         selections: this.blueSel,
         status: this.statusMessage,
+        wordList: this.blueWords,
       });
     }
   }

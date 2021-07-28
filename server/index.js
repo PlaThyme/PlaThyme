@@ -6,7 +6,7 @@ const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
-const EnigmaBreaker = require("./Games/EnigmaBreaker");
+const EnigmaBreaker = require("./Games/EnigmaBreaker/EnigmaBreaker");
 const { makeid } = require("./makeid");
 const {
   joinRoom,

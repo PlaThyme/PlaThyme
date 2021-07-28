@@ -71,6 +71,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           setBlueTwo(data.selections[1]);
           setBlueThree(data.selections[2]);
         }
+        setWords(data.wordList);
       }
       if (data.event === "selections") {
         if (myTeam === "red") {
