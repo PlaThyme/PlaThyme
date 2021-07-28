@@ -38,7 +38,7 @@ We are planning to do this in `2 steps`.
 * Future work: Additional game ideas: 
   1 __Draw the word, down the line__
   2 __Enigma Breaker__
-  3 __Slapjac__
+  3 __Slapjack__
 
 # Description of Games
 
