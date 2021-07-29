@@ -54,6 +54,9 @@ class EnigmaBreaker extends Game {
       case "submit-guess":
         this.handleGuess(data);
         break;
+      case "next-round":
+        this.advanceTurnOrder();
+        this.handleStartTurn();
       default:
         break;
     }
@@ -116,11 +119,11 @@ class EnigmaBreaker extends Game {
     const nums = ["1", "2", "3", "4"];
     let code = [];
     let rand = Math.floor(Math.random() * nums.length);
-    code.push(nums.splice(rand, 1));
+    code.push(nums.splice(rand, 1)[0]);
     rand = Math.floor(Math.random() * nums.length);
-    code.push(nums.splice(rand, 1));
+    code.push(nums.splice(rand, 1)[0]);
     rand = Math.floor(Math.random() * nums.length);
-    code.push(nums.splice(rand, 1));
+    code.push(nums.splice(rand, 1)[0]);
     return code;
   }
   handleBeginGame() {
@@ -202,7 +205,6 @@ class EnigmaBreaker extends Game {
     let score = [0,0,0,0];
     let actual = [this.redCode[0], this.redCode[1], this.redCode[2], this.blueCode[0], this.blueCode[1], this.blueCode[2]];
     if(redGuess[0] === this.redCode[0] && redGuess[1] === this.redCode[1] && redGuess[2] === this.redCode[2]){
-      
     } else {
       score[1] = 1;
       this.redScore[1] += 1;
@@ -210,15 +212,14 @@ class EnigmaBreaker extends Game {
     if(redGuess[3] === this.blueCode[0] && redGuess[4] === this.blueCode[1] && redGuess[5] === this.blueCode[2]){
       score[0] = 1;
       this.redScore[0] += 1;
-    }
+    } 
 
-    if(blueGuess[0] === this.blueCode[0] && blueGuess[1] === this.blueCode[1] && blueGuess[2] === this.blueCode[2]){
-
+    if(blueGuess[3] === this.blueCode[0] && blueGuess[4] === this.blueCode[1] && blueGuess[5] === this.blueCode[2]){
     } else {
       score[3] = 1;
       this.blueScore[1] += 1;
     }
-    if(blueGuess[3] === this.redCode[0] && blueGuess[4] === this.redCode[1] && blueGuess[5] === this.redCode[2]){
+    if(blueGuess[0] === this.redCode[0] && blueGuess[1] === this.redCode[1] && blueGuess[2] === this.redCode[2]){
       score[2] = 1;
       this.blueScore[0] += 1;
     }
