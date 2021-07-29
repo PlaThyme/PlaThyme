@@ -77,6 +77,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (data.event === "blue-hints-in") {
         setStatusMessage("Waiting on red teams encryption...");
       }
+      if (data.event === "wait-red-guess") {
+        setStatusMessage("Waiting for red team to finalize decryption");
+      }
+      if (data.event === "wait-blue-guess") {
+        setStatusMessage("Waiting for blue team to finalize decryption");
+      }
       if (data.event === "decryption") {
         setRedHint(data.redHints);
         setBlueHint(data.blueHints);
@@ -88,6 +94,24 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           setStatusMessage("Message recieved... decode message.");
           setActiveConfirm(true);
         }
+      }
+      if (data.event === "score-result"){
+        setRedScore(data.redScore);
+        setBlueScore(data.blueScore);
+        if(data.score[0] === 0 && data.score[1] === 0){
+          const rs = "unchanged";
+        } else {
+          rs = score[0] * hit;
+          rs += score[1] * miss;
+        }
+        if(data.score[0] === 0 && data.score[1] === 0){
+          const bs = "unchanged";
+        } else {
+          bs = score[2] * hit;
+          bs += score[3] * miss;
+        }
+        setStatusMessage(`Results-> Red: ${rs}  Blue: ${bs}`);
+        setActualNums(data.codes);
       }
       if (data.status !== undefined) {
         setStatusMessage(data.status);
@@ -270,8 +294,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           socket.emit("game-data", {
             event: "submit-guess",
             team: myTeam,
-            redGuess: [redOne, redTwo, redThree],
-            blueGuess: [blueOne, blueTwo, blueThree],
+            guess: [redOne, redTwo, redThree, blueOne, blueTwo, blueThree],
           });
         } else {
           setStatusMessage("No number may be assigned to two hints per color");

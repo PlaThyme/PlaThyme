@@ -21,6 +21,10 @@ class EnigmaBreaker extends Game {
     this.blueWords = this.generateWords();
     this.redCode = ["E", "R", "R"];
     this.blueCode = ["E", "R", "R"];
+    this.redGuessHistory = [];
+    this.blueGuessHistory = [];
+    this.redScore = [0,0];
+    this.blueScore = [0,0];
   }
 
   recieveData(data) {
@@ -174,10 +178,52 @@ class EnigmaBreaker extends Game {
     });
   }
 
-  handleGuess(data){
-    console.log(data);
+  handleGuess(data) {
+    if (data.team === "red") {
+      this.redGuessHistory.push(data.guess);
+      if (this.blueGuessHistory.length === this.currentRound) {
+        super.sendGameData({ event: "wait-blue-guess" });
+      } else {
+        this.handleScoreGame();
+      }
+    } else {
+      this.blueGuessHistory.push(data.guess);
+      if (this.redGuessHistory.length === this.currentRound) {
+        super.sendGameData({ event: "wait-red-guess" });
+      } else {
+        this.handleScoreGame();
+      }
+    }
   }
 
+  handleScoreGame(){
+    let redGuess = this.redGuessHistory[this.currentRound];
+    let blueGuess = this.blueGuessHistory[this.currentRound];
+    let score = [0,0,0,0];
+    let actual = [this.redCode[0], this.redCode[1], this.redCode[2], this.blueCode[0], this.blueCode[1], this.blueCode[2]];
+    if(redGuess[0] === this.redCode[0] && redGuess[1] === this.redCode[1] && redGuess[2] === this.redCode[2]){
+      
+    } else {
+      score[1] = 1;
+      this.redScore[1] += 1;
+    }
+    if(redGuess[3] === this.blueCode[0] && redGuess[4] === this.blueCode[1] && redGuess[5] === this.blueCode[2]){
+      score[0] = 1;
+      this.redScore[0] += 1;
+    }
+
+    if(blueGuess[0] === this.blueCode[0] && blueGuess[1] === this.blueCode[1] && blueGuess[2] === this.blueCode[2]){
+
+    } else {
+      score[3] = 1;
+      this.blueScore[1] += 1;
+    }
+    if(blueGuess[3] === this.redCode[0] && blueGuess[4] === this.redCode[1] && blueGuess[5] === this.redCode[2]){
+      score[2] = 1;
+      this.blueScore[0] += 1;
+    }
+    super.sendGameData({event:"score-result", score:score, codes:actual, redScore:this.redScore, blueScore:this.blueScore });
+  }
 
   handleJoinTeam(data) {
     if (data.team === "red") {
