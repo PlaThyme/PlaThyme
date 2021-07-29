@@ -1,5 +1,5 @@
 const Game = require("../Game");
-const wordsList = require("./wordsList")
+const wordsList = require("./wordsList");
 
 class EnigmaBreaker extends Game {
   constructor(roomCode, socket, io, players) {
@@ -7,33 +7,48 @@ class EnigmaBreaker extends Game {
     this.teams = {};
     this.redTurnOrder = [];
     this.blueTurnOrder = [];
-    this.redHints = {};
-    this.blueHints = {};
+    this.redHints = [];
+    this.blueHints = [];
     this.redNum = 0;
     this.blueNum = 0;
-    this.redSel = ["0", "0", "0"];
-    this.blueSel = ["0", "0", "0"];
+    this.currentRound = 0;
+    this.redSel = ["0", "0", "0", "0", "0", "0"];
+    this.blueSel = ["0", "0", "0", "0", "0", "0"];
     this.statusMessage = "Waiting for more players...";
     this.started = false;
     this.words = wordsList;
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
+    this.redCode = ["E", "R", "R"];
+    this.blueCode = ["E", "R", "R"];
   }
 
   recieveData(data) {
-    if (data.event === "join-team") {
-      this.handleJoinTeam(data);
-    }
-    if (data.event === "team-chat") {
-      this.handleTeamChat(data);
-    }
-    if (data.event === "submit-hint") {
-    }
-    if (data.event === "red-selections") {
-      this.handleRedSelections(data);
-    }
-    if (data.event === "blue-selections") {
-      this.handleBlueSelections(data);
+    switch (data.event) {
+      case "join-team":
+        this.handleJoinTeam(data);
+        break;
+      case "team-chat":
+        this.handleTeamChat(data);
+        break;
+      case "red-selections":
+        this.handleRedSelections(data);
+        break;
+      case "blue-selections":
+        this.handleBlueSelections(data);
+        break;
+      case "begin-game":
+        this.handleStartGame();
+        this.handleStartTurn();
+        break;
+      case "red-hints":
+        this.handleRedHints(data);
+        break;
+      case "blue-hints":
+        this.handleBlueHints(data);
+        break;
+      default:
+        break;
     }
   }
   handleTeamChat(data) {
@@ -62,24 +77,24 @@ class EnigmaBreaker extends Game {
   }
   handleRedSelections(data) {
     this.redSel.splice(data.index, 1, data.num);
-    for (let i = 1; i < this.redTurnOrder.length; i++) {
-      super.sendDataToPlayer(this.redTurnOrder[i], {
+    this.redTurnOrder.forEach((player) => {
+      super.sendDataToPlayer(player, {
         event: "selections",
         selections: this.redSel,
       });
-    }
+    });
   }
   handleBlueSelections(data) {
     this.blueSel.splice(data.index, 1, data.num);
-    for (let i = 1; i < this.blueTurnOrder.length; i++) {
-      super.sendDataToPlayer(this.blueTurnOrder[i], {
+    this.redTurnOrder.forEach((player) => {
+      super.sendDataToPlayer(player, {
         event: "selections",
         selections: this.blueSel,
       });
-    }
+    });
   }
-  generateWords(){
-    let encoded = []
+  generateWords() {
+    let encoded = [];
     let rand = Math.floor(Math.random() * this.words.length);
     encoded.push(this.words.splice(rand, 1));
     rand = Math.floor(Math.random() * this.words.length);
@@ -90,24 +105,69 @@ class EnigmaBreaker extends Game {
     encoded.push(this.words.splice(rand, 1));
     return encoded;
   }
+  generateCode() {
+    const nums = ["1", "2", "3", "4"];
+    let code = [];
+    let rand = Math.floor(Math.random() * nums.length);
+    code.push(nums.splice(rand, 1));
+    rand = Math.floor(Math.random() * nums.length);
+    code.push(nums.splice(rand, 1));
+    rand = Math.floor(Math.random() * nums.length);
+    code.push(nums.splice(rand, 1));
+    return code;
+  }
+  handleBeginGame() {
+    this.handleStartTurn();
+  }
+  handleEndOfTurn() {
+    this.advanceTurnOrder();
+  }
+  handleNewGame() {}
 
-  handleEndOfTurn() {}
-  handleNewGame(){}
-  
-  handleStartTurn() {
-    this.redSel = ["0", "0", "0"];
-    this.blueSel = ["0", "0", "0"];
+  handleRedHints(data) {
+    this.redHints.push([data.hint1, data.hint2, data.hint3]);
+    super.sendGameData({ event: "red-hints-in" });
+    if (this.blueHints.length > this.currentRound) {
+      handleHintsSubmitted();
+    }
+  }
+  handleBlueHints(data) {
+    this.blueHints.push([data.hint1, data.hint2, data.hint3]);
+    super.sendGameData({ event: "blue-hints-in" });
+    if (this.redHints.length > this.currentRound) {
+      handleHintsSubmitted();
+    }
+  }
 
-    super.sendGameData("new-turn",{
-      selections:this.redSel,
+  handleHintsSubmitted() {
+    super.sendGameData({
+      event: "decrpytion",
+      redHints: this.redHints[this.currentRound],
+      blueHints: this.blueHints[this.currentRound],
     });
+  }
+
+  handleStartGame() {
+    super.sendGameData({ event: "start-game" });
+  }
+  handleStartTurn() {
+    this.redSel = ["0", "0", "0", "0", "0", "0"];
+    this.blueSel = ["0", "0", "0", "0", "0", "0"];
+
+    super.sendGameData("new-turn", {
+      selections: this.redSel,
+    });
+
+    this.redCode = this.generateCode();
+    this.blueCode = this.generateCode();
+
     super.sendDataToPlayer(this.redTurnOrder[0], {
-      event:"your-turn",
-      words:this.generateWords(),
+      event: "your-turn",
+      code: this.redCode,
     });
     super.sendDataToPlayer(this.blueTurnOrder[0], {
-      event:"your-turn",
-      words:this.generateWords(),
+      event: "your-turn",
+      code: this.blueCode,
     });
   }
   handleJoinTeam(data) {
@@ -149,6 +209,9 @@ class EnigmaBreaker extends Game {
         status: this.statusMessage,
         wordList: this.blueWords,
       });
+    }
+    if (this.redNum > 1 && this.blueNum > 1) {
+      super.sendGameData({ event: "allow-start" });
     }
   }
 }

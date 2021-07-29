@@ -9,21 +9,24 @@ import NumberSelector from "./NumberSelector";
 const EnigmaBreaker = ({ socket, playerName }) => {
   const miss = "☠️";
   const hit = "💾";
+  const [secretCode, setSecretCode] = useState(["E", "R", "R"]);
   const [blueScore, setBlueScore] = useState([0, 2]);
   const [redScore, setRedScore] = useState([2, 2]);
-  const [words, setWords] = useState(["first", "second", "third", "fourth"]);
+  const [words, setWords] = useState(["", "", "", ""]);
   const [selected, setSelected] = useState("redHistory");
   const [blueHint, setBlueHint] = useState([
-    "Buffering...",
-    "Buffering...",
-    "Buffering...",
+    "Awaiting Transmission...",
+    "Awaiting Transmission...",
+    "Awaiting Transmission...",
   ]);
   const [redHint, setRedHint] = useState([
-    "Buffering...",
-    "Buffering...",
-    "Buffering...",
+    "Awaiting Transmission...",
+    "Awaiting Transmission...",
+    "Awaiting Transmission...",
   ]);
   const [coder, setCoder] = useState(false); ///////////////
+  const [submitted, setSubmitted] = useState(false);
+  const [activeConfirm, setActiveConfirm] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
@@ -38,6 +41,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [blueHints, setBlueHints] = useState({});
   const [redHints, setRedHints] = useState({});
   const [currentHints, setCurrentHints] = useState([]);
+  const [gameStarted, setGameStarted] = useState(false);
+  const r1HintRef = useRef();
+  const r2HintRef = useRef();
+  const r3HintRef = useRef();
+  const b1HintRef = useRef();
+  const b2HintRef = useRef();
+  const b3HintRef = useRef();
   const chatRef = useRef();
 
   useEffect(() => {
@@ -52,6 +62,37 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (data.event === "updateActuals") {
         setActualNums(data.nums);
       }
+      if (data.event === "allow-start"){
+        setActiveConfirm(true);
+      }
+      if (data.event === "start-game"){
+        setGameStarted(true);
+      }
+      if (data.event === "new-turn"){
+        setCoder(false);
+        setActiveConfirm(false);
+        setRedOne("0");
+        setRedTwo("0");
+        setRedThree("0");
+        setBlueOne("0");
+        setBlueTwo("0");
+        setBlueThree("0");
+        setStatusMessage("Awaiting encrypted messages...");
+        setSecretCode(["E", "R", "R"]);
+      }
+      if (data.event === "red-hints-in"){
+        setStatusMessage("Waiting on blue teams encryption...");
+      }
+      if (data.event === "blue-hints-in"){
+        setStatusMessage("Waiting on red teams encryption...");
+      }
+      if (data.event === "decryption"){
+        setRedHint(data.redHints);
+        setBlueHint(data.blueHints);
+        if(coder){
+          setStatusMessage("Agents, decode the messages now")
+        }
+      }
       if (data.status !== undefined) {
         setStatusMessage(data.status);
       }
@@ -61,38 +102,38 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (data.event === "team-info") {
         setMyTeam(data.team);
         setIsOpen(false);
-        if (data.team === "red") {
-          setRedOne(data.selections[0]);
-          setRedTwo(data.selections[1]);
-          setRedThree(data.selections[2]);
-        }
-        if (data.team === "blue") {
-          setBlueOne(data.selections[0]);
-          setBlueTwo(data.selections[1]);
-          setBlueThree(data.selections[2]);
-        }
+        setRedOne(data.selections[0]);
+        setRedTwo(data.selections[1]);
+        setRedThree(data.selections[2]);
+        setBlueOne(data.selections[3]);
+        setBlueTwo(data.selections[4]);
+        setBlueThree(data.selections[5]);
         setWords(data.wordList);
       }
       if (data.event === "selections") {
-        if (myTeam === "red") {
-          setRedOne(data.selections[0]);
-          setRedTwo(data.selections[1]);
-          setRedThree(data.selections[2]);
-        }
-        if (myTeam === "blue") {
-          setBlueOne(data.selections[0]);
-          setBlueTwo(data.selections[1]);
-          setBlueThree(data.selections[2]);
-        }
+        setRedOne(data.selections[0]);
+        setRedTwo(data.selections[1]);
+        setRedThree(data.selections[2]);
+        setBlueOne(data.selections[3]);
+        setBlueTwo(data.selections[4]);
+        setBlueThree(data.selections[5]);
       }
       if (data.event === "team-chat") {
         setTeamChat(data.message);
+      }
+      if (data.event === "your-turn") {
+        setCoder(true);
+        setSecretCode(data.code);
+        setActiveConfirm(true);
+        setStatusMessage(
+          "Code recieved. Encode and retransmit..."
+        );
       }
       if (data.status !== undefined) {
         setStatusMessage(data.status);
       }
     });
-  }, [redOne, blueOne, statusMessage, teamChat]);
+  }, [redOne, blueOne, statusMessage, teamChat, activeConfirm, gameStarted]);
 
   useEffect(() => {
     if (myTeam === "") {
@@ -159,15 +200,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   };
   const updateBlueOne = (num) => {
     setBlueOne(num);
-    updateSelections(0, num);
+    updateSelections(3, num);
   };
   const updateBlueTwo = (num) => {
     setBlueTwo(num);
-    updateSelections(1, num);
+    updateSelections(4, num);
   };
   const updateBlueThree = (num) => {
     setBlueThree(num);
-    updateSelections(2, num);
+    updateSelections(5, num);
   };
 
   const updateSelections = (index, num) => {
@@ -186,22 +227,56 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       });
     }
   };
-  const sendChat = (e) => {
-    e.preventDefault();
-    if(chatRef.current.value){
-      let truncMessage = chatRef.current.value.slice(0,41);
-      socket.emit('game-data', {
-        event:"team-chat",
-        team:myTeam,
-        message:truncMessage
-      });
-      document.getElementById('teamChatBox').reset();
+
+  const handleConfirm = () => {
+    if(gameStarted === false){
+      socket.emit("game-data", {event:"begin-game"});
+    } else {
+      if(coder){
+        if(myTeam === "red"){
+          let truncHint1 = r1HintRef.current.value.slice(0,46);
+          let truncHint2 = r2HintRef.current.value.slice(0,46);
+          let truncHint3 = r3HintRef.current.value.slice(0,46);
+          if(truncHint1 === "" || truncHint2 === "" || truncHint3 === ""){
+            setStatusMessage("You must fill out all hints before submitting.")
+          } else {
+            socket.emit("game-data", {event:"red-hints", hint1:truncHint1, hint2:truncHint2, hint3:truncHint3});
+            setSubmitted(true);
+            setStatusMessage("Waiting for blue team to submit");
+            setActiveConfirm(false);
+          }
+        } else {
+          let truncHint1 = b1HintRef.current.value.slice(0,46);
+          let truncHint2 = b2HintRef.current.value.slice(0,46);
+          let truncHint3 = b3HintRef.current.value.slice(0,46);
+          if(truncHint1 === "" || truncHint2 === "" || truncHint3 === ""){
+            setStatusMessage("You must fill out all hints before submitting.")
+          } else {
+            socket.emit("game-data", {event:"blue-hints", hint1:truncHint1, hint2:truncHint2, hint3:truncHint3});
+            setSubmitted(true);
+            setStatusMessage("Waiting for red team to submit");
+            setActiveConfirm(false);
+          }
+        }
+      }
     }
   }
-  const handleConfirm = () => {};
+
+  const sendChat = (e) => {
+    e.preventDefault();
+    if (chatRef.current.value) {
+      let truncMessage = chatRef.current.value.slice(0, 41);
+      socket.emit("game-data", {
+        event: "team-chat",
+        team: myTeam,
+        message: truncMessage,
+      });
+      document.getElementById("teamChatBox").reset();
+    }
+  };
 
   return (
-    <div className="enigma-grid">
+    <div className={`${myTeam === "red" ? "border-dotted border-red-700" : "border-dotted border-blue-700"} enigma-grid border-4`}>
       <div className="words-box">
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
@@ -209,7 +284,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           </h1>
         </div>
         <div className="word-border">
-          <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
+          <h1 className="word-screen text-center text-3xl mx-2">
             2: {words[1]}
           </h1>
         </div>
@@ -237,17 +312,18 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           <div className="icon-box">
             <EyeOffIcon className="bg-red-200 rounded-xl" />
           </div>
-          {myTeam === "red" && coder === true ? (
+          {myTeam === "red" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={r1HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{redHint[0]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{redHint[0]}</div>
           )}
           <div className="grid justify-content-center content-center">
-            {myTeam === "red" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={redOne}
                 setSelected={updateRedOne}
@@ -262,17 +338,18 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               {actualNums[0]}
             </div>
           </div>
-          {myTeam === "red" && coder === true ? (
+          {myTeam === "red" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={r2HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{redHint[1]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{redHint[1]}</div>
           )}
           <div className="grid justify-content-center content-center">
-            {myTeam === "red" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={redTwo}
                 setSelected={updateRedTwo}
@@ -287,17 +364,18 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               {actualNums[1]}
             </div>
           </div>
-          {myTeam === "red" && coder === true ? (
+          {myTeam === 'red' && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={r3HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{redHint[2]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{redHint[2]}</div>
           )}
           <div className="grid justify-content-center content-center">
-            {myTeam === "red" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={redThree}
                 setSelected={updateRedThree}
@@ -332,7 +410,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             </div>
           </div>
           <div className="grid justify-content-center content-center">
-            {myTeam === "blue" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={blueOne}
                 setSelected={updateBlueOne}
@@ -342,14 +420,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               <div></div>
             )}
           </div>
-          {myTeam === "blue" && coder === true ? (
+          {myTeam === "blue" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={b1HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{blueHint[0]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{blueHint[0]}</div>
           )}
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
@@ -357,7 +436,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             </div>
           </div>
           <div className="grid justify-content-center content-center">
-            {myTeam === "blue" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={blueTwo}
                 setSelected={updateBlueTwo}
@@ -367,14 +446,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               <div></div>
             )}
           </div>
-          {myTeam === "blue" && coder === true ? (
+          {myTeam === "blue" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={b2HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{blueHint[1]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{blueHint[1]}</div>
           )}
           <div className="grid justify-content-center content-center">
             <div className="text-center bg-blue-200 rounded-xl mx-3">
@@ -382,7 +462,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             </div>
           </div>
           <div className="grid justify-content-center content-center">
-            {myTeam === "blue" && coder === false ? (
+            {coder === false ? (
               <NumberSelector
                 selected={blueThree}
                 setSelected={updateBlueThree}
@@ -392,14 +472,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               <div></div>
             )}
           </div>
-          {myTeam === "blue" && coder === true ? (
+          {myTeam === "blue" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
               placeholder="Hint goes here"
+              ref={b3HintRef}
             />
           ) : (
-            <div className="bg-gray-200 m-2">{blueHint[2]}</div>
+            <div className="bg-gray-200 m-2 pl-1">{blueHint[2]}</div>
           )}
         </div>
       </div>
@@ -407,17 +488,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         <div className="code-box bg-gray-900">
           <div className="num-border">
             <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
-              E
+              {secretCode[0]}
             </h1>
           </div>
           <div className="num-border">
             <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
-              R
+              {secretCode[1]}
             </h1>
           </div>
           <div className="num-border">
             <h1 className="word-screen text-center text-4xl bg-green-900 rounded-md">
-              R
+              {secretCode[2]}
             </h1>
           </div>
         </div>
@@ -425,9 +506,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           <div className="word-screen h-full">{`>${statusMessage}_`}</div>
         </div>
         <div className="confirm-box bg-black h-full">
-          <button type="button" className="confirm-button w-full h-full">
-            {`[Confirm]`}
-          </button>
+          {activeConfirm ? (
+            <button type="button" className="confirm-button w-full h-full" onClick={handleConfirm}>
+              {`[CONFIRM]`}
+            </button>
+          ) : (
+            <div className="inactive-button w-full h-full">{"[INACTIVE]"}</div>
+          )}
         </div>
         <div className="word-border h-max-full">
           <div className="word-screen h-full">
@@ -438,10 +523,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               </>
             ) : (
               <>
-                <div>{`:>${teamChat}_`}</div>
-                <form 
-                  onSubmit={sendChat}
-                  id="teamChatBox">
+                <div>{`>${teamChat}_`}</div>
+                <form onSubmit={sendChat} id="teamChatBox">
                   <input
                     type="text"
                     placeholder="team chat here"
