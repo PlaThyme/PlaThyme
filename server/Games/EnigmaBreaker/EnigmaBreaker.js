@@ -23,8 +23,8 @@ class EnigmaBreaker extends Game {
     this.blueCode = ["E", "R", "R"];
     this.redGuessHistory = [];
     this.blueGuessHistory = [];
-    this.redScore = [0,0];
-    this.blueScore = [0,0];
+    this.redScore = [0, 0];
+    this.blueScore = [0, 0];
   }
 
   recieveData(data) {
@@ -164,9 +164,7 @@ class EnigmaBreaker extends Game {
     this.redSel = ["0", "0", "0", "0", "0", "0"];
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
 
-    super.sendGameData("new-turn", {
-      selections: this.redSel,
-    });
+    super.sendGameData({event:"new-turn", selections: this.redSel,});
 
     this.redCode = this.generateCode();
     this.blueCode = this.generateCode();
@@ -189,6 +187,9 @@ class EnigmaBreaker extends Game {
       } else {
         this.handleScoreGame();
       }
+      this.redTurnOrder.forEach((player) => {
+        super.sendDataToPlayer(player,{event:"guess-data",guess:data.guess});
+      });
     } else {
       this.blueGuessHistory.push(data.guess);
       if (this.redGuessHistory.length === this.currentRound) {
@@ -196,34 +197,66 @@ class EnigmaBreaker extends Game {
       } else {
         this.handleScoreGame();
       }
+      this.blueTurnOrder.forEach((player) => {
+        super.sendDataToPlayer(player,{event:"guess-data",guess:data.guess});
+      });
     }
   }
 
-  handleScoreGame(){
+  handleScoreGame() {
     let redGuess = this.redGuessHistory[this.currentRound];
     let blueGuess = this.blueGuessHistory[this.currentRound];
-    let score = [0,0,0,0];
-    let actual = [this.redCode[0], this.redCode[1], this.redCode[2], this.blueCode[0], this.blueCode[1], this.blueCode[2]];
-    if(redGuess[0] === this.redCode[0] && redGuess[1] === this.redCode[1] && redGuess[2] === this.redCode[2]){
+    let score = [0, 0, 0, 0];
+    let actual = [
+      this.redCode[0],
+      this.redCode[1],
+      this.redCode[2],
+      this.blueCode[0],
+      this.blueCode[1],
+      this.blueCode[2],
+    ];
+    if (
+      redGuess[0] === this.redCode[0] &&
+      redGuess[1] === this.redCode[1] &&
+      redGuess[2] === this.redCode[2]
+    ) {
     } else {
       score[1] = 1;
       this.redScore[1] += 1;
     }
-    if(redGuess[3] === this.blueCode[0] && redGuess[4] === this.blueCode[1] && redGuess[5] === this.blueCode[2]){
+    if (
+      redGuess[3] === this.blueCode[0] &&
+      redGuess[4] === this.blueCode[1] &&
+      redGuess[5] === this.blueCode[2]
+    ) {
       score[0] = 1;
       this.redScore[0] += 1;
-    } 
+    }
 
-    if(blueGuess[3] === this.blueCode[0] && blueGuess[4] === this.blueCode[1] && blueGuess[5] === this.blueCode[2]){
+    if (
+      blueGuess[3] === this.blueCode[0] &&
+      blueGuess[4] === this.blueCode[1] &&
+      blueGuess[5] === this.blueCode[2]
+    ) {
     } else {
       score[3] = 1;
       this.blueScore[1] += 1;
     }
-    if(blueGuess[0] === this.redCode[0] && blueGuess[1] === this.redCode[1] && blueGuess[2] === this.redCode[2]){
+    if (
+      blueGuess[0] === this.redCode[0] &&
+      blueGuess[1] === this.redCode[1] &&
+      blueGuess[2] === this.redCode[2]
+    ) {
       score[2] = 1;
       this.blueScore[0] += 1;
     }
-    super.sendGameData({event:"score-result", score:score, codes:actual, redScore:this.redScore, blueScore:this.blueScore });
+    super.sendGameData({
+      event: "score-result",
+      score: score,
+      codes: actual,
+      redScore: this.redScore,
+      blueScore: this.blueScore,
+    });
   }
 
   handleJoinTeam(data) {
@@ -266,7 +299,7 @@ class EnigmaBreaker extends Game {
         wordList: this.blueWords,
       });
     }
-    if (this.redNum > 1 && this.blueNum > 1) {
+    if (this.redNum > 1 && this.blueNum > 1 && this.started === false) {
       super.sendGameData({ event: "allow-start" });
     }
   }

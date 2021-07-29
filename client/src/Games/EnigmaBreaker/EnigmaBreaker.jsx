@@ -11,8 +11,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const hit = "💾";
   const [secretCode, setSecretCode] = useState(["E", "R", "R"]);
   const [decrypt, setDecrypt] = useState(false);
-  const [blueScore, setBlueScore] = useState([0, 2]);
-  const [redScore, setRedScore] = useState([2, 2]);
+  const [blueScore, setBlueScore] = useState([0, 0]);
+  const [redScore, setRedScore] = useState([0, 0]);
   const [words, setWords] = useState(["", "", "", ""]);
   const [selected, setSelected] = useState("redHistory");
   const [blueHint, setBlueHint] = useState([
@@ -28,7 +28,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [coder, setCoder] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [endOfRound, setEndOfRound] = useState(false);
-  const [activeConfirm, setActiveConfirm] = useState(true);
+  const [activeConfirm, setActiveConfirm] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [redOne, setRedOne] = useState("0");
   const [redTwo, setRedTwo] = useState("0");
@@ -57,20 +57,24 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       }
       if (data.event === "allow-start") {
         setActiveConfirm(true);
+        setStatusMessage("Minimum Players Reacherd. Press confirm to start game.")
       }
       if (data.event === "start-game") {
+        setActiveConfirm(false);
         setGameStarted(true);
       }
       if (data.event === "new-turn") {
         setCoder(false);
         setEndOfRound(false);
         setActiveConfirm(false);
+        setActualNums(["?", "?", "?", "?", "?", "?"])
         setRedOne("0");
         setRedTwo("0");
         setRedThree("0");
         setBlueOne("0");
         setBlueTwo("0");
         setBlueThree("0");
+        console.log("setting status to await message");
         setStatusMessage("Awaiting encrypted messages...");
         setSecretCode(["E", "R", "R"]);
       }
@@ -81,13 +85,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setStatusMessage("Waiting on red teams encryption...");
       }
       if (data.event === "wait-red-guess") {
-        if(myTeam === "blue"){
+        if (myTeam === "blue") {
           setEndOfRound(true);
         }
         setStatusMessage("Waiting for red team to finalize decryption");
       }
       if (data.event === "wait-blue-guess") {
-        if(myTeam === "red"){
+        if (myTeam === "red") {
           setEndOfRound(true);
         }
         setStatusMessage("Waiting for blue team to finalize decryption");
@@ -172,11 +176,22 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setActiveConfirm(true);
         setStatusMessage("Code recieved. Encode and retransmit...");
       }
+      if (data.event === "guess-data"){
+        setGuessResults(data.guess);
+      }
       if (data.status !== undefined) {
         setStatusMessage(data.status);
       }
     });
-  }, [redOne, blueOne, statusMessage, teamChat, activeConfirm, gameStarted, endOfRound]);
+  }, [
+    redOne,
+    blueOne,
+    statusMessage,
+    teamChat,
+    activeConfirm,
+    gameStarted,
+    endOfRound,
+  ]);
 
   useEffect(() => {
     if (myTeam === "") {
@@ -276,7 +291,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       socket.emit("game-data", { event: "begin-game" });
     } else {
       if (endOfRound) {
-        socket.emit("game-data", {event:"next-round"});
+        socket.emit("game-data", { event: "next-round" });
       } else {
         if (coder) {
           if (myTeam === "red") {
