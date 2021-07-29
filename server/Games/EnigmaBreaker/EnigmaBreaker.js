@@ -47,6 +47,9 @@ class EnigmaBreaker extends Game {
       case "blue-hints":
         this.handleBlueHints(data);
         break;
+      case "submit-guess":
+        this.handleGuess(data);
+        break;
       default:
         break;
     }
@@ -128,20 +131,20 @@ class EnigmaBreaker extends Game {
     this.redHints.push([data.hint1, data.hint2, data.hint3]);
     super.sendGameData({ event: "red-hints-in" });
     if (this.blueHints.length > this.currentRound) {
-      handleHintsSubmitted();
+      this.handleHintsSubmitted();
     }
   }
   handleBlueHints(data) {
     this.blueHints.push([data.hint1, data.hint2, data.hint3]);
     super.sendGameData({ event: "blue-hints-in" });
     if (this.redHints.length > this.currentRound) {
-      handleHintsSubmitted();
+      this.handleHintsSubmitted();
     }
   }
 
   handleHintsSubmitted() {
     super.sendGameData({
-      event: "decrpytion",
+      event: "decryption",
       redHints: this.redHints[this.currentRound],
       blueHints: this.blueHints[this.currentRound],
     });
@@ -170,6 +173,12 @@ class EnigmaBreaker extends Game {
       code: this.blueCode,
     });
   }
+
+  handleGuess(data){
+    console.log(data);
+  }
+
+
   handleJoinTeam(data) {
     if (data.team === "red") {
       this.teams[data.playerName] = "red";

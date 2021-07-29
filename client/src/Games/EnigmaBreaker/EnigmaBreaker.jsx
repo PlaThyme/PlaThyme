@@ -10,6 +10,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const miss = "☠️";
   const hit = "💾";
   const [secretCode, setSecretCode] = useState(["E", "R", "R"]);
+  const [decrypt, setDecrypt] = useState(false);
   const [blueScore, setBlueScore] = useState([0, 2]);
   const [redScore, setRedScore] = useState([2, 2]);
   const [words, setWords] = useState(["", "", "", ""]);
@@ -24,7 +25,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     "Awaiting Transmission...",
     "Awaiting Transmission...",
   ]);
-  const [coder, setCoder] = useState(false); ///////////////
+  const [coder, setCoder] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [activeConfirm, setActiveConfirm] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
@@ -36,11 +37,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [blueThree, setBlueThree] = useState("0");
   const [teamChat, setTeamChat] = useState("Waiting comms...");
   const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
-  const [isOpen, setIsOpen] = useState(true); ///////////////
-  const [myTeam, setMyTeam] = useState(""); /////////////
-  const [blueHints, setBlueHints] = useState({});
-  const [redHints, setRedHints] = useState({});
-  const [currentHints, setCurrentHints] = useState([]);
+  const [isOpen, setIsOpen] = useState(true);
+  const [myTeam, setMyTeam] = useState("");
   const [gameStarted, setGameStarted] = useState(false);
   const r1HintRef = useRef();
   const r2HintRef = useRef();
@@ -52,23 +50,16 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   useEffect(() => {
     socket.on("update-game", (data) => {
-      if (data.event === "update-hints") {
-        setBlueHints(data.blueHints);
-        setRedHints(data.redHints);
-      }
-      if (data.event === "make-guess") {
-        setCurrentHints(data.hints);
-      }
       if (data.event === "updateActuals") {
         setActualNums(data.nums);
       }
-      if (data.event === "allow-start"){
+      if (data.event === "allow-start") {
         setActiveConfirm(true);
       }
-      if (data.event === "start-game"){
+      if (data.event === "start-game") {
         setGameStarted(true);
       }
-      if (data.event === "new-turn"){
+      if (data.event === "new-turn") {
         setCoder(false);
         setActiveConfirm(false);
         setRedOne("0");
@@ -80,17 +71,22 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setStatusMessage("Awaiting encrypted messages...");
         setSecretCode(["E", "R", "R"]);
       }
-      if (data.event === "red-hints-in"){
+      if (data.event === "red-hints-in") {
         setStatusMessage("Waiting on blue teams encryption...");
       }
-      if (data.event === "blue-hints-in"){
+      if (data.event === "blue-hints-in") {
         setStatusMessage("Waiting on red teams encryption...");
       }
-      if (data.event === "decryption"){
+      if (data.event === "decryption") {
         setRedHint(data.redHints);
         setBlueHint(data.blueHints);
-        if(coder){
-          setStatusMessage("Agents, decode the messages now")
+        setDecrypt(true);
+        if (coder) {
+          setStatusMessage("Agents, decode the messages now");
+          setActiveConfirm(false);
+        } else {
+          setStatusMessage("Message recieved... decode message.");
+          setActiveConfirm(true);
         }
       }
       if (data.status !== undefined) {
@@ -125,9 +121,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setCoder(true);
         setSecretCode(data.code);
         setActiveConfirm(true);
-        setStatusMessage(
-          "Code recieved. Encode and retransmit..."
-        );
+        setStatusMessage("Code recieved. Encode and retransmit...");
       }
       if (data.status !== undefined) {
         setStatusMessage(data.status);
@@ -229,38 +223,62 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   };
 
   const handleConfirm = () => {
-    if(gameStarted === false){
-      socket.emit("game-data", {event:"begin-game"});
+    if (gameStarted === false) {
+      socket.emit("game-data", { event: "begin-game" });
     } else {
-      if(coder){
-        if(myTeam === "red"){
-          let truncHint1 = r1HintRef.current.value.slice(0,46);
-          let truncHint2 = r2HintRef.current.value.slice(0,46);
-          let truncHint3 = r3HintRef.current.value.slice(0,46);
-          if(truncHint1 === "" || truncHint2 === "" || truncHint3 === ""){
-            setStatusMessage("You must fill out all hints before submitting.")
+      if (coder) {
+        if (myTeam === "red") {
+          let truncHint1 = r1HintRef.current.value.slice(0, 46);
+          let truncHint2 = r2HintRef.current.value.slice(0, 46);
+          let truncHint3 = r3HintRef.current.value.slice(0, 46);
+          if (truncHint1 === "" || truncHint2 === "" || truncHint3 === "") {
+            setStatusMessage("You must fill out all hints before submitting.");
           } else {
-            socket.emit("game-data", {event:"red-hints", hint1:truncHint1, hint2:truncHint2, hint3:truncHint3});
+            socket.emit("game-data", {
+              event: "red-hints",
+              hint1: truncHint1,
+              hint2: truncHint2,
+              hint3: truncHint3,
+            });
             setSubmitted(true);
             setStatusMessage("Waiting for blue team to submit");
             setActiveConfirm(false);
           }
         } else {
-          let truncHint1 = b1HintRef.current.value.slice(0,46);
-          let truncHint2 = b2HintRef.current.value.slice(0,46);
-          let truncHint3 = b3HintRef.current.value.slice(0,46);
-          if(truncHint1 === "" || truncHint2 === "" || truncHint3 === ""){
-            setStatusMessage("You must fill out all hints before submitting.")
+          let truncHint1 = b1HintRef.current.value.slice(0, 46);
+          let truncHint2 = b2HintRef.current.value.slice(0, 46);
+          let truncHint3 = b3HintRef.current.value.slice(0, 46);
+          if (truncHint1 === "" || truncHint2 === "" || truncHint3 === "") {
+            setStatusMessage("You must fill out all hints before submitting");
           } else {
-            socket.emit("game-data", {event:"blue-hints", hint1:truncHint1, hint2:truncHint2, hint3:truncHint3});
+            socket.emit("game-data", {
+              event: "blue-hints",
+              hint1: truncHint1,
+              hint2: truncHint2,
+              hint3: truncHint3,
+            });
             setSubmitted(true);
             setStatusMessage("Waiting for red team to submit");
             setActiveConfirm(false);
           }
         }
       }
+      if (decrypt) {
+        const redGuess = new Set([redOne, redTwo, redThree]);
+        const blueGuess = new Set([blueOne, blueTwo, blueThree]);
+        if (redGuess.size === 3 && blueGuess.size === 3) {
+          socket.emit("game-data", {
+            event: "submit-guess",
+            team: myTeam,
+            redGuess: [redOne, redTwo, redThree],
+            blueGuess: [blueOne, blueTwo, blueThree],
+          });
+        } else {
+          setStatusMessage("No number may be assigned to two hints per color");
+        }
+      }
     }
-  }
+  };
 
   const sendChat = (e) => {
     e.preventDefault();
@@ -276,7 +294,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   };
 
   return (
-    <div className={`${myTeam === "red" ? "border-dotted border-red-700" : "border-dotted border-blue-700"} enigma-grid border-4`}>
+    <div
+      className={`${
+        myTeam === "red"
+          ? "border-dotted border-red-700"
+          : "border-dotted border-blue-700"
+      } enigma-grid border-4`}
+    >
       <div className="words-box">
         <div className="word-border">
           <h1 className="word-screen text-center text-3xl bg-green-900 mx-2">
@@ -364,7 +388,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               {actualNums[1]}
             </div>
           </div>
-          {myTeam === 'red' && coder === true && submitted === false ? (
+          {myTeam === "red" && coder === true && submitted === false ? (
             <input
               className="m-2 px-1"
               type="text"
@@ -507,7 +531,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         </div>
         <div className="confirm-box bg-black h-full">
           {activeConfirm ? (
-            <button type="button" className="confirm-button w-full h-full" onClick={handleConfirm}>
+            <button
+              type="button"
+              className="confirm-button w-full h-full"
+              onClick={handleConfirm}
+            >
               {`[CONFIRM]`}
             </button>
           ) : (
