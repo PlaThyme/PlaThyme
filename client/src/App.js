@@ -15,7 +15,7 @@ import TestGame from './Games/TestGame/TestGame';
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
 
-const SERVER = "http://localhost:3001";
+const SERVER = "https://tranquil-plateau-03725.herokuapp.com/";
 let socket;
 let title;
 let dialogText;
@@ -26,9 +26,9 @@ export default function App() {
   // Enter the new game in this Dictionary.
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
+    // { gameId: 2, gameName: "TestGame", minPlayers: 3 },
     { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+    // { gameId: 4, gameName: "Uno", minPlayers: 2 },
   ]);
 
   // Game and player Info
