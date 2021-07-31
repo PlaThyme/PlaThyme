@@ -94,7 +94,7 @@ export default function App() {
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
-    let truncName = playerName.slice(0,14);
+    let truncName = playerName.slice(0,19);
     setCurrentPlayer(truncName);
     const id = selectedGame.gameId;
     socket.emit("newRoom", { 

@@ -212,7 +212,8 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
                 type="text"
                 id="name"
                 name="name"
-                placeholder="Enter Name"
+                placeholder="Username"
+                maxlength="20"
                 className="border border-gray-300 shadow p-2 w-full"
                 ref={nameRef}
                 required
