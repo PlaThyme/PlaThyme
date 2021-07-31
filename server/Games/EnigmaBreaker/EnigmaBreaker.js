@@ -81,6 +81,27 @@ class EnigmaBreaker extends Game {
     }
   }
 
+  disconnection(playerName){
+    super.disconnection(playerName);
+    team = this.teams[playerName];
+    if(team === 'red'){
+      this.redNum -= 1;
+      if(this.redTurnOrder[0] === playerName){
+        
+      }
+      this.redTurnOrder.filter((player) => player != playerName);
+    
+    }
+    if(team === 'blue'){
+      this.blueNum -= 1;
+      if(this.blueTurnOrder[0] === playerName){
+        
+      }
+      this.blueTurnOrder.filter((player) => player != playerName);
+    }
+  }
+
+
   //Retransmits team chat message to each memeber of the same team
   handleTeamChat(data) {
     if (data.team === "red") {

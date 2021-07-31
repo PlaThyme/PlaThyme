@@ -132,10 +132,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           "Awaiting Transmission...",]);
       }
       if (data.event === "red-hints-in") {
-        setStatusMessage("Waiting on blue teams encryption...");
+        setStatusMessage("Waiting on blue team encryption...");
       }
       if (data.event === "blue-hints-in") {
-        setStatusMessage("Waiting on red teams encryption...");
+        setStatusMessage("Waiting on red team encryption...");
       }
       if (data.event === "wait-red-guess") {
         setGameState(data.state);

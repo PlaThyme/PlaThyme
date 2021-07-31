@@ -169,8 +169,9 @@ io.on("connection", (socket) => {
   //Perform client disconnection actions
   const handleDisconnect = () => {
     try {
-      //Remove the user from room tracking.
+      //Remove the user from room tracking, and socket.
       const userName = leaveRoom(socket.id);
+      socket.leave(roomCode);
 
       //Verify the user was in a room, then perform the other actions upon disconnect
       if (userName) {
