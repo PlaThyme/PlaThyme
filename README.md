@@ -38,6 +38,7 @@ We are planning to do this in `2 steps`.
 * Future work: Additional game ideas: 
   1 __Draw the word, down the line__
   2 __Enigma Breaker__
+  3 __Slapjack__
 
 # Description of Games
 
@@ -60,7 +61,7 @@ In addition to unit tests, all code is required to be reviewed by someone else b
 # Where can I get more help, if I need it?
 
 Primary goal of `PlaThyme` is to be inclusive to the largest number of contributors, with the most varied and diverse backgrounds possible.
-We are trying to create a safe and friendly community where you can share your thoughts freely.
+We are trying to create a safe and friendly community where you can share your thoughts freely. 
 
 If you need more help, we highly encorage you to post your question or concern in [`Discussions`](https://github.com/PlaThyme/PlaThyme/discussions)
 

@@ -351,7 +351,6 @@ export default function DrawingBoard({ socket }) {
               <Dialog.Overlay className="fixed inset-Y0" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
