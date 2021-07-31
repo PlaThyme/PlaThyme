@@ -99,7 +99,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (data.event === "allow-start") {
         setActiveConfirm(true);
         setStatusMessage(
-          "Minimum Players Reacherd. Press confirm to start game."
+          "Minimum Players Reached. Press confirm to start game."
         );
       }
       if (data.event === "start-game") {
@@ -293,7 +293,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setCoder(true);
         setSecretCode(data.code);
         setActiveConfirm(true);
-        setStatusMessage("Code recieved. Encode and retransmit...");
+        setStatusMessage("Code received. Encode and retransmit...");
       }
       if (data.event === "guess-data") {
         setShowGuesses(true);
