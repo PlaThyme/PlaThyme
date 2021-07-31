@@ -17,7 +17,6 @@ class EnigmaBreaker extends Game {
     this.redSel = ["0", "0", "0", "0", "0", "0"];
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
     this.statusMessage = "Waiting for more players...";
-    this.started = false;
     this.words = wordsList;
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
@@ -81,26 +80,57 @@ class EnigmaBreaker extends Game {
     }
   }
 
-  disconnection(playerName){
+  disconnection(playerName) {
     super.disconnection(playerName);
     team = this.teams[playerName];
-    if(team === 'red'){
+    let first = false;
+    if (team === "red") {
       this.redNum -= 1;
-      if(this.redTurnOrder[0] === playerName){
-        
+      if (this.redTurnOrder[0] === playerName) {
+        first = true;
       }
       this.redTurnOrder.filter((player) => player != playerName);
-    
     }
-    if(team === 'blue'){
+    if (team === "blue") {
       this.blueNum -= 1;
-      if(this.blueTurnOrder[0] === playerName){
-        
+      if (this.blueTurnOrder[0] === playerName) {
+        first = true;
       }
       this.blueTurnOrder.filter((player) => player != playerName);
     }
-  }
 
+    //Determine if a new person needs to generate the hint.
+    if (this.gameState > 0) {
+      if (first && team === "red") {
+        if (
+          this.gameState === 1 ||
+          (this.gameState === 2 && this.redHints.length <= this.currentRound)
+        ) {
+          super.sendDataToPlayer(this.redTurnOrder[0], {
+            event: "your-turn",
+            code: this.redCode,
+          });
+        }
+      }
+      if (first && team === "blue") {
+        if (
+          this.gameState === 1 ||
+          (this.gameState === 2 && this.blueHints.length <= this.currentRound)
+        ) {
+          super.sendDataToPlayer(this.blueTurnOrder[0], {
+            event: "your-turn",
+            code: this.blueCode,
+          });
+        }
+      }
+      if (this.redNum < 2) {
+        super.sendGameData({ event: "red-needs-players" });
+      }
+      if (this.blueNum < 2) {
+        super.sendGameData({ event: "blue-needs-players" });
+      }
+    }
+  }
 
   //Retransmits team chat message to each memeber of the same team
   handleTeamChat(data) {
@@ -190,17 +220,18 @@ class EnigmaBreaker extends Game {
     this.redSel = ["0", "0", "0", "0", "0", "0"];
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
     this.statusMessage = "Waiting for more players to join teams...";
-    this.started = false;
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
     this.redCode = ["E", "R", "R"];
     this.blueCode = ["E", "R", "R"];
     this.redGuessHistory = [];
     this.blueGuessHistory = [];
+    this.redHistory = [];
+    this.blueHistory = [];
     this.redScore = [0, 0];
     this.blueScore = [0, 0];
     this.gameState = 0;
-    super.sendGameData({event:"reset-game"})
+    super.sendGameData({ event: "reset-game" });
   }
 
   //When a team submits hints this records the hints, and distributes them to the other players.
@@ -326,18 +357,34 @@ class EnigmaBreaker extends Game {
       this.blueCode[1],
       this.blueCode[2],
     ];
-    let redRoundHistory = ["<<------------------------->>", "<<------------------------->>", "<<------------------------->>", "<<------------------------->>"];
-    redRoundHistory[parseInt(this.redCode[0]) - 1] = redGuess[0] + " >> " + this.redHints[this.currentRound][0];
-    redRoundHistory[parseInt(this.redCode[1]) - 1] = redGuess[1] + " >> " + this.redHints[this.currentRound][1];
-    redRoundHistory[parseInt(this.redCode[2]) - 1] = redGuess[2] + " >> " + this.redHints[this.currentRound][2];
+    let redRoundHistory = [
+      "<<------------------------->>",
+      "<<------------------------->>",
+      "<<------------------------->>",
+      "<<------------------------->>",
+    ];
+    redRoundHistory[parseInt(this.redCode[0]) - 1] =
+      redGuess[0] + " >> " + this.redHints[this.currentRound][0];
+    redRoundHistory[parseInt(this.redCode[1]) - 1] =
+      redGuess[1] + " >> " + this.redHints[this.currentRound][1];
+    redRoundHistory[parseInt(this.redCode[2]) - 1] =
+      redGuess[2] + " >> " + this.redHints[this.currentRound][2];
     this.redHistory.push(redRoundHistory);
 
-    let blueRoundHistory = ["<<------------------------->>", "<<------------------------->>", "<<------------------------->>", "<<------------------------->>"];
-    blueRoundHistory[parseInt(this.blueCode[0]) - 1] = blueGuess[3] + " >> " + this.blueHints[this.currentRound][0];
-    blueRoundHistory[parseInt(this.blueCode[1]) - 1] = blueGuess[4] + " >> " + this.blueHints[this.currentRound][1];
-    blueRoundHistory[parseInt(this.blueCode[2]) - 1] = blueGuess[5] + " >> " + this.blueHints[this.currentRound][2];
+    let blueRoundHistory = [
+      "<<------------------------->>",
+      "<<------------------------->>",
+      "<<------------------------->>",
+      "<<------------------------->>",
+    ];
+    blueRoundHistory[parseInt(this.blueCode[0]) - 1] =
+      blueGuess[3] + " >> " + this.blueHints[this.currentRound][0];
+    blueRoundHistory[parseInt(this.blueCode[1]) - 1] =
+      blueGuess[4] + " >> " + this.blueHints[this.currentRound][1];
+    blueRoundHistory[parseInt(this.blueCode[2]) - 1] =
+      blueGuess[5] + " >> " + this.blueHints[this.currentRound][2];
     this.blueHistory.push(blueRoundHistory);
-    
+
     if (
       //check to see if red guessed their code correctly. No score change if they did.
       redGuess[0] === this.redCode[0] &&
@@ -411,7 +458,10 @@ class EnigmaBreaker extends Game {
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
       });
-      super.sendChat({sender:"Game-Over", text:"To start a new game press continue"});
+      super.sendChat({
+        sender: "Game-Over",
+        text: "To start a new game press continue",
+      });
       return;
     }
 
@@ -457,6 +507,7 @@ class EnigmaBreaker extends Game {
         selections: this.redSel,
         status: this.statusMessage,
         wordList: this.redWords,
+        state: this.gameState,
       });
     }
     if (this.teams[data.playerName] === "blue") {
@@ -466,9 +517,11 @@ class EnigmaBreaker extends Game {
         selections: this.blueSel,
         status: this.statusMessage,
         wordList: this.blueWords,
+        state: this.gameState,
       });
     }
-    if (this.redNum > 1 && this.blueNum > 1 && this.started === false) {
+    console.log(this.gameState);
+    if (this.redNum > 1 && this.blueNum > 1 && this.gameState === 0) {
       super.sendGameData({ event: "allow-start" });
     }
   }

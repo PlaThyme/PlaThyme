@@ -157,6 +157,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           setActiveConfirm(true);
         }
       }
+      if (data.event === "red-needs-players"){
+        setStatusMessage("Red team needs players. Hire more agents.")
+      }
+      if (data.event === "blue-needs-players"){
+        setStatusMessage("Blue team needs players. Hire more agents.")
+      }
       if (data.event === "score-result") {
         setRedHistory(data.redHistory);
         setBlueHistory(data.blueHistory);
@@ -257,6 +263,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setShowGuesses(false);
         setTeamChat("Waiting on comms...");
         setGuessResults(["", "", "", "", "", ""]);
+        setRedHistory([]);
+        setBlueHistory([]);
         setGameState(0);
         setCurrentRound(0);
         setMyTeam("");
@@ -550,7 +558,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const sendChat = (e) => {
     e.preventDefault();
     if (chatRef.current.value) {
-      let truncMessage = chatRef.current.value.slice(0, 41);
+      let truncMessage = chatRef.current.value.slice(0, 39);
       socket.emit("game-data", {
         event: "team-chat",
         team: myTeam,
@@ -654,7 +662,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "red" && gameState > 0)) &&
-              coder === false ? (
+              (coder === false || myTeam === "blue") ? (
               <NumberSelector
                 selected={redOne}
                 setSelected={updateRedOne}
@@ -687,7 +695,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "red" && gameState > 0)) &&
-              coder === false ? (
+              (coder === false || myTeam === "blue") ? (
               <NumberSelector
                 selected={redTwo}
                 setSelected={updateRedTwo}
@@ -720,7 +728,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "red" && gameState > 0)) &&
-              coder === false ? (
+            (coder === false || myTeam === "blue") ? (
               <NumberSelector
                 selected={redThree}
                 setSelected={updateRedThree}
@@ -762,7 +770,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-              coder === false ? (
+            (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueOne}
                 setSelected={updateBlueOne}
@@ -795,7 +803,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-              coder === false ? (
+            (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueTwo}
                 setSelected={updateBlueTwo}
@@ -828,7 +836,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-              coder === false ? (
+            (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueThree}
                 setSelected={updateBlueThree}
@@ -899,6 +907,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     type="text"
                     placeholder="team chat here"
                     required
+                    maxlength="40"
                     ref={chatRef}
                     autocomplete="off"
                     className="team-chat w-full px-1"
