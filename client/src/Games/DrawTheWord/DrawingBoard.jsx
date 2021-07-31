@@ -1,8 +1,8 @@
 /**
  * @Resources
- * https://dev.to/jerrymcdonald/creating-a-shareable-whiteboard-with-canvas-socket-io-and-react-2en
  * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
  */
+
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
