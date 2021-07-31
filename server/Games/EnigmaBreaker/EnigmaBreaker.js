@@ -82,26 +82,26 @@ class EnigmaBreaker extends Game {
 
   disconnection(playerName) {
     super.disconnection(playerName);
-    team = this.teams[playerName];
+    let team = this.teams[playerName];
     let first = false;
     if (team === "red") {
       this.redNum -= 1;
       if (this.redTurnOrder[0] === playerName) {
         first = true;
       }
-      this.redTurnOrder.filter((player) => player != playerName);
+      this.redTurnOrder = this.redTurnOrder.filter((player) => player != playerName);
     }
     if (team === "blue") {
       this.blueNum -= 1;
       if (this.blueTurnOrder[0] === playerName) {
         first = true;
       }
-      this.blueTurnOrder.filter((player) => player != playerName);
+      this.blueTurnOrder = this.blueTurnOrder.filter((player) => player != playerName);
     }
 
     //Determine if a new person needs to generate the hint.
     if (this.gameState > 0) {
-      if (first && team === "red") {
+      if (first && (team === "red")) {
         if (
           this.gameState === 1 ||
           (this.gameState === 2 && this.redHints.length <= this.currentRound)
@@ -112,7 +112,7 @@ class EnigmaBreaker extends Game {
           });
         }
       }
-      if (first && team === "blue") {
+      if (first && (team === "blue")) {
         if (
           this.gameState === 1 ||
           (this.gameState === 2 && this.blueHints.length <= this.currentRound)
@@ -128,6 +128,9 @@ class EnigmaBreaker extends Game {
       }
       if (this.blueNum < 2) {
         super.sendGameData({ event: "blue-needs-players" });
+      }
+      if (this.redNum === 0 || this.blueNum === 0){
+        this.handleNewGame();
       }
     }
   }
@@ -507,7 +510,14 @@ class EnigmaBreaker extends Game {
         selections: this.redSel,
         status: this.statusMessage,
         wordList: this.redWords,
-        state: this.gameState,
+        gameState: this.gameState,
+        redHints: this.redHints[this.currentRound],
+        blueHints: this.blueHints[this.currentRound],
+        currentRound: this.currentRound,
+        redScore: this.redScore,
+        blueScore: this.blueScore,
+        redHistory: this.redHistory,
+        blueHistory: this.blueHistory,
       });
     }
     if (this.teams[data.playerName] === "blue") {
@@ -517,10 +527,16 @@ class EnigmaBreaker extends Game {
         selections: this.blueSel,
         status: this.statusMessage,
         wordList: this.blueWords,
-        state: this.gameState,
+        gameState: this.gameState,
+        redHints: this.redHints[this.currentRound],
+        blueHints: this.blueHints[this.currentRound1],
+        currentRound: this.currentRound,
+        redScore: this.redScore,
+        blueScore: this.blueScore,
+        redHistory: this.redHistory,
+        blueHistory: this.blueHistory,
       });
     }
-    console.log(this.gameState);
     if (this.redNum > 1 && this.blueNum > 1 && this.gameState === 0) {
       super.sendGameData({ event: "allow-start" });
     }

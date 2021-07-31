@@ -125,11 +125,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueHint([
           "Awaiting Transmission...",
           "Awaiting Transmission...",
-          "Awaiting Transmission...",]);
+          "Awaiting Transmission...",
+        ]);
         setRedHint([
           "Awaiting Transmission...",
           "Awaiting Transmission...",
-          "Awaiting Transmission...",]);
+          "Awaiting Transmission...",
+        ]);
       }
       if (data.event === "red-hints-in") {
         setStatusMessage("Waiting on blue team encryption...");
@@ -157,11 +159,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           setActiveConfirm(true);
         }
       }
-      if (data.event === "red-needs-players"){
-        setStatusMessage("Red team needs players. Hire more agents.")
+      if (data.event === "red-needs-players") {
+        setStatusMessage("Red team needs players. Hire more agents.");
       }
-      if (data.event === "blue-needs-players"){
-        setStatusMessage("Blue team needs players. Hire more agents.")
+      if (data.event === "blue-needs-players") {
+        setStatusMessage("Blue team needs players. Hire more agents.");
       }
       if (data.event === "score-result") {
         setRedHistory(data.redHistory);
@@ -230,21 +232,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           }
         }
         setStatusMessage(
-          `R:${rs} B:${bs} Game-over - ${data.winner === "tie" ? "Tie game!" : `${data.winner} team wins!`}`
+          `R:${rs} B:${bs} Game-over - ${
+            data.winner === "tie" ? "Tie game!" : `${data.winner} team wins!`
+          }`
         );
         setActualNums(data.codes);
         setGameState(data.state);
       }
       //Essentially resets the game back to the initial state. People will need to re-join teams.
-      if (data.event === "reset-game"){
+      if (data.event === "reset-game") {
         setSecretCode(["E", "R", "R"]);
         setActiveConfirm(false);
         setActualNums(["?", "?", "?", "?", "?", "?"]);
-        setBlueHint("");
-        setRedHint("");
-        setRedScore([0,0]);
-        setBlueScore([0,0]);
-        setWords(["","","",""]);
+        setRedScore([0, 0]);
+        setBlueScore([0, 0]);
+        setWords(["", "", "", ""]);
         setRedOne("0");
         setRedTwo("0");
         setRedThree("0");
@@ -255,11 +257,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueHint([
           "Awaiting Transmission...",
           "Awaiting Transmission...",
-          "Awaiting Transmission...",]);
+          "Awaiting Transmission...",
+        ]);
         setRedHint([
           "Awaiting Transmission...",
           "Awaiting Transmission...",
-          "Awaiting Transmission...",]);
+          "Awaiting Transmission...",
+        ]);
         setShowGuesses(false);
         setTeamChat("Waiting on comms...");
         setGuessResults(["", "", "", "", "", ""]);
@@ -285,6 +289,16 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueTwo(data.selections[4]);
         setBlueThree(data.selections[5]);
         setWords(data.wordList);
+        if(data.gameState > 2){
+          setRedHint(data.redHints);
+          setBlueHint(data.blueHints);
+        }
+        setCurrentRound(data.currentRound);
+        setBlueHistory(data.blueHistory);
+        setRedHistory(data.redHistory);
+        setRedScore(data.redScore);
+        setBlueScore(data.blueScore);
+        setGameState(data.gameState);
       }
       if (data.event === "selections") {
         setRedOne(data.selections[0]);
@@ -327,10 +341,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   }, [myTeam]);
 
   useEffect(() => {
-    const printHst = (history, color) =>{
+    const printHst = (history, color) => {
       const paper = document.querySelector("#printer .paper");
       const sheet = document.createElement("div");
-      sheet.className = hstAnimation[history.length -1];
+      sheet.className = hstAnimation[history.length - 1];
       const edge = document.createElement("div");
       edge.className = "edge";
       const content = document.createElement("div");
@@ -361,9 +375,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         sheet.appendChild(currentLine.cloneNode(true));
       });
       paper.prepend(sheet.cloneNode(true));
-    }
+    };
 
     if (selected === "redHistory") {
+      console.log(redHistory);
       printHst(redHistory, "redType");
     }
     if (selected === "blueHistory") {
@@ -728,7 +743,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "red" && gameState > 0)) &&
-            (coder === false || myTeam === "blue") ? (
+              (coder === false || myTeam === "blue") ? (
               <NumberSelector
                 selected={redThree}
                 setSelected={updateRedThree}
@@ -770,7 +785,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-            (coder === false || myTeam === "red") ? (
+              (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueOne}
                 setSelected={updateBlueOne}
@@ -803,7 +818,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-            (coder === false || myTeam === "red") ? (
+              (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueTwo}
                 setSelected={updateBlueTwo}
@@ -836,7 +851,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
               </div>
             ) : (currentRound > 0 || (myTeam === "blue" && gameState > 0)) &&
-            (coder === false || myTeam === "red") ? (
+              (coder === false || myTeam === "red") ? (
               <NumberSelector
                 selected={blueThree}
                 setSelected={updateBlueThree}
@@ -894,27 +909,20 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         </div>
         <div className="word-border h-max-full">
           <div className="word-screen h-full">
-            {coder ? (
-              <>
-                <div>{">Communications Failure..._"}</div>
-                <div className="team-chat w-full px-1">...........</div>
-              </>
-            ) : (
-              <>
-                <div>{`>${teamChat}_`}</div>
-                <form onSubmit={sendChat} id="teamChatBox">
-                  <input
-                    type="text"
-                    placeholder="team chat here"
-                    required
-                    maxlength="40"
-                    ref={chatRef}
-                    autocomplete="off"
-                    className="team-chat w-full px-1"
-                  ></input>
-                </form>
-              </>
-            )}
+            <>
+              <div>{`>${teamChat}_`}</div>
+              <form onSubmit={sendChat} id="teamChatBox">
+                <input
+                  type="text"
+                  placeholder="team chat here"
+                  required
+                  maxlength="40"
+                  ref={chatRef}
+                  autocomplete="off"
+                  className="team-chat w-full px-1"
+                ></input>
+              </form>
+            </>
           </div>
         </div>
         <div className="word-border h-max-full">
@@ -954,12 +962,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           )}
         </RadioGroup.Option>
       </RadioGroup>
-        <div classname="history-lists bg-red-900">
-          <div className="printer" id="printer">
-            <div className="paper">
-            </div>
-          </div>
+      <div classname="history-lists bg-red-900">
+        <div className="printer" id="printer">
+          <div className="paper"></div>
         </div>
+      </div>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
