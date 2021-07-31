@@ -15,7 +15,7 @@ import TestGame from './Games/TestGame/TestGame';
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
 
-const SERVER = "https://tranquil-plateau-03725.herokuapp.com/";
+const SERVER = "http://enigmabreaker.herokuapp.com";
 let socket;
 let title;
 let dialogText;
