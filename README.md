@@ -72,5 +72,5 @@ This project and everyone participating in it is governed by PlaThyme [Code of C
 
 # Licence
 
-[GNU General Public License v3.0](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
+[MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
 
