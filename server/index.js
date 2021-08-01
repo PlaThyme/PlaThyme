@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
       const gid = getGameId(roomCode);
 
       //Make sure game room exists.
-      if (gid === null) {
+      if (gid === null || games[roomCode] === undefined) {
         socket.emit("error", { error: "gid" });
         return;
       }

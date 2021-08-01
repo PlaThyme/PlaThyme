@@ -16,7 +16,6 @@ class EnigmaBreaker extends Game {
     this.currentRound = 0;
     this.redSel = ["0", "0", "0", "0", "0", "0"];
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
-    this.statusMessage = "Waiting for more players...";
     this.words = wordsList;
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
@@ -222,7 +221,6 @@ class EnigmaBreaker extends Game {
     this.currentRound = 0;
     this.redSel = ["0", "0", "0", "0", "0", "0"];
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
-    this.statusMessage = "Waiting for more players to join teams...";
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
     this.redCode = ["E", "R", "R"];
@@ -504,12 +502,24 @@ class EnigmaBreaker extends Game {
         this.redTurnOrder.push(data.playerName);
       }
     }
+
+    //Determine if the game is in state 4, and this player will be waiting on the other teams action.
+    let wait = false;
+    if(this.gameState === 4){
+      if((this.teams[data.playerName] === "red") && (this.redGuessHistory.length > this.currentRound)){ //Red team already guessed, they will be waiting.
+        wait = true;
+      } 
+      if((this.teams[data.playerName] === "blue") && (this.blueGuessHistory.length > this.currentRound)){ //Blue team already guessed, they will be waiting.
+        wait = true;
+      } 
+    }
+
+
     if (this.teams[data.playerName] === "red") {
       super.sendDataToPlayer(data.playerName, {
         event: "team-info",
         team: "red",
         selections: this.redSel,
-        status: this.statusMessage,
         wordList: this.redWords,
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
@@ -519,6 +529,7 @@ class EnigmaBreaker extends Game {
         blueScore: this.blueScore,
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
+        wait: wait,
       });
     }
     if (this.teams[data.playerName] === "blue") {
@@ -526,7 +537,6 @@ class EnigmaBreaker extends Game {
         event: "team-info",
         team: "blue",
         selections: this.blueSel,
-        status: this.statusMessage,
         wordList: this.blueWords,
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
@@ -536,6 +546,7 @@ class EnigmaBreaker extends Game {
         blueScore: this.blueScore,
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
+        wait: wait,
       });
     }
     if (this.redNum > 1 && this.blueNum > 1 && this.gameState === 0) {
