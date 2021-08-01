@@ -1,4 +1,4 @@
-const Game = require("./Game");
+const Game = require("../Game");
 
 class UNOtm extends Game {
   /** 
@@ -20,6 +20,7 @@ class UNOtm extends Game {
     this.currentNumber = '';
     this.playedCardsPile = [];
     this.drawCardPile = [];
+    this.roomFull = false;
   }
 
    recieveData(data) {}
@@ -30,6 +31,7 @@ class UNOtm extends Game {
   startGame() {
     super.sendGameData({ event: "start-game" });
     this.gameStarted = true;
+    this.roomFull = true;
   }
 
   newPlayer(playerName) {

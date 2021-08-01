@@ -6,7 +6,7 @@ const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
-const UNOtm = require("./Games/UNOtm");
+const UNOtm = require("./Games/UNOtm/UNOtm");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -102,7 +102,6 @@ io.on("connection", (socket) => {
       case 4:
         console.log("UNO game selected\n");
         games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
-        console.log(games[roomCode]);
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
           games[roomCode].startGame();
           socket.emit("start-game", {}); // informs App.js to render game component.
@@ -162,10 +161,22 @@ io.on("connection", (socket) => {
         // Test: enter wrong room code; got error. (add checks)
         games[roomCode].newPlayer(name);
 
-        if ( games[roomCode].players.length >= games[roomCode].minPlayers && (gid === 1 || gid === 4)) {
+        if ( games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1) {
           games[roomCode].startGame();
         }
-
+        if ( games[roomCode].players.length >= games[roomCode].minPlayers &&  gid === 4) {
+          console.log("inside game 4 join statement");
+          
+          if(games[roomCode].players.length === games[roomCode].minPlayers){
+            console.log(games[roomCode]);
+            console.log("UNO game started");
+            games[roomCode].startGame();
+          } 
+          if(games[roomCode].players.length > games[roomCode]){
+            // send an error event indicating thta current room i sfull and redireect them to home page agin.
+            console.log("*Room full*");
+          }
+        }
         //Send all players updated user list.
         io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
       }
