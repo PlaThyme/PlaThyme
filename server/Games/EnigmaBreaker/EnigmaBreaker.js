@@ -469,6 +469,7 @@ class EnigmaBreaker extends Game {
     }
 
     //If the game isn't over, send the results.
+    this.counter += 1;
     super.sendGameData({
       event: "score-result",
       score: score,

@@ -1,5 +1,6 @@
 import React from "react";
 import { RadioGroup } from "@headlessui/react";
+import "./EnigmaBreakerStyle.css";
 
 const NumberSelector = ({ selected, setSelected, color }) => {
   return (
@@ -14,22 +15,24 @@ const NumberSelector = ({ selected, setSelected, color }) => {
             color === "red" ? (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`red-num-selector red-screen-text ${
                   checked
-                    ? "bg-red-600 text-gray-100 border-red-100"
-                    : "bg-red-800 text-gray-400 border-gray-600"
-                } hover:bg-red-200`}
+                    ? "red-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 1
               </button>
             ) : (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`blue-num-selector blue-screen-text ${
                   checked
-                    ? "bg-blue-600 text-gray-100 border-blue-100"
-                    : "bg-blue-800 text-gray-400 border-gray-600"
-                } hover:bg-blue-200`}
+                    ? "blue-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 1
               </button>
@@ -41,22 +44,24 @@ const NumberSelector = ({ selected, setSelected, color }) => {
             color === "red" ? (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`red-num-selector red-screen-text ${
                   checked
-                    ? "bg-red-600 text-gray-100 border-red-100"
-                    : "bg-red-800 text-gray-400 border-gray-600"
-                } hover:bg-red-200`}
+                    ? "red-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 2
               </button>
             ) : (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`blue-num-selector blue-screen-text ${
                   checked
-                    ? "bg-blue-600 text-gray-100 border-blue-100"
-                    : "bg-blue-800 text-gray-400 border-gray-600"
-                } hover:bg-blue-200`}
+                    ? "blue-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 2
               </button>
@@ -68,22 +73,24 @@ const NumberSelector = ({ selected, setSelected, color }) => {
             color === "red" ? (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`red-num-selector red-screen-text ${
                   checked
-                    ? "bg-red-600 text-gray-100 border-red-100"
-                    : "bg-red-800 text-gray-400 border-gray-600"
-                } hover:bg-red-200`}
+                    ? "red-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 3
               </button>
             ) : (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`blue-num-selector blue-screen-text ${
                   checked
-                    ? "bg-blue-600 text-gray-100 border-blue-100"
-                    : "bg-blue-800 text-gray-400 border-gray-600"
-                } hover:bg-blue-200`}
+                    ? "blue-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 3
               </button>
@@ -95,22 +102,24 @@ const NumberSelector = ({ selected, setSelected, color }) => {
             color === "red" ? (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`red-num-selector red-screen-text ${
                   checked
-                    ? "bg-red-600 text-gray-100 border-red-100"
-                    : "bg-red-800 text-gray-400 border-gray-600"
-                } hover:bg-red-200`}
+                    ? "red-checked-selector"
+                    : "unchecked-selector"
+                  }`
+                }
               >
                 4
               </button>
             ) : (
               <button
                 onClick={() => true}
-                className={`text-sm border-2 rounded-md ${
+                className={`blue-num-selector blue-screen-text ${
                   checked
-                    ? "bg-blue-600 text-gray-100 border-blue-100"
-                    : "bg-blue-800 text-gray-400 border-gray-600"
-                } hover:bg-blue-200`}
+                    ? "blue-checked-selector"
+                    : "unchecked-selector"
+                  }
+                `}
               >
                 4
               </button>
