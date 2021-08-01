@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import SideBar from "./SideBar";
 import ToolTip from "./ToolTip";
 
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children, displaySideBar}) => {
 
   const [allUsers, setAllUsers] = useState([]);
 
@@ -13,7 +13,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
       setAllUsers(users);
     })
   }, []);
-  
+  console.log("displaySideBar = ", displaySideBar);
   return (
     <div className="flex flex-col h-screen max-h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
@@ -34,16 +34,21 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
           </ToolTip>
         </div>
       </nav>
+      {(displaySideBar)? 
       <div className="flex inline h-full">
         <div className="game-box bg-gray-800 flex-grow">
           {children}
-        </div>
-        <div className="flex bg-gray-900">
-          <div className="flex flex-none w-60">
-            <SideBar currentPlayer={currentPlayer} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
-          </div>
-        </div>
-      </div>
+        </div> 
+          <div className="flex bg-gray-900">
+            <div className="flex flex-none w-60">
+              <SideBar currentPlayer={currentPlayer} allUsers={allUsers} leaveGame={leaveGame} socket={socket} />
+            </div>
+          </div>        
+      </div>:
+      <div className="game-box bg-gray-800 flex-grow">
+          {children}
+        </div> 
+}
     </div>
   );
 };

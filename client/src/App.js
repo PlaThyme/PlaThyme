@@ -10,6 +10,7 @@ import logo from './images/plathyme.png';
 
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
+import UNOTM from './Games/UNOtm/UNOtm';
 
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
@@ -27,7 +28,7 @@ export default function App() {
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "TestGame", minPlayers: 3 },
     { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Card game", minPlayers: 2 },
+    { gameId: 4, gameName: "The Card game - Mattle UNO™", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -41,6 +42,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [displaySideBar, setDisplaySideBar] = useState(true);
 
   useEffect(() => {
     const openModal = () =>  setIsOpen(true);
@@ -54,6 +56,9 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
+      if(gameData.gameId === 4){
+        setDisplaySideBar(false);
+      }
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
@@ -123,6 +128,8 @@ export default function App() {
         return <TestGame socket={socket}/>;
       case 3:
         break;
+      case 4:
+        return <UNOTM socket={socket} />;
       default:
         break;
     }
@@ -140,6 +147,7 @@ export default function App() {
             currentPlayer={currentPlayer}
             leaveGame={setInGame}
             socket={socket}
+            displaySideBar={displaySideBar}
           >
             { 
               renderGame(gameInfo.gameId)
