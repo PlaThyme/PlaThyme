@@ -6,6 +6,7 @@ const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
+const UNOtm = require("./Games/UNOtm");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -15,6 +16,7 @@ const {
   numUsersInRoom,
   getUsersInRoom,
 } = require("./rooms.js");
+// const { default: UNOTM } = require("../client/src/Games/UNOtm/UNOtm");
 
 //games is a dict of the game state objects, indexed bt the roomCode.
 const games = {};
@@ -97,6 +99,15 @@ io.on("connection", (socket) => {
       case 2:
         games[roomCode] = new TestGame(roomCode, socket, io, data.name);
         break;
+      case 4:
+        console.log("UNO game selected\n");
+        games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
+        console.log(games[roomCode]);
+        if (games[roomCode].players.length === games[roomCode].minPlayers) {
+          games[roomCode].startGame();
+          socket.emit("start-game", {}); // informs App.js to render game component.
+        }
+        break;
       default:
         break;
     }
@@ -151,7 +162,7 @@ io.on("connection", (socket) => {
         // Test: enter wrong room code; got error. (add checks)
         games[roomCode].newPlayer(name);
 
-        if ( games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1) {
+        if ( games[roomCode].players.length >= games[roomCode].minPlayers && (gid === 1 || gid === 4)) {
           games[roomCode].startGame();
         }
 

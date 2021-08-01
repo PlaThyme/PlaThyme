@@ -1,6 +1,6 @@
 // UNO?™
 
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // import queryString from 'query-string'
 import Spinner from './Spinner'
 import useSound from 'use-sound'
