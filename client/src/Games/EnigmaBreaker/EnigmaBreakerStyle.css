@@ -62,8 +62,8 @@
   height: 100%;
   display: grid;
   grid-template-rows: 10% 8% 40% 42%;
-  animation: tv-refresh 60ms infinite;
 }
+
 @keyframes tv-refresh {
   0% {
     opacity: 0.94;
