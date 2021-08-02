@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { EyeOffIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import React from "react";
 import "./EnigmaBreakerStyle.css";
 import { RadioGroup } from "@headlessui/react";
@@ -30,7 +29,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //Controls the three digit code indicator
   const [secretCode, setSecretCode] = useState(["?", "?", "?"]);
-  const [buttonMessage, setButtonMessage] = useState("[CONFIRM]");
+  const [buttonMessage, setButtonMessage] = useState("Wait For Players");
 
   //Current score display.
   const [blueScore, setBlueScore] = useState([0, 0]);
@@ -52,9 +51,18 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     "Awaiting Transmission",
   ]);
   const [history, setHistory] = useState({ redHistory: [], blueHistory: [] });
-  const hstAnimation = ["sheet1", "sheet2", "sheet3", "sheet4", "sheet5", "sheet6", "sheet7", "sheet8"];
+  const hstAnimation = [
+    "sheet1",
+    "sheet2",
+    "sheet3",
+    "sheet4",
+    "sheet5",
+    "sheet6",
+    "sheet7",
+    "sheet8",
+  ];
   const [submitted, setSubmitted] = useState(false);
-  const [activeConfirm, setActiveConfirm] = useState(true);
+  const [activeConfirm, setActiveConfirm] = useState(false);
   const [statusMessage, setStatusMessage] = useState(
     "Waiting for more players to join. A minimum of 2 per team are needed."
   );
@@ -165,7 +173,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setGameState(data.state);
         setRedHint(data.redHints);
         setBlueHint(data.blueHints);
-
         if (coder === true) {
           setActiveConfirm(false);
           setButtonMessage("Inactive");
@@ -418,15 +425,23 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   }, [history]);
 
   const printBlueHst = () => {
-    if(history.blueHistory.length === 0){
-      printHst([["404 NOT FOUND","404 NOT FOUND","404 NOT FOUND","404 NOT FOUND"]], "blueType", false);
+    if (history.blueHistory.length === 0) {
+      printHst(
+        [["404 NOT FOUND", "404 NOT FOUND", "404 NOT FOUND", "404 NOT FOUND"]],
+        "blueType",
+        false
+      );
     } else {
       printHst(history.blueHistory, "blueType", false);
     }
   };
   const printRedHst = () => {
-    if(history.redHistory.length === 0){
-      printHst([["404 NOT FOUND","404 NOT FOUND","404 NOT FOUND","404 NOT FOUND"]], "redType", false);
+    if (history.redHistory.length === 0) {
+      printHst(
+        [["404 NOT FOUND", "404 NOT FOUND", "404 NOT FOUND", "404 NOT FOUND"]],
+        "redType",
+        false
+      );
     } else {
       printHst(history.redHistory, "redType", false);
     }
@@ -435,7 +450,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   let timeoutValue;
 
   const printHst = (historyList, color) => {
-    if(timeoutValue !== undefined){
+    if (timeoutValue !== undefined) {
       clearTimeout(timeoutValue);
     }
     timeoutValue = setTimeout(() => {
@@ -450,7 +465,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       col.className = "histColumn";
       const line = document.createElement("div");
       line.className = "line";
-  
+
       historyList.reverse().forEach((round) => {
         const col1 = col.cloneNode();
         col1.innerText = round[0];
@@ -472,7 +487,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         sheet.appendChild(currentLine.cloneNode(true));
       });
       paper.prepend(sheet.cloneNode(true));
-      if(paper.childElementCount > 11){
+      if (paper.childElementCount > 11) {
         paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
       }
     }, 50);
@@ -1106,8 +1121,16 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                   </div>
                   <div className="screen-buttons">
                     <div className="ml-4">
-                      <div>{`Blue Score:${displayScore(blueScore)}`}</div>
-                      <div>{`Red Score: ${displayScore(redScore)}`}</div>
+                      <div>
+                        {`Blue Score:${displayScore(blueScore)}`}
+                        <span className={`float-right ${myTeam}-screen-text`}>{`${myTeam === 'red' ? 
+                        `Round ${currentRound + 1}`: "<-My Team"}`}</span>
+                      </div>
+                      <div>
+                        {`Red Score: ${displayScore(redScore)}`}
+                        <span className={`float-right ${myTeam}-screen-text`}>{`${myTeam === 'blue' ? 
+                        `Round ${currentRound + 1}`: "<-My Team"}`}</span>
+                      </div>
                     </div>
                     <button
                       type="button"

@@ -1,14 +1,3 @@
-@font-face {
-  font-family: pixel;
-  src: url(./fonts/dogicapixel.otf);
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: digital;
-  src: url(./fonts/DIGITALDREAMNARROW.ttf);
-}
-
 .enigma-grid {
   display: grid;
   /* font-family: pixel; */
