@@ -52,10 +52,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     "Awaiting Transmission",
   ]);
   const [history, setHistory] = useState({ redHistory: [], blueHistory: [] });
-  const hstAnimation = ["sheet1", "sheet2", "sheet3", "sheet4"];
+  const hstAnimation = ["sheet1", "sheet2", "sheet3", "sheet4", "sheet5", "sheet6", "sheet7", "sheet8"];
   const [submitted, setSubmitted] = useState(false);
   const [activeConfirm, setActiveConfirm] = useState(true);
-  const [statusMessage, setStatusMessage] = useState("Waiting for more players to join. A minimum of 2 per team are needed.");
+  const [statusMessage, setStatusMessage] = useState(
+    "Waiting for more players to join. A minimum of 2 per team are needed."
+  );
 
   //There might be a better way to handle these, but this is for the guess selector
   const [redOne, setRedOne] = useState("0");
@@ -104,7 +106,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         );
       }
       if (data.event === "start-game") {
-        setButtonMessage("Inactive")
+        setButtonMessage("Inactive");
         setActiveConfirm(false);
         setGameState(data.state);
       }
@@ -115,7 +117,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setCurrentRound(data.round);
         setGameState(data.state);
         setActiveConfirm(false);
-        setButtonMessage("Inactive")
+        setButtonMessage("Inactive");
         setActualNums(["?", "?", "?", "?", "?", "?"]);
         setRedOne("0");
         setRedTwo("0");
@@ -137,46 +139,72 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         ]);
       }
       if (data.event === "red-hints-in") {
-        setStatusMessage("Red has encoded their transmission. Waiting on Blue Encoder to complete encryption.");
+        setStatusMessage(
+          "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
+        );
       }
       if (data.event === "blue-hints-in") {
-        setStatusMessage("Red has encoded their transmission. Waiting on Blue Encoder to complete encryption.");
+        setStatusMessage(
+          "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
+        );
       }
       if (data.event === "wait-red-guess") {
         setGameState(data.state);
-        setStatusMessage("Blue team has decoded the transmission... Waiting for red team to finalize their decryption");
+        setStatusMessage(
+          "Blue team has decoded the transmission... Waiting for red team to finalize their decryption"
+        );
       }
       if (data.event === "wait-blue-guess") {
         setGameState(data.state);
-        setStatusMessage("Red team has decoded the transmission... Waiting for blue team to finalize their decryption");
+        setStatusMessage(
+          "Red team has decoded the transmission... Waiting for blue team to finalize their decryption"
+        );
       }
       if (data.event === "decryption") {
+        console.log(coder, "Decrpyption");
         setGameState(data.state);
         setRedHint(data.redHints);
         setBlueHint(data.blueHints);
+
         if (coder === true) {
-          setStatusMessage("Transmission received. Agents, decode the secret messages above. Match the hints, to the words above.");
           setActiveConfirm(false);
           setButtonMessage("Inactive");
+          if (currentRound === 0) {
+            setStatusMessage(
+              "Hint sumbmitted. Round 1 no information on other team yet... Cannot assist in breaking their code."
+            );
+          } else {
+            setStatusMessage(
+              "Transmission received. Assist agents in breaking enemy code."
+            );
+          }
         } else {
-          setStatusMessage("Transmission received. Assist agents in breaking enemy code.");
           setActiveConfirm(true);
           setButtonMessage("./SUBMIT");
+          setStatusMessage(
+            "Transmission received. Agents, decode the secret messages above. Match the hints, to the words above."
+          );
         }
       }
       if (data.event === "red-needs-players") {
-        setStatusMessage("Red team no longer has enough players. Hire more agents.");
+        setStatusMessage(
+          "Red team no longer has enough players. Hire more agents."
+        );
       }
       if (data.event === "blue-needs-players") {
-        setStatusMessage("Blue team no longer has enough players. Hire more agents.");
+        setStatusMessage(
+          "Blue team no longer has enough players. Hire more agents."
+        );
       }
       if (data.event === "score-result") {
-        setHistory({redHistory:data.redHistory, blueHistory:data.blueHistory});
+        setHistory({
+          redHistory: data.redHistory,
+          blueHistory: data.blueHistory,
+        });
         setActiveConfirm(true);
         setRedScore(data.redScore);
         setBlueScore(data.blueScore);
         setGameState(data.state);
-        setCoder(false);
         let rs = "";
         let bs = "";
         if (data.score[0] === 0 && data.score[1] === 0) {
@@ -196,25 +224,24 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             bs += hit + "Broke the other teams encryption!";
           }
           if (data.score[3]) {
-            bs += miss  + "Failed to decode their own message.";
+            bs += miss + "Failed to decode their own message.";
           }
         }
-        setStatusMessage(
-          `Results->Red:${rs} Blue:${bs}`
-        );
-        setButtonMessage("NEXT ROUND")
+        setStatusMessage(`Results->Red:${rs} Blue:${bs}`);
+        setButtonMessage("NEXT ROUND");
         setActualNums(data.codes);
         setGameState(data.state);
       }
       if (data.event === "game-over") {
-        console.log("game over received");
-        setHistory({redHistory:data.redHistory, blueHistory:data.blueHistory});
+        setHistory({
+          redHistory: data.redHistory,
+          blueHistory: data.blueHistory,
+        });
         setActiveConfirm(true);
         setButtonMessage("NEW GAME");
         setRedScore(data.redScore);
         setBlueScore(data.blueScore);
         setGameState(data.state);
-        setCoder(false);
         let rs = "";
         let bs = "";
         if (data.score[0] === 0 && data.score[1] === 0) {
@@ -247,7 +274,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       }
       //Essentially resets the game back to the initial state. People will need to re-join teams.
       if (data.event === "reset-game") {
-        setButtonMessage("Inactive")
+        setButtonMessage("Inactive");
         setActiveConfirm(false);
         setActualNums(["?", "?", "?", "?", "?", "?"]);
         setRedScore([0, 0]);
@@ -273,7 +300,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setShowGuesses(false);
         setTeamChat("Waiting on comms...");
         setGuessResults(["", "", "", "", "", ""]);
-        setHistory({redHistory:[], blueHistory:[]});
+        setHistory({ redHistory: [], blueHistory: [] });
         setGameState(0);
         setCurrentRound(0);
         setMyTeam("");
@@ -291,43 +318,52 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueTwo(data.selections[4]);
         setBlueThree(data.selections[5]);
         setWords(data.wordList);
-        if(data.gameState > 2){
+        if (data.gameState > 2) {
           setRedHint(data.redHints);
           setBlueHint(data.blueHints);
         }
-        if(data.gameState === 1 || data.gameState === 2){
+        if (data.gameState === 1 || data.gameState === 2) {
           setStatusMessage("Waiting on encoders to encrypt their secret code.");
           setActiveConfirm(false);
           setButtonMessage("Inactive");
         }
-        if(data.gameState === 3){
+        if (data.gameState === 3) {
           setActiveConfirm(true);
           setButtonMessage("Submit");
-          setStatusMessage("Transmission received. Agents, decode the secret messages above.");
+          setStatusMessage(
+            "Transmission received. Agents, decode the secret messages above."
+          );
         }
-        if(data.gameState === 4){
-          if(data.wait){
+        if (data.gameState === 4) {
+          if (data.wait) {
             setActiveConfirm(false);
             setButtonMessage("Inactive");
-            setStatusMessage("Waiting on other team to decrypt their transmissions.");
+            setStatusMessage(
+              "Waiting on other team to decrypt their transmissions."
+            );
           } else {
             setActiveConfirm(true);
             setButtonMessage("Submit");
-            setStatusMessage("Waiting on your team to decrypt the secret messages above.");
+            setStatusMessage(
+              "Waiting on your team to decrypt the secret messages above."
+            );
           }
         }
-        if(data.gameState === 5){
+        if (data.gameState === 5) {
           setActiveConfirm(true);
           setButtonMessage("Next Round");
           setStatusMessage("Ready to start next round");
         }
-        if(data.gameState === 6){
+        if (data.gameState === 6) {
           setActiveConfirm(true);
           setButtonMessage("NEW GAME");
-          setStatusMessage("Game Over... Start a new game?")
+          setStatusMessage("Game Over... Start a new game?");
         }
         setCurrentRound(data.currentRound);
-        setHistory({redHistory:data.redHistory, blueHistory:data.blueHistory});
+        setHistory({
+          redHistory: data.redHistory,
+          blueHistory: data.blueHistory,
+        });
         setRedScore(data.redScore);
         setBlueScore(data.blueScore);
         setGameState(data.gameState);
@@ -347,7 +383,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setCoder(true);
         setSecretCode(data.code);
         setActiveConfirm(true);
-        setStatusMessage("Secret code received. Encode the numbers by creating secret messages which match the words up top for your team to guess");
+        setStatusMessage(
+          "Secret code received. Encode the numbers by creating secret messages which match the words up top for your team to guess"
+        );
         setButtonMessage("./SUBMIT");
       }
       if (data.event === "guess-data") {
@@ -355,7 +393,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setGuessResults(data.guess);
       }
     });
-  }, []);
+  }, [coder]);
 
   //Join team modal functionality
   useEffect(() => {
@@ -363,7 +401,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       setIsOpen(true);
     }
     if (myTeam === "red") {
-      console.log("RedHistoryButton Press");
       setSelected("redHistory");
     }
     if (myTeam === "blue") {
@@ -380,47 +417,65 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
   }, [history]);
 
-  const printBlueHst = () =>{
+  const printBlueHst = () => {
+    if(history.blueHistory.length === 0){
+      printHst([["404 NOT FOUND","404 NOT FOUND","404 NOT FOUND","404 NOT FOUND"]], "blueType", false);
+    } else {
       printHst(history.blueHistory, "blueType", false);
-  }
-  const printRedHst = () =>{
+    }
+  };
+  const printRedHst = () => {
+    if(history.redHistory.length === 0){
+      printHst([["404 NOT FOUND","404 NOT FOUND","404 NOT FOUND","404 NOT FOUND"]], "redType", false);
+    } else {
       printHst(history.redHistory, "redType", false);
-  }
+    }
+  };
 
-  const printHst = (historyList, color, blank) => {
-    const paper = document.querySelector("#printer .paper");
-    const sheet = document.createElement("div");
-    sheet.className = hstAnimation[historyList.length - 1];
-    const edge = document.createElement("div");
-    edge.className = "edge";
-    const content = document.createElement("div");
-    content.className = "content" + " " + color;
-    const col = document.createElement("div");
-    col.className = "histColumn";
-    const line = document.createElement("div");
-    line.className = "line";
+  let timeoutValue;
 
-    historyList.reverse().forEach((round) => {
-      const col1 = col.cloneNode();
-      col1.innerText = round[0];
-      const col2 = col.cloneNode();
-      col2.innerText = round[1];
-      const col3 = col.cloneNode();
-      col3.innerText = round[2];
-      const col4 = col.cloneNode();
-      col4.innerText = round[3];
-      const cnt = content.cloneNode();
-      cnt.appendChild(col1);
-      cnt.appendChild(col2);
-      cnt.appendChild(col3);
-      cnt.appendChild(col4);
-      const currentLine = line.cloneNode();
-      currentLine.appendChild(edge.cloneNode());
-      currentLine.appendChild(cnt);
-      currentLine.appendChild(edge.cloneNode());
-      sheet.appendChild(currentLine.cloneNode(true));
-    });
-    paper.prepend(sheet.cloneNode(true));
+  const printHst = (historyList, color) => {
+    if(timeoutValue !== undefined){
+      clearTimeout(timeoutValue);
+    }
+    timeoutValue = setTimeout(() => {
+      const paper = document.querySelector("#printer .paper");
+      const sheet = document.createElement("div");
+      sheet.className = hstAnimation[historyList.length - 1];
+      const edge = document.createElement("div");
+      edge.className = "edge";
+      const content = document.createElement("div");
+      content.className = "content" + " " + color;
+      const col = document.createElement("div");
+      col.className = "histColumn";
+      const line = document.createElement("div");
+      line.className = "line";
+  
+      historyList.reverse().forEach((round) => {
+        const col1 = col.cloneNode();
+        col1.innerText = round[0];
+        const col2 = col.cloneNode();
+        col2.innerText = round[1];
+        const col3 = col.cloneNode();
+        col3.innerText = round[2];
+        const col4 = col.cloneNode();
+        col4.innerText = round[3];
+        const cnt = content.cloneNode();
+        cnt.appendChild(col1);
+        cnt.appendChild(col2);
+        cnt.appendChild(col3);
+        cnt.appendChild(col4);
+        const currentLine = line.cloneNode();
+        currentLine.appendChild(edge.cloneNode());
+        currentLine.appendChild(cnt);
+        currentLine.appendChild(edge.cloneNode());
+        sheet.appendChild(currentLine.cloneNode(true));
+      });
+      paper.prepend(sheet.cloneNode(true));
+      if(paper.childElementCount > 11){
+        paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
+      }
+    }, 50);
   };
   //When first joining you get prompt to join a team, these send the server what you selected.
   const joinRed = () => {
@@ -446,21 +501,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       playerName: playerName,
     });
   };
-
-  // const printHist = (history) => {
-  //   return history.reverse().map((hist) => {
-  //     <div className="line">
-  //       <div className="edge" />
-  //       <div className="content">
-  //         <div>{hist[0]}</div>
-  //         <div>{hist[1]}</div>
-  //         <div>{hist[2]}</div>
-  //         <div>{hist[3]}</div>
-  //       </div>
-  //       <div className="edge" />
-  //     </div>;
-  //   });
-  // };
 
   //Pretty stright forward, displays the score.
   const displayScore = (score) => {
@@ -595,7 +635,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           guess: allguess,
         });
       } else {
-        setStatusMessage("Error: Code Format => Every encrypted hint must have a decode selected. After round 1 you must guess on the enemy's code too. Each hint per color must have a different number.");
+        setStatusMessage(
+          "Error: Code Format => Every encrypted hint must have a decode selected. After round 1 you must guess on the enemy's code too. Each hint per color must have a different number."
+        );
       }
     }
 
@@ -700,19 +742,31 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <div className="code-box red-screen-text ml-5">
                       <span className="ml-1 text-3xl">
                         {`${secretCode[0]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
                       <span className="ml-1 text-3xl">
                         {`${secretCode[1]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
                       <span className="ml-1 text-3xl">
                         {`${secretCode[2]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
@@ -779,7 +833,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="red-num-selector red-screen-text red-checked-selector">
-                          {(currentRound > 0 || myTeam === "red") ? guessResults[0] : ""}
+                          {currentRound > 0 || myTeam === "red"
+                            ? guessResults[0]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -796,7 +852,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="red-num-selector red-screen-text red-checked-selector">
-                          {(currentRound > 0 || myTeam === "red") ? guessResults[1] : ""}
+                          {currentRound > 0 || myTeam === "red"
+                            ? guessResults[1]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -813,7 +871,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="red-num-selector red-screen-text red-checked-selector">
-                          {(currentRound > 0 || myTeam === "red") ? guessResults[2] : ""}
+                          {currentRound > 0 || myTeam === "red"
+                            ? guessResults[2]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -831,7 +891,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
                 <div className="screen-bottom mx-3 my-2">
                   <div>
-                    {`>${statusMessage}`} 
+                    {`>${statusMessage}`}
                     <span className="cursor">_</span>
                   </div>
                   <div className="screen-buttons">
@@ -851,7 +911,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         {buttonMessage}
                       </button>
                     ) : (
-                      <button type="button" className="inactive-button">{buttonMessage}</button>
+                      <button type="button" className="inactive-button">
+                        {buttonMessage}
+                      </button>
                     )}
                   </div>
                 </div>
@@ -876,19 +938,31 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <div className="code-box blue-screen-text ml-5">
                       <span className="ml-1 text-3xl">
                         {`${secretCode[0]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
                       <span className="ml-1 text-3xl">
                         {`${secretCode[1]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
                       <span className="ml-1 text-3xl">
                         {`${secretCode[2]}`}
-                        <span className={`${(coder && gameState < 3) ? "cursor " : " "}`}>
+                        <span
+                          className={`${
+                            coder && gameState < 3 ? "cursor " : " "
+                          }`}
+                        >
                           {"->"}
                         </span>
                       </span>
@@ -956,7 +1030,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {(currentRound > 0 || myTeam === "blue") ? guessResults[3] : ""}
+                          {currentRound > 0 || myTeam === "blue"
+                            ? guessResults[3]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -973,7 +1049,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {(currentRound > 0 || myTeam === "blue") ? guessResults[4] : ""}
+                          {currentRound > 0 || myTeam === "blue"
+                            ? guessResults[4]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -990,7 +1068,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     {gameState === 5 || showGuesses ? (
                       <div className="grid justify-content-center content-center">
                         <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {(currentRound > 0 || myTeam === "blue") ? guessResults[5] : ""}
+                          {currentRound > 0 || myTeam === "blue"
+                            ? guessResults[5]
+                            : ""}
                         </div>
                       </div>
                     ) : (currentRound > 0 ||
@@ -1008,7 +1088,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                 </div>
                 <div className={`screen-bottom mx-3 my-2`}>
                   <div className={`${myTeam}-screen-text`}>
-                    <span>{`>${teamChat}`}
+                    <span>
+                      {`>${teamChat}`}
                       <span className="cursor">_</span>
                     </span>
                     <form onSubmit={sendChat} id="teamChatBox">
@@ -1042,7 +1123,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           </div>
         </div>
       </div>
-      
+
       <div classname="history-lists bg-red-900">
         <div className="printer" id="printer">
           <div className="paper"></div>
