@@ -8,11 +8,13 @@ import GameRoom from './components/GameRoom';
 import WaitRoom from './components/WaitRoom';
 import logo from './images/plathyme.png';
 
+import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
+
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -93,7 +95,7 @@ export default function App() {
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
-    let truncName = playerName.slice(0,14);
+    let truncName = playerName.slice(0,19);
     setCurrentPlayer(truncName);
     const id = selectedGame.gameId;
     socket.emit("newRoom", { 
@@ -122,7 +124,7 @@ export default function App() {
       case 2:
         return <TestGame socket={socket}/>;
       case 3:
-        break;
+        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       default:
         break;
     }
@@ -160,6 +162,7 @@ export default function App() {
           <Carousel />
         </div>
       )}
+     
 
       {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
@@ -171,7 +174,7 @@ export default function App() {
           <div className="min-h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
               <Dialog.Overlay className="fixed inset-0" />
-            </Transition.Child>
+            </Transition.Child> 
 
             <span
               className="inline-block h-screen align-middle"
