@@ -1,9 +1,9 @@
-import React, { useState, useRef, Fragment } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 
-export default function SelectGame({ listofGames, createGame, joinGame }) {
+export default function SelectGame({ listofGames, createGame, joinGame, setSelectedGame }) {
   // Constant variables
   const [selected, setSelected] = useState({
     gameId: 0,
@@ -15,6 +15,11 @@ export default function SelectGame({ listofGames, createGame, joinGame }) {
   const nameRef = useRef();
   const codeRef = useRef();
 
+  //To effect carousel
+  useEffect(() => {
+    setSelectedGame(selected.gameId)
+  }, [selected])
+  
   // Handle Functions
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);

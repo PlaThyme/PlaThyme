@@ -1,20 +1,27 @@
 import React from 'react'; 
+import { useEffect } from 'react';
 
 import demo1 from "../images/drawing.gif";
-import demo2 from "../images/enigma.gif";
-import demo3 from "../images/eb.PNG";
+import demo2 from "../images/notfound.gif";
+// import demo3 from "../images/eb.PNG";
 
 import "./Carousel.css";
 
 const images = [
   demo1,
   demo2,
-  demo3,
+  // demo3,
 ];
 
-const Carousel = () => {
+const Carousel = ({selectedGame}) => {
   const [displayedImage, setDisplayedImage] = React.useState(0);
   const totalImages = images.length;
+
+  useEffect(() => {
+    if(selectedGame > 0 && selectedGame <= images.length){
+      scrollToImage(selectedGame - 1);
+    }
+  }, [selectedGame])
 
   const imgrefs = images.reduce((ret, val, i) => {
     ret[i] = React.createRef();
