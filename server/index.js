@@ -102,10 +102,6 @@ io.on("connection", (socket) => {
         break;
     }
 
-    if (data.gameId === 2) {
-      games[roomCode] = new TestGame(roomCode, socket, io, data.name);
-    }
-
     //Send all players updated user list.
     io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
   };

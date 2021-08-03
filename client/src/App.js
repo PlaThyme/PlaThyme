@@ -42,7 +42,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedGame, setSelectedGame] = useState(0);
+  const [carSelect, setCarSelect] = useState(0);
 
   useEffect(() => {
     const openModal = () =>  setIsOpen(true);
@@ -156,9 +156,9 @@ export default function App() {
             listofGames={listofGames}
             createGame={handleCreateGame}
             joinGame={handleJoinGame}
-            setSelectedGame={setSelectedGame}
+            setSelectedGame={setCarSelect}
           />
-          <Carousel selectedGame={selectedGame}/>
+          <Carousel selectedGame={carSelect}/>
         </div>
       )}
      
