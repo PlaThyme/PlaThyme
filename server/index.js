@@ -96,10 +96,8 @@ io.on("connection", (socket) => {
         }
         break;
       case 2:
-        games[roomCode] = new TestGame(roomCode, socket, io, data.name);
-        break;
-      case 3:
         games[roomCode] = new EnigmaBreaker(roomCode, socket, io, [data.name], data.minPlayers);
+        break;
       default:
         break;
     }
