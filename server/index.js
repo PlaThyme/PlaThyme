@@ -45,9 +45,9 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-
+  
   //Below are the functions to to handle the socket.on events.
-
+  
   //New game greation.
   const handleCreateGame = (data) => {
     //Generate a random room code.
@@ -100,10 +100,6 @@ io.on("connection", (socket) => {
         break;
       default:
         break;
-    }
-
-    if (data.gameId === 2) {
-      games[roomCode] = new TestGame(roomCode, socket, io, data.name);
     }
 
     //Send all players updated user list.
