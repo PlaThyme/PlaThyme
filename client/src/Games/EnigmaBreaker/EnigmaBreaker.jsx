@@ -765,7 +765,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         </button>
         <span className="float-right">
             <a
-              href="linky_here"
+              href="https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/README.md"
               target="_blank" className="float-left">
               <QuestionMarkCircleIcon className="h-10 w-10 float-right" />
             </a>
