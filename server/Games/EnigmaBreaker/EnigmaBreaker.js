@@ -441,11 +441,19 @@ class EnigmaBreaker extends Game {
       let rScore = this.redScore[0] - this.redScore[1];
       let bScore = this.blueScore[0] - this.blueScore[1];
       let victor = "tie";
-      if (rScore > bScore) {
-        victor = "Red";
-      }
-      if (bScore > rScore) {
-        victor = "Blue";
+      if((this.redScore[0] == 2) && (this.redScore[1] != 2) && (this.blueScore[0] != 2)){
+          victor = "Red";
+      } else {
+        if((this.blueScore[0] == 2) && (this.blueScore[1] != 2) && (this.redScore[0] != 2)){
+          victor = "Blue"
+        } else{
+          if (rScore > bScore) {
+            victor = "Red";
+          }
+          if (bScore > rScore) {
+            victor = "Blue";
+          }
+        }
       }
       this.gameState += 1; //Advance game state to end of the game.
       super.sendGameData({
@@ -540,7 +548,7 @@ class EnigmaBreaker extends Game {
         wordList: this.blueWords,
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
-        blueHints: this.blueHints[this.currentRound1],
+        blueHints: this.blueHints[this.currentRound],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,

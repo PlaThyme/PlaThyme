@@ -2,6 +2,14 @@ import { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import React from "react";
 import "./EnigmaBreakerStyle.css";
+import print1 from "./audio/print1.mp3";
+import print2 from "./audio/print2.mp3";
+import print3 from "./audio/print3.mp3";
+import print4 from "./audio/print4.mp3";
+import print5 from "./audio/print5.mp3";
+import print6 from "./audio/print6.mp3";
+import print7 from "./audio/print1.mp3";
+import print8 from "./audio/print1.mp3";
 import { RadioGroup } from "@headlessui/react";
 import NumberSelector from "./NumberSelector";
 
@@ -74,7 +82,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [blueOne, setBlueOne] = useState("0");
   const [blueTwo, setBlueTwo] = useState("0");
   const [blueThree, setBlueThree] = useState("0");
-
+  
   //Dispaly guesses when your team has finalzed them.
   const [showGuesses, setShowGuesses] = useState(false);
 
@@ -99,6 +107,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const b2HintRef = useRef();
   const b3HintRef = useRef();
   const chatRef = useRef();
+
 
   //These are all the socket events.
   useEffect(() => {
@@ -153,23 +162,30 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       }
       if (data.event === "blue-hints-in") {
         setStatusMessage(
-          "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
+          "Blue has encoded their transmission. Waiting on Red Encoder to complete encryption."
         );
       }
       if (data.event === "wait-red-guess") {
         setGameState(data.state);
+        if(myTeam === "blue"){
+          setActiveConfirm(false);
+          setButtonMessage("Please Wait");
+        }
         setStatusMessage(
           "Blue team has decoded the transmission... Waiting for red team to finalize their decryption"
         );
       }
       if (data.event === "wait-blue-guess") {
         setGameState(data.state);
+        if(myTeam === "red"){
+          setActiveConfirm(false);
+          setButtonMessage("Please Wait");
+        }
         setStatusMessage(
           "Red team has decoded the transmission... Waiting for blue team to finalize their decryption"
         );
       }
       if (data.event === "decryption") {
-        console.log(coder, "Decrpyption");
         setGameState(data.state);
         setRedHint(data.redHints);
         setBlueHint(data.blueHints);
@@ -416,13 +432,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   }, [myTeam]);
 
   useEffect(() => {
-    if (selected === "redHistory") {
-      printHst(history.redHistory, "redType", false);
-    }
-    if (selected === "blueHistory") {
-      printHst(history.blueHistory, "blueType", false);
-    }
-  }, [history]);
+      if (gameState > 0) {
+        if (selected === "redHistory") {
+          printHst(history.redHistory, "redType", false);
+        }
+        if (selected === "blueHistory") {
+          printHst(history.blueHistory, "blueType", false);
+        }
+      }
+  }, [currentRound]);
 
   const printBlueHst = () => {
     if (history.blueHistory.length === 0) {
@@ -447,51 +465,94 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
   };
 
-  let timeoutValue;
-
+  let printing = false;
   const printHst = (historyList, color) => {
-    if (timeoutValue !== undefined) {
-      clearTimeout(timeoutValue);
-    }
-    timeoutValue = setTimeout(() => {
-      const paper = document.querySelector("#printer .paper");
-      const sheet = document.createElement("div");
-      sheet.className = hstAnimation[historyList.length - 1];
-      const edge = document.createElement("div");
-      edge.className = "edge";
-      const content = document.createElement("div");
-      content.className = "content" + " " + color;
-      const col = document.createElement("div");
-      col.className = "histColumn";
-      const line = document.createElement("div");
-      line.className = "line";
-
-      historyList.reverse().forEach((round) => {
-        const col1 = col.cloneNode();
-        col1.innerText = round[0];
-        const col2 = col.cloneNode();
-        col2.innerText = round[1];
-        const col3 = col.cloneNode();
-        col3.innerText = round[2];
-        const col4 = col.cloneNode();
-        col4.innerText = round[3];
-        const cnt = content.cloneNode();
-        cnt.appendChild(col1);
-        cnt.appendChild(col2);
-        cnt.appendChild(col3);
-        cnt.appendChild(col4);
-        const currentLine = line.cloneNode();
-        currentLine.appendChild(edge.cloneNode());
-        currentLine.appendChild(cnt);
-        currentLine.appendChild(edge.cloneNode());
-        sheet.appendChild(currentLine.cloneNode(true));
-      });
-      paper.prepend(sheet.cloneNode(true));
-      if (paper.childElementCount > 11) {
-        paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
+    if (!printing) {
+      printing = true;
+      let audioElement;
+      switch (historyList.length) {
+        case 1:
+          audioElement = document.getElementById("print1");
+          break;
+        case 2:
+          audioElement = document.getElementById("print2");
+          break;
+        case 3:
+          audioElement = document.getElementById("print3");
+          break;
+        case 4:
+          audioElement = document.getElementById("print4");
+          break;
+        case 5:
+          audioElement = document.getElementById("print5");
+          break;
+        case 6:
+          audioElement = document.getElementById("print6");
+          break;
+        case 7:
+          audioElement = document.getElementById("print7");
+          break;
+        case 8:
+          audioElement = document.getElementById("print8");
+          break;
       }
-    }, 50);
+      audioElement.play();
+      let listLength = historyList.length;
+      let timeOutValue;
+
+      const beginPrinting = (listLength, color) => {
+        if(listLength > 0){
+          printLine(historyList[listLength - 1], color);
+          if(timeOutValue !== undefined){
+            clearTimeout(timeOutValue);
+          }
+          listLength--;
+          timeOutValue = setTimeout(() => {
+            beginPrinting(listLength, color);
+          },500);
+        } else {
+          printing = false;
+        }
+      }
+      beginPrinting(listLength, color);
+
+    }
   };
+
+  const printLine = (hstLine, color) => {
+    const paper = document.querySelector("#printer .paper");
+    const edge = document.createElement("div");
+    edge.className = "edge";
+    const content = document.createElement("div");
+    content.className = "content" + " " + color;
+    const col = document.createElement("div");
+    col.className = "histColumn";
+    const line = document.createElement("div");
+    line.className = "line sheet1";
+
+    const col1 = col.cloneNode();
+    col1.innerText = hstLine[0];
+    const col2 = col.cloneNode();
+    col2.innerText = hstLine[1];
+    const col3 = col.cloneNode();
+    col3.innerText = hstLine[2];
+    const col4 = col.cloneNode();
+    col4.innerText = hstLine[3];
+    const cnt = content.cloneNode();
+    cnt.appendChild(col1);
+    cnt.appendChild(col2);
+    cnt.appendChild(col3);
+    cnt.appendChild(col4);
+    const currentLine = line.cloneNode();
+    currentLine.appendChild(edge.cloneNode());
+    currentLine.appendChild(cnt);
+    currentLine.appendChild(edge.cloneNode());
+    paper.prepend(currentLine.cloneNode(true));
+    if (paper.childElementCount > 11) {
+      paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
+    }
+  };
+
   //When first joining you get prompt to join a team, these send the server what you selected.
   const joinRed = () => {
     socket.emit("game-data", {
@@ -678,542 +739,538 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //This is what actually renders the element.
   return (
-    <div
-      className={`${
-        myTeam === "red"
-          ? "border-dotted border-red-700"
-          : "border-dotted border-blue-700"
-      } enigma-grid border-4`}
-    >
-      <div className="words-box">
-        <div className="word-border">
-          <h1
-            className={`${
-              myTeam === ""
-                ? "word-screen"
-                : myTeam === "red"
-                ? "red-screen"
-                : "blue-screen"
-            } text-center text-2xl bg-green-900 mx-2`}
-          >
-            1: {words[0]}
-          </h1>
+    <div>
+      <audio id="print1" src={print1} crossorigin="anonymous"></audio>
+      <audio id="print2" src={print2} crossorigin="anonymous"></audio>
+      <audio id="print3" src={print3} crossorigin="anonymous"></audio>
+      <audio id="print4" src={print4} crossorigin="anonymous"></audio>
+      <audio id="print5" src={print5} crossorigin="anonymous"></audio>
+      <audio id="print6" src={print6} crossorigin="anonymous"></audio>
+      <audio id="print7" src={print7} crossorigin="anonymous"></audio>
+      <audio id="print8" src={print8} crossorigin="anonymous"></audio>
+      <div
+        className={`${
+          myTeam === "red"
+            ? "border-dotted border-red-700"
+            : "border-dotted border-blue-700"
+        } enigma-grid border-4`}
+      >
+        <div className="words-box">
+          <div className="word-border">
+            <h1
+              className={`${
+                myTeam === ""
+                  ? "word-screen"
+                  : myTeam === "red"
+                  ? "red-screen"
+                  : "blue-screen"
+              } text-center text-2xl bg-green-900 mx-2`}
+            >
+              1: {words[0]}
+            </h1>
+          </div>
+          <div className="word-border">
+            <h1
+              className={`${
+                myTeam === ""
+                  ? "word-screen"
+                  : myTeam === "red"
+                  ? "red-screen"
+                  : "blue-screen"
+              } text-center text-2xl bg-green-900 mx-2`}
+            >
+              2: {words[1]}
+            </h1>
+          </div>
+          <div className="word-border">
+            <h1
+              className={`${
+                myTeam === ""
+                  ? "word-screen"
+                  : myTeam === "red"
+                  ? "red-screen"
+                  : "blue-screen"
+              } text-center text-2xl bg-green-900 mx-2`}
+            >
+              3: {words[2]}
+            </h1>
+          </div>
+          <div className="word-border">
+            <h1
+              className={`${
+                myTeam === ""
+                  ? "word-screen"
+                  : myTeam === "red"
+                  ? "red-screen"
+                  : "blue-screen"
+              } text-center text-2xl bg-green-900 mx-2`}
+            >
+              4: {words[3]}
+            </h1>
+          </div>
         </div>
-        <div className="word-border">
-          <h1
-            className={`${
-              myTeam === ""
-                ? "word-screen"
-                : myTeam === "red"
-                ? "red-screen"
-                : "blue-screen"
-            } text-center text-2xl bg-green-900 mx-2`}
-          >
-            2: {words[1]}
-          </h1>
-        </div>
-        <div className="word-border">
-          <h1
-            className={`${
-              myTeam === ""
-                ? "word-screen"
-                : myTeam === "red"
-                ? "red-screen"
-                : "blue-screen"
-            } text-center text-2xl bg-green-900 mx-2`}
-          >
-            3: {words[2]}
-          </h1>
-        </div>
-        <div className="word-border">
-          <h1
-            className={`${
-              myTeam === ""
-                ? "word-screen"
-                : myTeam === "red"
-                ? "red-screen"
-                : "blue-screen"
-            } text-center text-2xl bg-green-900 mx-2`}
-          >
-            4: {words[3]}
-          </h1>
-        </div>
-      </div>
-      <div className="input-container">
-        <div className="tv-border">
-          <div className="tv-bezel">
-            <div className="tv-screen">
-              <div className="tv-content">
-                <div className="text-center red-screen-text mt-1">
-                  Red Enigma Machine
-                </div>
-                <div className="flex">
-                  <span className="ml-3">Secret Code</span>
-                  <span className="flex-grow text-center">Hint Boxes</span>
-                  <span className="mr-4">Decoder</span>
-                </div>
-                <div className="input-box">
-                  {myTeam === "red" ? (
-                    <div className="code-box red-screen-text ml-5">
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[0]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
+        <div className="input-container">
+          <div className="tv-border">
+            <div className="tv-bezel">
+              <div className="tv-screen">
+                <div className="tv-content">
+                  <div className="text-center red-screen-text mt-1">
+                    Red Enigma Machine
+                  </div>
+                  <div className="flex">
+                    <span className="ml-3">Secret Code</span>
+                    <span className="flex-grow text-center">Hint Boxes</span>
+                    <span className="mr-4">Decoder</span>
+                  </div>
+                  <div className="input-box">
+                    {myTeam === "red" ? (
+                      <div className="code-box red-screen-text ml-5">
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[0]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
                         </span>
-                      </span>
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[1]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[1]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
                         </span>
-                      </span>
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[2]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[2]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
                         </span>
-                      </span>
+                      </div>
+                    ) : (
+                      <div className="code-box red-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`${actualNums[1]}->`}</div>
+                        <div className="ml-1 text-3xl">{`${actualNums[2]}->`}</div>
+                        <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
+                      </div>
+                    )}
+                    <div className="hint-boxes">
+                      {myTeam === "red" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="red-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={r1HintRef}
+                        />
+                      ) : (
+                        <div className="hint-box">{redHint[0]}</div>
+                      )}
+                      {myTeam === "red" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="red-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={r2HintRef}
+                        />
+                      ) : (
+                        <div className="hint-box">{redHint[1]}</div>
+                      )}
+                      {myTeam === "red" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="red-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={r3HintRef}
+                          gfd
+                        />
+                      ) : (
+                        <div className="hint-box">{redHint[2]}</div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="code-box red-screen-text ml-5">
-                      <div className="ml-1 text-3xl">{`${actualNums[1]}->`}</div>
-                      <div className="ml-1 text-3xl">{`${actualNums[2]}->`}</div>
-                      <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
+                    <div className="selector-box mr-3">
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0 || myTeam === "red"
+                              ? guessResults[0]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "red" && gameState > 0)) &&
+                        (coder === false || myTeam === "blue") ? (
+                        <NumberSelector
+                          selected={redOne}
+                          setSelected={updateRedOne}
+                          color="red"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0 || myTeam === "red"
+                              ? guessResults[1]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "red" && gameState > 0)) &&
+                        (coder === false || myTeam === "blue") ? (
+                        <NumberSelector
+                          selected={redTwo}
+                          setSelected={updateRedTwo}
+                          color="red"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0 || myTeam === "red"
+                              ? guessResults[2]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "red" && gameState > 0)) &&
+                        (coder === false || myTeam === "blue") ? (
+                        <NumberSelector
+                          selected={redThree}
+                          setSelected={updateRedThree}
+                          color="red"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
                     </div>
-                  )}
-                  <div className="hint-boxes">
-                    {myTeam === "red" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="red-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={r1HintRef}
-                      />
-                    ) : (
-                      <div className="hint-box">
-                        {redHint[0]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
-                    {myTeam === "red" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="red-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={r2HintRef}
-                      />
-                    ) : (
-                      <div className="hint-box">
-                        {redHint[1]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
-                    {myTeam === "red" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="red-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={r3HintRef}
-                        gfd
-                      />
-                    ) : (
-                      <div className="hint-box">
-                        {redHint[2]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
                   </div>
-                  <div className="selector-box mr-3">
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="red-num-selector red-screen-text red-checked-selector">
-                          {currentRound > 0 || myTeam === "red"
-                            ? guessResults[0]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "red" && gameState > 0)) &&
-                      (coder === false || myTeam === "blue") ? (
-                      <NumberSelector
-                        selected={redOne}
-                        setSelected={updateRedOne}
-                        color="red"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="red-num-selector red-screen-text red-checked-selector">
-                          {currentRound > 0 || myTeam === "red"
-                            ? guessResults[1]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "red" && gameState > 0)) &&
-                      (coder === false || myTeam === "blue") ? (
-                      <NumberSelector
-                        selected={redTwo}
-                        setSelected={updateRedTwo}
-                        color="red"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="red-num-selector red-screen-text red-checked-selector">
-                          {currentRound > 0 || myTeam === "red"
-                            ? guessResults[2]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "red" && gameState > 0)) &&
-                      (coder === false || myTeam === "blue") ? (
-                      <NumberSelector
-                        selected={redThree}
-                        setSelected={updateRedThree}
-                        color="red"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                </div>
-                <div className="screen-bottom mx-3 my-2">
-                  <div>
-                    {`>${statusMessage}`}
-                    <span className="cursor">_</span>
-                  </div>
-                  <div className="screen-buttons">
-                    <button
-                      type="button"
-                      className="red-print-button"
-                      onClick={printRedHst}
-                    >
-                      Print Red History
-                    </button>
-                    {activeConfirm ? (
+                  <div className="screen-bottom mx-3 my-2">
+                    <div>{`>${statusMessage}`}</div>
+                    <div className="screen-buttons">
                       <button
                         type="button"
-                        className="confirm-button"
-                        onClick={handleConfirm}
+                        className="red-print-button"
+                        onClick={printRedHst}
                       >
-                        {buttonMessage}
+                        Print Red History
                       </button>
+                      {activeConfirm ? (
+                        <button
+                          type="button"
+                          className="confirm-button"
+                          onClick={handleConfirm}
+                        >
+                          {buttonMessage}
+                        </button>
+                      ) : (
+                        <button type="button" className="inactive-button">
+                          {buttonMessage}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="tv-border">
+            <div className="tv-bezel">
+              <div className="tv-screen">
+                <div className="tv-content">
+                  <div className="text-center blue-screen-text mt-1">
+                    Blue Enigma Machine
+                  </div>
+                  <div className="flex">
+                    <span className="ml-3">Secret Code</span>
+                    <span className="flex-grow text-center">Hint Boxes</span>
+                    <span className="mr-4">Decoder</span>
+                  </div>
+                  <div className="input-box">
+                    {myTeam === "blue" ? (
+                      <div className="code-box blue-screen-text ml-5">
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[0]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
+                        </span>
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[1]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
+                        </span>
+                        <span className="ml-1 text-3xl">
+                          {`${secretCode[2]}`}
+                          <span
+                            className={`${
+                              coder && gameState < 3 ? "cursor " : " "
+                            }`}
+                          >
+                            {"->"}
+                          </span>
+                        </span>
+                      </div>
                     ) : (
-                      <button type="button" className="inactive-button">
-                        {buttonMessage}
-                      </button>
+                      <div className="code-box blue-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
+                        <div className="ml-1 text-3xl">{`${actualNums[4]}->`}</div>
+                        <div className="ml-1 text-3xl">{`${actualNums[5]}->`}</div>
+                      </div>
                     )}
+
+                    <div className="blue-hint-boxes">
+                      {myTeam === "blue" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="blue-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={b1HintRef}
+                        />
+                      ) : (
+                        <div className="blue-hint-box">{blueHint[0]}</div>
+                      )}
+                      {myTeam === "blue" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="blue-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={b2HintRef}
+                        />
+                      ) : (
+                        <div className="blue-hint-box">{blueHint[1]}</div>
+                      )}
+                      {myTeam === "blue" &&
+                      coder === true &&
+                      submitted === false ? (
+                        <input
+                          className="blue-input"
+                          type="text"
+                          placeholder="Hint goes here"
+                          maxlength="42"
+                          ref={b3HintRef}
+                          gfd
+                        />
+                      ) : (
+                        <div className="blue-hint-box">{blueHint[2]}</div>
+                      )}
+                    </div>
+                    <div className="selector-box mr-3">
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0 || myTeam === "blue"
+                              ? guessResults[3]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "blue" && gameState > 0)) &&
+                        (coder === false || myTeam === "red") ? (
+                        <NumberSelector
+                          selected={blueOne}
+                          setSelected={updateBlueOne}
+                          color="blue"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0 || myTeam === "blue"
+                              ? guessResults[4]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "blue" && gameState > 0)) &&
+                        (coder === false || myTeam === "red") ? (
+                        <NumberSelector
+                          selected={blueTwo}
+                          setSelected={updateBlueTwo}
+                          color="blue"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                      {gameState === 5 || showGuesses ? (
+                        <div className="grid justify-content-center content-center">
+                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0 || myTeam === "blue"
+                              ? guessResults[5]
+                              : ""}
+                          </div>
+                        </div>
+                      ) : (currentRound > 0 ||
+                          (myTeam === "blue" && gameState > 0)) &&
+                        (coder === false || myTeam === "red") ? (
+                        <NumberSelector
+                          selected={blueThree}
+                          setSelected={updateBlueThree}
+                          color="blue"
+                        />
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  </div>
+                  <div className={`screen-bottom mx-3 my-2`}>
+                    <div className={`${myTeam}-screen-text`}>
+                      <span>{`>${teamChat}`}</span>
+                      <form onSubmit={sendChat} id="teamChatBox">
+                        <input
+                          type="text"
+                          placeholder="team chat here"
+                          required
+                          maxlength="40"
+                          ref={chatRef}
+                          autocomplete="off"
+                          className={`${myTeam}-input w-full px-1`}
+                        />
+                      </form>
+                    </div>
+                    <div className="screen-buttons">
+                      <div className="ml-4">
+                        <div>
+                          {`Blue Score:${displayScore(blueScore)}`}
+                          <span
+                            className={`float-right ${myTeam}-screen-text`}
+                          >{`${
+                            myTeam === "red"
+                              ? `Round ${currentRound + 1}`
+                              : "<-My Team"
+                          }`}</span>
+                        </div>
+                        <div>
+                          {`Red Score: ${displayScore(redScore)}`}
+                          <span
+                            className={`float-right ${myTeam}-screen-text`}
+                          >{`${
+                            myTeam === "blue"
+                              ? `Round ${currentRound + 1}`
+                              : "<-My Team"
+                          }`}</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="blue-print-button"
+                        onClick={printBlueHst}
+                      >
+                        Print Blue History
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="tv-border">
-          <div className="tv-bezel">
-            <div className="tv-screen">
-              <div className="tv-content">
-                <div className="text-center blue-screen-text mt-1">
-                  Blue Enigma Machine
-                </div>
-                <div className="flex">
-                  <span className="ml-3">Secret Code</span>
-                  <span className="flex-grow text-center">Hint Boxes</span>
-                  <span className="mr-4">Decoder</span>
-                </div>
-                <div className="input-box">
-                  {myTeam === "blue" ? (
-                    <div className="code-box blue-screen-text ml-5">
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[0]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
-                        </span>
-                      </span>
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[1]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
-                        </span>
-                      </span>
-                      <span className="ml-1 text-3xl">
-                        {`${secretCode[2]}`}
-                        <span
-                          className={`${
-                            coder && gameState < 3 ? "cursor " : " "
-                          }`}
-                        >
-                          {"->"}
-                        </span>
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="code-box blue-screen-text ml-5">
-                      <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
-                      <div className="ml-1 text-3xl">{`${actualNums[4]}->`}</div>
-                      <div className="ml-1 text-3xl">{`${actualNums[5]}->`}</div>
-                    </div>
-                  )}
 
-                  <div className="blue-hint-boxes">
-                    {myTeam === "blue" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="blue-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={b1HintRef}
-                      />
-                    ) : (
-                      <div className="blue-hint-box">
-                        {blueHint[0]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
-                    {myTeam === "blue" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="blue-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={b2HintRef}
-                      />
-                    ) : (
-                      <div className="blue-hint-box">
-                        {blueHint[1]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
-                    {myTeam === "blue" &&
-                    coder === true &&
-                    submitted === false ? (
-                      <input
-                        className="blue-input"
-                        type="text"
-                        placeholder="Hint goes here"
-                        maxlength="42"
-                        ref={b3HintRef}
-                        gfd
-                      />
-                    ) : (
-                      <div className="blue-hint-box">
-                        {blueHint[2]}
-                        <span className="cursor">_</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="selector-box mr-3">
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {currentRound > 0 || myTeam === "blue"
-                            ? guessResults[3]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "blue" && gameState > 0)) &&
-                      (coder === false || myTeam === "red") ? (
-                      <NumberSelector
-                        selected={blueOne}
-                        setSelected={updateBlueOne}
-                        color="blue"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {currentRound > 0 || myTeam === "blue"
-                            ? guessResults[4]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "blue" && gameState > 0)) &&
-                      (coder === false || myTeam === "red") ? (
-                      <NumberSelector
-                        selected={blueTwo}
-                        setSelected={updateBlueTwo}
-                        color="blue"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                    {gameState === 5 || showGuesses ? (
-                      <div className="grid justify-content-center content-center">
-                        <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                          {currentRound > 0 || myTeam === "blue"
-                            ? guessResults[5]
-                            : ""}
-                        </div>
-                      </div>
-                    ) : (currentRound > 0 ||
-                        (myTeam === "blue" && gameState > 0)) &&
-                      (coder === false || myTeam === "red") ? (
-                      <NumberSelector
-                        selected={blueThree}
-                        setSelected={updateBlueThree}
-                        color="blue"
-                      />
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                </div>
-                <div className={`screen-bottom mx-3 my-2`}>
-                  <div className={`${myTeam}-screen-text`}>
-                    <span>
-                      {`>${teamChat}`}
-                      <span className="cursor">_</span>
-                    </span>
-                    <form onSubmit={sendChat} id="teamChatBox">
-                      <input
-                        type="text"
-                        placeholder="team chat here"
-                        required
-                        maxlength="40"
-                        ref={chatRef}
-                        autocomplete="off"
-                        className={`${myTeam}-input w-full px-1`}
-                      ></input>
-                    </form>
-                  </div>
-                  <div className="screen-buttons">
-                    <div className="ml-4">
-                      <div>
-                        {`Blue Score:${displayScore(blueScore)}`}
-                        <span className={`float-right ${myTeam}-screen-text`}>{`${myTeam === 'red' ? 
-                        `Round ${currentRound + 1}`: "<-My Team"}`}</span>
-                      </div>
-                      <div>
-                        {`Red Score: ${displayScore(redScore)}`}
-                        <span className={`float-right ${myTeam}-screen-text`}>{`${myTeam === 'blue' ? 
-                        `Round ${currentRound + 1}`: "<-My Team"}`}</span>
-                      </div>
-                    </div>
+        <div classname="history-lists bg-red-900">
+          <div className="printer" id="printer">
+            <div className="paper"></div>
+          </div>
+        </div>
+
+        <Transition appear show={isOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="fixed inset-0 z-10 overflow-y-auto"
+            onClose={() => {}}
+          >
+            <div className="min-h-screen px-4 text-center">
+              <Transition.Child as={Fragment}>
+                <Dialog.Overlay className="fixed inset-0 bg-gray-800 opacity-60" />
+              </Transition.Child>
+
+              <span
+                className="inline-block h-screen align-middle"
+                aria-hidden="true"
+              >
+                &#8203;
+              </span>
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-200"
+                enterFrom="opacity-0 scale-50"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-50"
+              >
+                <div className="inline-block max-w-md p-4 my-5 overflow-hidden text-left align-middle transition-all transform bg-gray-700 shadow-md rounded-lg">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-100"
+                  >
+                    Pick a Team
+                  </Dialog.Title>
+                  <div className="mt-4 w-full flex">
                     <button
                       type="button"
-                      className="blue-print-button"
-                      onClick={printBlueHst}
+                      className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-red-900 bg-red-100 rounded-md hover:bg-red-200"
+                      onClick={joinRed}
                     >
-                      Print Blue History
+                      Red Team
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-blue-900 bg-blue-100 rounded-md hover:bg-blue-200"
+                      onClick={joinBlue}
+                    >
+                      Blue Team
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-gray-900 bg-gray-100 rounded-md hover:bg-gray-200"
+                      onClick={joinAny}
+                    >
+                      Pick For Me
                     </button>
                   </div>
                 </div>
-              </div>
+              </Transition.Child>
             </div>
-          </div>
-        </div>
+          </Dialog>
+        </Transition>
       </div>
-
-      <div classname="history-lists bg-red-900">
-        <div className="printer" id="printer">
-          <div className="paper"></div>
-        </div>
-      </div>
-
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
-          onClose={() => {}}
-        >
-          <div className="min-h-screen px-4 text-center">
-            <Transition.Child as={Fragment}>
-              <Dialog.Overlay className="fixed inset-0 bg-gray-800 opacity-60" />
-            </Transition.Child>
-
-            <span
-              className="inline-block h-screen align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-200"
-              enterFrom="opacity-0 scale-50"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-50"
-            >
-              <div className="inline-block max-w-md p-4 my-5 overflow-hidden text-left align-middle transition-all transform bg-gray-700 shadow-md rounded-lg">
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg font-medium leading-6 text-gray-100"
-                >
-                  Pick a Team
-                </Dialog.Title>
-                <div className="mt-4 w-full flex">
-                  <button
-                    type="button"
-                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-red-900 bg-red-100 rounded-md hover:bg-red-200"
-                    onClick={joinRed}
-                  >
-                    Red Team
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-blue-900 bg-blue-100 rounded-md hover:bg-blue-200"
-                    onClick={joinBlue}
-                  >
-                    Blue Team
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 mx-2 text-sm font-medium shadow-md text-gray-900 bg-gray-100 rounded-md hover:bg-gray-200"
-                    onClick={joinAny}
-                  >
-                    Pick For Me
-                  </button>
-                </div>
-              </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition>
     </div>
   );
 };
