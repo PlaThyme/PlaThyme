@@ -10,6 +10,12 @@ import print6 from "./audio/print6.mp3";
 import print7 from "./audio/print7.mp3";
 import print8 from "./audio/print8.mp3";
 import NumberSelector from "./NumberSelector";
+import {
+  QuestionMarkCircleIcon,
+  VolumeOffIcon,
+  VolumeUpIcon,
+} from "@heroicons/react/solid";
+import ToolTip from "../../components/ToolTip";
 
 const EnigmaBreaker = ({ socket, playerName }) => {
   //Used to track current state of the game.
@@ -77,6 +83,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //This keeps track of what team you're on locally.
   const [myTeam, setMyTeam] = useState("");
+
+  const [soundToggle, SetSoundToggle] = useState(false);
 
   //Refs are for input boxes. Chat, and hints.
   const r1HintRef = useRef();
@@ -271,7 +279,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setGuessResults(data.guess);
       }
     });
-  }, [myTeam, coder, activeConfirm, history, statusMessage]);
+  }, []);
 
   //Join team modal functionality
   useEffect(() => {
@@ -327,9 +335,35 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setGameState(0);
     setCurrentRound(0);
     setMyTeam("");
+    setCoder(false);
+    setActualNums(["?", "?", "?", "?", "?", "?"]);
     setIsOpen(true);
     setStatusMessage(
       "Waiting for more players to join. A minimum of 2 per team are needed."
+    );
+    printHst(
+      [
+        [
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+        ],
+      ],
+      "blueType",
+      false
+    );
+    printHst(
+      [
+        [
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+          "<----NEW GAME---->",
+        ],
+      ],
+      "redType",
+      false
     );
   };
 
@@ -432,34 +466,36 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const printHst = (historyList, color) => {
     if (!printing) {
       printing = true;
-      let audioElement;
-      switch (historyList.length) {
-        case 1:
-          audioElement = document.getElementById("print1");
-          break;
-        case 2:
-          audioElement = document.getElementById("print2");
-          break;
-        case 3:
-          audioElement = document.getElementById("print3");
-          break;
-        case 4:
-          audioElement = document.getElementById("print4");
-          break;
-        case 5:
-          audioElement = document.getElementById("print5");
-          break;
-        case 6:
-          audioElement = document.getElementById("print6");
-          break;
-        case 7:
-          audioElement = document.getElementById("print7");
-          break;
-        case 8:
-          audioElement = document.getElementById("print8");
-          break;
+      if (soundToggle) {
+        let audioElement;
+        switch (historyList.length) {
+          case 1:
+            audioElement = document.getElementById("print1");
+            break;
+          case 2:
+            audioElement = document.getElementById("print2");
+            break;
+          case 3:
+            audioElement = document.getElementById("print3");
+            break;
+          case 4:
+            audioElement = document.getElementById("print4");
+            break;
+          case 5:
+            audioElement = document.getElementById("print5");
+            break;
+          case 6:
+            audioElement = document.getElementById("print6");
+            break;
+          case 7:
+            audioElement = document.getElementById("print7");
+            break;
+          case 8:
+            audioElement = document.getElementById("print8");
+            break;
+        }
+        audioElement.play();
       }
-      audioElement.play();
       let listLength = historyList.length;
       let timeOutValue;
 
@@ -513,6 +549,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     if (paper.childElementCount > 11) {
       paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
     }
+  };
+
+  const toggleSound = () => {
+    SetSoundToggle(!soundToggle);
   };
 
   //When first joining you get prompt to join a team, these send the server what you selected.
@@ -704,7 +744,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //This is what actually renders the element.
   return (
-    <div>
+      <div>
       <audio id="print1" src={print1} crossorigin="anonymous"></audio>
       <audio id="print2" src={print2} crossorigin="anonymous"></audio>
       <audio id="print3" src={print3} crossorigin="anonymous"></audio>
@@ -713,6 +753,25 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       <audio id="print6" src={print6} crossorigin="anonymous"></audio>
       <audio id="print7" src={print7} crossorigin="anonymous"></audio>
       <audio id="print8" src={print8} crossorigin="anonymous"></audio>
+
+    <div className={`${myTeam}-screen-text`}>
+      <span>
+        <button onClick={toggleSound}>
+          {soundToggle ? (
+            <VolumeUpIcon className="h-10 w-10" />
+            ) : (
+              <VolumeOffIcon className="h-10 w-10" />
+              )}
+        </button>
+        <span className="float-right">
+            <a
+              href="https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/README.md"
+              target="_blank" className="float-left">
+              <QuestionMarkCircleIcon className="h-10 w-10 float-right" />
+            </a>
+        </span>
+      </span>
+              </div>
       <div
         className={`${
           myTeam === "red"
@@ -788,7 +847,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <span className="mr-4">Decoder</span>
                   </div>
                   <div className="input-box">
-                    {(myTeam === "red" && gameState < 5 && coder )? (
+                    {myTeam === "red" && gameState < 5 && coder ? (
                       <div className="code-box red-screen-text ml-5">
                         <span className="ml-1 text-3xl">
                           {`${secretCode[0]}`}
@@ -1035,7 +1094,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <span className="mr-4">Decoder</span>
                   </div>
                   <div className="input-box">
-                    {myTeam === "blue" && gameState < 5 && coder? (
+                    {myTeam === "blue" && gameState < 5 && coder ? (
                       <div className="code-box blue-screen-text ml-5">
                         <span className="ml-1 text-3xl">
                           {`${secretCode[0]}`}
