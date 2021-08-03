@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect, useReducer, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import React from "react";
 import "./EnigmaBreakerStyle.css";
 import print1 from "./audio/print1.mp3";
 import print2 from "./audio/print2.mp3";
@@ -8,9 +7,8 @@ import print3 from "./audio/print3.mp3";
 import print4 from "./audio/print4.mp3";
 import print5 from "./audio/print5.mp3";
 import print6 from "./audio/print6.mp3";
-import print7 from "./audio/print1.mp3";
-import print8 from "./audio/print1.mp3";
-import { RadioGroup } from "@headlessui/react";
+import print7 from "./audio/print7.mp3";
+import print8 from "./audio/print8.mp3";
 import NumberSelector from "./NumberSelector";
 
 const EnigmaBreaker = ({ socket, playerName }) => {
@@ -46,29 +44,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   //Your teams secret words.
   const [words, setWords] = useState(["", "", "", ""]);
 
-  //The following vars control the history tabs.
-  const [selected, setSelected] = useState("redHistory");
-  const [blueHint, setBlueHint] = useState([
-    "Awaiting Transmission",
-    "Awaiting Transmission",
-    "Awaiting Transmission",
-  ]);
-  const [redHint, setRedHint] = useState([
-    "Awaiting Transmission",
-    "Awaiting Transmission",
-    "Awaiting Transmission",
-  ]);
+  const [hints, setHints] = useState(["", "", "", "", "", ""]);
+
   const [history, setHistory] = useState({ redHistory: [], blueHistory: [] });
-  const hstAnimation = [
-    "sheet1",
-    "sheet2",
-    "sheet3",
-    "sheet4",
-    "sheet5",
-    "sheet6",
-    "sheet7",
-    "sheet8",
-  ];
+
   const [submitted, setSubmitted] = useState(false);
   const [activeConfirm, setActiveConfirm] = useState(false);
   const [statusMessage, setStatusMessage] = useState(
@@ -76,13 +55,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   );
 
   //There might be a better way to handle these, but this is for the guess selector
-  const [redOne, setRedOne] = useState("0");
-  const [redTwo, setRedTwo] = useState("0");
-  const [redThree, setRedThree] = useState("0");
-  const [blueOne, setBlueOne] = useState("0");
-  const [blueTwo, setBlueTwo] = useState("0");
-  const [blueThree, setBlueThree] = useState("0");
-  
+  const [redOne, setRedOne] = useState("1");
+  const [redTwo, setRedTwo] = useState("1");
+  const [redThree, setRedThree] = useState("1");
+  const [blueOne, setBlueOne] = useState("1");
+  const [blueTwo, setBlueTwo] = useState("1");
+  const [blueThree, setBlueThree] = useState("1");
+
   //Dispaly guesses when your team has finalzed them.
   const [showGuesses, setShowGuesses] = useState(false);
 
@@ -108,228 +87,103 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const b3HintRef = useRef();
   const chatRef = useRef();
 
-
   //These are all the socket events.
   useEffect(() => {
-    socket.on("update-game", (data) => {
-      if (data.event === "updateActuals") {
-        setActualNums(data.nums);
-      }
-      if (data.event === "allow-start") {
-        setButtonMessage("START GAME");
-        setActiveConfirm(true);
-        setStatusMessage(
-          "Minimum Players Reached. You can now start the game."
-        );
-      }
-      if (data.event === "start-game") {
-        setButtonMessage("Inactive");
-        setActiveConfirm(false);
-        setGameState(data.state);
-      }
-      if (data.event === "new-turn") {
-        setShowGuesses(false);
-        setCoder(false);
-        setSubmitted(false);
-        setCurrentRound(data.round);
-        setGameState(data.state);
-        setActiveConfirm(false);
-        setButtonMessage("Inactive");
-        setActualNums(["?", "?", "?", "?", "?", "?"]);
-        setRedOne("0");
-        setRedTwo("0");
-        setRedThree("0");
-        setBlueOne("0");
-        setBlueTwo("0");
-        setBlueThree("0");
-        setStatusMessage("Waiting for secret codes to be encrypted...");
-        setSecretCode(["?", "?", "?"]);
-        setBlueHint([
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-        ]);
-        setRedHint([
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-        ]);
-      }
-      if (data.event === "red-hints-in") {
-        setStatusMessage(
-          "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
-        );
-      }
-      if (data.event === "blue-hints-in") {
-        setStatusMessage(
-          "Blue has encoded their transmission. Waiting on Red Encoder to complete encryption."
-        );
-      }
-      if (data.event === "wait-red-guess") {
-        setGameState(data.state);
-        if(myTeam === "blue"){
-          setActiveConfirm(false);
-          setButtonMessage("Please Wait");
+    socket.on(
+      "update-game",
+      (data) => {
+        if (data.event === "updateActuals") {
+          setActualNums(data.nums);
+          return;
         }
-        setStatusMessage(
-          "Blue team has decoded the transmission... Waiting for red team to finalize their decryption"
-        );
-      }
-      if (data.event === "wait-blue-guess") {
-        setGameState(data.state);
-        if(myTeam === "red"){
-          setActiveConfirm(false);
-          setButtonMessage("Please Wait");
-        }
-        setStatusMessage(
-          "Red team has decoded the transmission... Waiting for blue team to finalize their decryption"
-        );
-      }
-      if (data.event === "decryption") {
-        setGameState(data.state);
-        setRedHint(data.redHints);
-        setBlueHint(data.blueHints);
-        if (coder === true) {
-          setActiveConfirm(false);
-          setButtonMessage("Inactive");
-          if (currentRound === 0) {
-            setStatusMessage(
-              "Hint sumbmitted. Round 1 no information on other team yet... Cannot assist in breaking their code."
-            );
-          } else {
-            setStatusMessage(
-              "Transmission received. Assist agents in breaking enemy code."
-            );
-          }
-        } else {
+        if (data.event === "allow-start") {
+          setButtonMessage("START GAME");
           setActiveConfirm(true);
-          setButtonMessage("./SUBMIT");
           setStatusMessage(
-            "Transmission received. Agents, decode the secret messages above. Match the hints, to the words above."
+            "Minimum Players Reached. You can now start the game."
           );
+          return;
         }
-      }
-      if (data.event === "red-needs-players") {
-        setStatusMessage(
-          "Red team no longer has enough players. Hire more agents."
-        );
-      }
-      if (data.event === "blue-needs-players") {
-        setStatusMessage(
-          "Blue team no longer has enough players. Hire more agents."
-        );
-      }
-      if (data.event === "score-result") {
-        setHistory({
-          redHistory: data.redHistory,
-          blueHistory: data.blueHistory,
-        });
-        setActiveConfirm(true);
-        setRedScore(data.redScore);
-        setBlueScore(data.blueScore);
-        setGameState(data.state);
-        let rs = "";
-        let bs = "";
-        if (data.score[0] === 0 && data.score[1] === 0) {
-          rs = "Only decoded their message.";
-        } else {
-          if (data.score[0]) {
-            rs += hit + "Broke the other teams encryption!";
-          }
-          if (data.score[1]) {
-            rs += miss + "Failed to decode their own message.";
-          }
+        if (data.event === "start-game") {
+          setActualNums(["?", "?", "?", "?", "?", "?"]);
+          setButtonMessage("Inactive");
+          setActiveConfirm(false);
+          setGameState(data.state);
+          return;
         }
-        if (data.score[2] === 0 && data.score[3] === 0) {
-          bs = "Only decoded their message.";
-        } else {
-          if (data.score[2]) {
-            bs += hit + "Broke the other teams encryption!";
-          }
-          if (data.score[3]) {
-            bs += miss + "Failed to decode their own message.";
-          }
+        if (data.event === "new-turn") {
+          handleNewTurn(data);
         }
-        setStatusMessage(`Results->Red:${rs} Blue:${bs}`);
-        setButtonMessage("NEXT ROUND");
-        setActualNums(data.codes);
-        setGameState(data.state);
-      }
-      if (data.event === "game-over") {
-        setHistory({
-          redHistory: data.redHistory,
-          blueHistory: data.blueHistory,
-        });
-        setActiveConfirm(true);
-        setButtonMessage("NEW GAME");
-        setRedScore(data.redScore);
-        setBlueScore(data.blueScore);
-        setGameState(data.state);
-        let rs = "";
-        let bs = "";
-        if (data.score[0] === 0 && data.score[1] === 0) {
-          rs = "+0";
-        } else {
-          if (data.score[0]) {
-            rs += hit;
-          }
-          if (data.score[1]) {
-            rs += miss;
-          }
+        if (data.event === "red-hints-in") {
+          setRedOne("0");
+          setRedTwo("0");
+          setRedThree("0");
+          setBlueOne("0");
+          setBlueTwo("0");
+          setBlueThree("0");
+          setStatusMessage(
+            "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
+          );
+          return;
         }
-        if (data.score[2] === 0 && data.score[3] === 0) {
-          bs = "+0";
-        } else {
-          if (data.score[2]) {
-            bs += hit;
-          }
-          if (data.score[3]) {
-            bs += miss;
-          }
+        if (data.event === "blue-hints-in") {
+          setStatusMessage(
+            "Blue has encoded their transmission. Waiting on Red Encoder to complete encryption."
+          );
+          return;
         }
-        setStatusMessage(
-          `R:${rs} B:${bs} Game-over - ${
-            data.winner === "tie" ? "Tie game!" : `${data.winner} team wins!`
-          }`
-        );
-        setActualNums(data.codes);
-        setGameState(data.state);
-      }
-      //Essentially resets the game back to the initial state. People will need to re-join teams.
-      if (data.event === "reset-game") {
-        setButtonMessage("Inactive");
-        setActiveConfirm(false);
-        setActualNums(["?", "?", "?", "?", "?", "?"]);
-        setRedScore([0, 0]);
-        setBlueScore([0, 0]);
-        setWords(["", "", "", ""]);
-        setRedOne("0");
-        setRedTwo("0");
-        setRedThree("0");
-        setBlueOne("0");
-        setBlueTwo("0");
-        setBlueThree("0");
-        setSecretCode(["?", "?", "?"]);
-        setBlueHint([
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-        ]);
-        setRedHint([
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-          "Awaiting Transmission...",
-        ]);
-        setShowGuesses(false);
-        setTeamChat("Waiting on comms...");
-        setGuessResults(["", "", "", "", "", ""]);
-        setHistory({ redHistory: [], blueHistory: [] });
-        setGameState(0);
-        setCurrentRound(0);
-        setMyTeam("");
-        setIsOpen(true);
-      }
-    });
+        if (data.event === "wait-red-guess") {
+          setGameState(data.state);
+          if (myTeam === "blue") {
+            setActiveConfirm(false);
+            setButtonMessage("Please Wait");
+          }
+          setStatusMessage(
+            "Blue team has decoded the transmission... Waiting for red team to finalize their decryption"
+          );
+          return;
+        }
+        if (data.event === "wait-blue-guess") {
+          setGameState(data.state);
+          if (myTeam === "red") {
+            setActiveConfirm(false);
+            setButtonMessage("Please Wait");
+          }
+          setStatusMessage(
+            "Red team has decoded the transmission... Waiting for blue team to finalize their decryption"
+          );
+          return;
+        }
+        if (data.event === "decryption") {
+          handleDecryption(data);
+          return;
+        }
+        if (data.event === "red-needs-players") {
+          setStatusMessage(
+            "Red team no longer has enough players. Hire more agents."
+          );
+          return;
+        }
+        if (data.event === "blue-needs-players") {
+          setStatusMessage(
+            "Blue team no longer has enough players. Hire more agents."
+          );
+          return;
+        }
+        if (data.event === "score-result") {
+          handleScoreResult(data);
+        }
+        if (data.event === "game-over") {
+          handleGameOver(data);
+          return;
+        }
+        //Essentially resets the game back to the initial state. People will need to re-join teams.
+        if (data.event === "reset-game") {
+          handleResetGame();
+        }
+      },
+      []
+    );
     socket.on("update-game-player", (data) => {
       if (data.event === "team-info") {
         setMyTeam(data.team);
@@ -342,8 +196,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueThree(data.selections[5]);
         setWords(data.wordList);
         if (data.gameState > 2) {
-          setRedHint(data.redHints);
-          setBlueHint(data.blueHints);
+          setHints([data.redHints, data.blueHints]);
         }
         if (data.gameState === 1 || data.gameState === 2) {
           setStatusMessage("Waiting on encoders to encrypt their secret code.");
@@ -406,6 +259,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setCoder(true);
         setSecretCode(data.code);
         setActiveConfirm(true);
+        setSubmitted(false);
+        setActualNums(["?", "?", "?", "?", "?", "?"]);
         setStatusMessage(
           "Secret code received. Encode the numbers by creating secret messages which match the words up top for your team to guess"
         );
@@ -416,31 +271,139 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setGuessResults(data.guess);
       }
     });
-  }, [coder]);
+  }, [myTeam, coder, activeConfirm, history, statusMessage]);
 
   //Join team modal functionality
   useEffect(() => {
     if (myTeam === "") {
       setIsOpen(true);
     }
-    if (myTeam === "red") {
-      setSelected("redHistory");
-    }
-    if (myTeam === "blue") {
-      setSelected("blueHistory");
-    }
   }, [myTeam]);
 
   useEffect(() => {
-      if (gameState > 0) {
-        if (selected === "redHistory") {
-          printHst(history.redHistory, "redType", false);
-        }
-        if (selected === "blueHistory") {
-          printHst(history.blueHistory, "blueType", false);
-        }
+    if (gameState === 5 || gameState === 6) {
+      if (myTeam === "red") {
+        printHst(history.redHistory, "redType", false);
       }
-  }, [currentRound]);
+      if (myTeam === "blue") {
+        printHst(history.blueHistory, "blueType", false);
+      }
+    }
+  }, [gameState]);
+
+  const parseScores = (data) => {
+    let rs = "";
+    let bs = "";
+    if (data.score[0] === 0 && data.score[1] === 0) {
+      rs = "Only decoded their message.";
+    } else {
+      if (data.score[0]) {
+        rs += hit + "Broke the other teams encryption!";
+      }
+      if (data.score[1]) {
+        rs += miss + "Failed to decode their own message.";
+      }
+    }
+    if (data.score[2] === 0 && data.score[3] === 0) {
+      bs = "Only decoded their message.";
+    } else {
+      if (data.score[2]) {
+        bs += hit + "Broke the other teams encryption!";
+      }
+      if (data.score[3]) {
+        bs += miss + "Failed to decode their own message.";
+      }
+    }
+    return [rs, bs];
+  };
+
+  const handleResetGame = () => {
+    setButtonMessage("Wait For Players");
+    setActiveConfirm(false);
+    setRedScore([0, 0]);
+    setBlueScore([0, 0]);
+    setShowGuesses(false);
+    setHistory({ redHistory: [], blueHistory: [] });
+    setGameState(0);
+    setCurrentRound(0);
+    setMyTeam("");
+    setIsOpen(true);
+    setStatusMessage(
+      "Waiting for more players to join. A minimum of 2 per team are needed."
+    );
+  };
+
+  const handleNewTurn = (data) => {
+    setShowGuesses(false);
+    setCoder(false);
+    setSubmitted(false);
+    setCurrentRound(data.round);
+    setGameState(data.state);
+    setActiveConfirm(false);
+    setButtonMessage("Inactive");
+    setStatusMessage("Waiting for secret codes to be encrypted...");
+  };
+
+  const handleGameOver = (data) => {
+    setHistory({
+      redHistory: data.redHistory,
+      blueHistory: data.blueHistory,
+    });
+    setActiveConfirm(true);
+    setButtonMessage("NEW GAME");
+    setRedScore(data.redScore);
+    setBlueScore(data.blueScore);
+    setGameState(data.state);
+    const rslt = parseScores(data);
+    setStatusMessage(
+      `R:${rslt[0]} B:${rslt[1]} Game-over - ${
+        data.winner === "tie" ? "Tie game!" : `${data.winner} team wins!`
+      }`
+    );
+    setActualNums(data.codes);
+    setGameState(data.state);
+  };
+
+  const handleScoreResult = (data) => {
+    setHistory({
+      redHistory: data.redHistory,
+      blueHistory: data.blueHistory,
+    });
+    setActiveConfirm(true);
+    setRedScore(data.redScore);
+    setBlueScore(data.blueScore);
+    setGameState(data.state);
+    const rslt = parseScores(data);
+    setStatusMessage(`Results->Red:${rslt[0]} Blue:${rslt[1]}`);
+    setButtonMessage("NEXT ROUND");
+    setActualNums(data.codes);
+    setGameState(data.state);
+  };
+
+  const handleDecryption = (data) => {
+    setGameState(data.state);
+    setHints([data.redHints, data.blueHints]);
+    if (coder === true) {
+      setActiveConfirm(false);
+      setButtonMessage("Inactive");
+      if (currentRound === 0) {
+        setStatusMessage(
+          "Hint sumbmitted. Round 1 no information on other team yet... Cannot assist in breaking their code."
+        );
+      } else {
+        setStatusMessage(
+          "Transmission received. Assist agents in breaking enemy code."
+        );
+      }
+    } else {
+      setActiveConfirm(true);
+      setButtonMessage("./SUBMIT");
+      setStatusMessage(
+        "Transmission received. Agents, decode the secret messages above. Match the hints, to the words above."
+      );
+    }
+    return;
+  };
 
   const printBlueHst = () => {
     if (history.blueHistory.length === 0) {
@@ -501,21 +464,20 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       let timeOutValue;
 
       const beginPrinting = (listLength, color) => {
-        if(listLength > 0){
+        if (listLength > 0) {
           printLine(historyList[listLength - 1], color);
-          if(timeOutValue !== undefined){
+          if (timeOutValue !== undefined) {
             clearTimeout(timeOutValue);
           }
           listLength--;
           timeOutValue = setTimeout(() => {
             beginPrinting(listLength, color);
-          },500);
+          }, 500);
         } else {
           printing = false;
         }
-      }
+      };
       beginPrinting(listLength, color);
-
     }
   };
 
@@ -703,7 +665,10 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (
         (myTeam === "blue" && currentRound === 0 && blueGuess.size === 3) ||
         (myTeam === "red" && currentRound === 0 && redGuess.size === 3) ||
-        (redGuess.size === 3 && blueGuess.size === 3)
+        (redGuess.size === 3 &&
+          blueGuess.size === 3 &&
+          redGuess.has("0") !== true &&
+          blueGuess.has("0") !== true)
       ) {
         socket.emit("game-data", {
           event: "submit-guess",
@@ -815,7 +780,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               <div className="tv-screen">
                 <div className="tv-content">
                   <div className="text-center red-screen-text mt-1">
-                    Red Enigma Machine
+                    Red Enigma Uplink
                   </div>
                   <div className="flex">
                     <span className="ml-3">Secret Code</span>
@@ -823,7 +788,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <span className="mr-4">Decoder</span>
                   </div>
                   <div className="input-box">
-                    {myTeam === "red" ? (
+                    {(myTeam === "red" && gameState < 5 && coder )? (
                       <div className="code-box red-screen-text ml-5">
                         <span className="ml-1 text-3xl">
                           {`${secretCode[0]}`}
@@ -856,11 +821,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </span>
                         </span>
                       </div>
-                    ) : (
+                    ) : gameState > 4 ? (
                       <div className="code-box red-screen-text ml-5">
                         <div className="ml-1 text-3xl">{`${actualNums[1]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[2]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
+                      </div>
+                    ) : (
+                      <div className="code-box blue-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`?->`}</div>
+                        <div className="ml-1 text-3xl">{`?->`}</div>
+                        <div className="ml-1 text-3xl">{`?->`}</div>
                       </div>
                     )}
                     <div className="hint-boxes">
@@ -875,7 +846,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           ref={r1HintRef}
                         />
                       ) : (
-                        <div className="hint-box">{redHint[0]}</div>
+                        <div className="hint-box">
+                          {gameState > 2
+                            ? hints[0][0]
+                            : "Awaiting Transmission"}
+                        </div>
                       )}
                       {myTeam === "red" &&
                       coder === true &&
@@ -888,7 +863,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           ref={r2HintRef}
                         />
                       ) : (
-                        <div className="hint-box">{redHint[1]}</div>
+                        <div className="hint-box">
+                          {gameState > 2
+                            ? hints[0][1]
+                            : "Awaiting Transmission"}
+                        </div>
                       )}
                       {myTeam === "red" &&
                       coder === true &&
@@ -902,11 +881,15 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           gfd
                         />
                       ) : (
-                        <div className="hint-box">{redHint[2]}</div>
+                        <div className="hint-box">
+                          {gameState > 2
+                            ? hints[0][2]
+                            : "Awaiting Transmission"}
+                        </div>
                       )}
                     </div>
                     <div className="selector-box mr-3">
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
                           <div className="red-num-selector red-screen-text red-checked-selector">
                             {currentRound > 0 || myTeam === "red"
@@ -915,8 +898,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "red" && gameState > 0)) &&
-                        (coder === false || myTeam === "blue") ? (
+                          (myTeam === "red" && gameState > 2)) &&
+                        (coder === false || myTeam === "blue") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={redOne}
                           setSelected={updateRedOne}
@@ -934,8 +918,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "red" && gameState > 0)) &&
-                        (coder === false || myTeam === "blue") ? (
+                          (myTeam === "red" && gameState > 2)) &&
+                        (coder === false || myTeam === "blue") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={redTwo}
                           setSelected={updateRedTwo}
@@ -953,8 +938,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "red" && gameState > 0)) &&
-                        (coder === false || myTeam === "blue") ? (
+                          (myTeam === "red" && gameState > 2)) &&
+                        (coder === false || myTeam === "blue") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={redThree}
                           setSelected={updateRedThree}
@@ -966,7 +952,24 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     </div>
                   </div>
                   <div className="screen-bottom mx-3 my-2">
-                    <div>{`>${statusMessage}`}</div>
+                    {myTeam === "red" ? (
+                      <div className={`${myTeam}-screen-text`}>
+                        <span>{`>${teamChat}`}</span>
+                        <form onSubmit={sendChat} id="teamChatBox">
+                          <input
+                            type="text"
+                            placeholder="team chat here"
+                            required
+                            maxlength="40"
+                            ref={chatRef}
+                            autocomplete="off"
+                            className={`${myTeam}-input w-full px-1`}
+                          />
+                        </form>
+                      </div>
+                    ) : (
+                      <div>{`>${statusMessage}`}</div>
+                    )}
                     <div className="screen-buttons">
                       <button
                         type="button"
@@ -975,18 +978,43 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       >
                         Print Red History
                       </button>
-                      {activeConfirm ? (
-                        <button
-                          type="button"
-                          className="confirm-button"
-                          onClick={handleConfirm}
-                        >
-                          {buttonMessage}
-                        </button>
+                      {myTeam === "red" ? (
+                        activeConfirm ? (
+                          <button
+                            type="button"
+                            className="confirm-button"
+                            onClick={handleConfirm}
+                          >
+                            {buttonMessage}
+                          </button>
+                        ) : (
+                          <button type="button" className="inactive-button">
+                            {buttonMessage}
+                          </button>
+                        )
                       ) : (
-                        <button type="button" className="inactive-button">
-                          {buttonMessage}
-                        </button>
+                        <div className="mr-4">
+                          <div>
+                            {`Blue Score:${displayScore(blueScore)}`}
+                            <span
+                              className={`float-right ${myTeam}-screen-text`}
+                            >{`${
+                              myTeam === "red"
+                                ? `Round ${currentRound + 1}`
+                                : "<-My Team"
+                            }`}</span>
+                          </div>
+                          <div>
+                            {`Red Score: ${displayScore(redScore)}`}
+                            <span
+                              className={`float-right ${myTeam}-screen-text`}
+                            >{`${
+                              myTeam === "blue"
+                                ? `Round ${currentRound + 1}`
+                                : "<-My Team"
+                            }`}</span>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -999,7 +1027,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
               <div className="tv-screen">
                 <div className="tv-content">
                   <div className="text-center blue-screen-text mt-1">
-                    Blue Enigma Machine
+                    Blue Enigma Uplink
                   </div>
                   <div className="flex">
                     <span className="ml-3">Secret Code</span>
@@ -1007,7 +1035,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <span className="mr-4">Decoder</span>
                   </div>
                   <div className="input-box">
-                    {myTeam === "blue" ? (
+                    {myTeam === "blue" && gameState < 5 && coder? (
                       <div className="code-box blue-screen-text ml-5">
                         <span className="ml-1 text-3xl">
                           {`${secretCode[0]}`}
@@ -1040,11 +1068,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </span>
                         </span>
                       </div>
-                    ) : (
+                    ) : gameState > 4 ? (
                       <div className="code-box blue-screen-text ml-5">
                         <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[4]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[5]}->`}</div>
+                      </div>
+                    ) : (
+                      <div className="code-box blue-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`?->`}</div>
+                        <div className="ml-1 text-3xl">{`?->`}</div>
+                        <div className="ml-1 text-3xl">{`?->`}</div>
                       </div>
                     )}
 
@@ -1060,7 +1094,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           ref={b1HintRef}
                         />
                       ) : (
-                        <div className="blue-hint-box">{blueHint[0]}</div>
+                        <div className="blue-hint-box">
+                          {gameState > 2
+                            ? hints[1][0]
+                            : "Awaiting Transmission"}
+                        </div>
                       )}
                       {myTeam === "blue" &&
                       coder === true &&
@@ -1073,7 +1111,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           ref={b2HintRef}
                         />
                       ) : (
-                        <div className="blue-hint-box">{blueHint[1]}</div>
+                        <div className="blue-hint-box">
+                          {gameState > 2
+                            ? hints[1][1]
+                            : "Awaiting Trainsmission"}
+                        </div>
                       )}
                       {myTeam === "blue" &&
                       coder === true &&
@@ -1087,7 +1129,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           gfd
                         />
                       ) : (
-                        <div className="blue-hint-box">{blueHint[2]}</div>
+                        <div className="blue-hint-box">
+                          {gameState > 2 ? hints[1][2] : "Awaiting Transmssion"}
+                        </div>
                       )}
                     </div>
                     <div className="selector-box mr-3">
@@ -1100,8 +1144,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "blue" && gameState > 0)) &&
-                        (coder === false || myTeam === "red") ? (
+                          (myTeam === "blue" && gameState > 2)) &&
+                        (coder === false || myTeam === "red") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={blueOne}
                           setSelected={updateBlueOne}
@@ -1119,8 +1164,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "blue" && gameState > 0)) &&
-                        (coder === false || myTeam === "red") ? (
+                          (myTeam === "blue" && gameState > 2)) &&
+                        (coder === false || myTeam === "red") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={blueTwo}
                           setSelected={updateBlueTwo}
@@ -1138,8 +1184,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                           </div>
                         </div>
                       ) : (currentRound > 0 ||
-                          (myTeam === "blue" && gameState > 0)) &&
-                        (coder === false || myTeam === "red") ? (
+                          (myTeam === "blue" && gameState > 2)) &&
+                        (coder === false || myTeam === "red") &&
+                        gameState > 2 ? (
                         <NumberSelector
                           selected={blueThree}
                           setSelected={updateBlueThree}
@@ -1151,43 +1198,63 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     </div>
                   </div>
                   <div className={`screen-bottom mx-3 my-2`}>
-                    <div className={`${myTeam}-screen-text`}>
-                      <span>{`>${teamChat}`}</span>
-                      <form onSubmit={sendChat} id="teamChatBox">
-                        <input
-                          type="text"
-                          placeholder="team chat here"
-                          required
-                          maxlength="40"
-                          ref={chatRef}
-                          autocomplete="off"
-                          className={`${myTeam}-input w-full px-1`}
-                        />
-                      </form>
-                    </div>
-                    <div className="screen-buttons">
-                      <div className="ml-4">
-                        <div>
-                          {`Blue Score:${displayScore(blueScore)}`}
-                          <span
-                            className={`float-right ${myTeam}-screen-text`}
-                          >{`${
-                            myTeam === "red"
-                              ? `Round ${currentRound + 1}`
-                              : "<-My Team"
-                          }`}</span>
-                        </div>
-                        <div>
-                          {`Red Score: ${displayScore(redScore)}`}
-                          <span
-                            className={`float-right ${myTeam}-screen-text`}
-                          >{`${
-                            myTeam === "blue"
-                              ? `Round ${currentRound + 1}`
-                              : "<-My Team"
-                          }`}</span>
-                        </div>
+                    {myTeam === "blue" ? (
+                      <div className={`${myTeam}-screen-text`}>
+                        <span>{`>${teamChat}`}</span>
+                        <form onSubmit={sendChat} id="teamChatBox">
+                          <input
+                            type="text"
+                            placeholder="team chat here"
+                            required
+                            maxlength="40"
+                            ref={chatRef}
+                            autocomplete="off"
+                            className={`${myTeam}-input w-full px-1`}
+                          />
+                        </form>
                       </div>
+                    ) : (
+                      <div>{`>${statusMessage}`}</div>
+                    )}
+                    <div className="screen-buttons">
+                      {myTeam === "blue" ? (
+                        activeConfirm ? (
+                          <button
+                            type="button"
+                            className="confirm-button"
+                            onClick={handleConfirm}
+                          >
+                            {buttonMessage}
+                          </button>
+                        ) : (
+                          <button type="button" className="inactive-button">
+                            {buttonMessage}
+                          </button>
+                        )
+                      ) : (
+                        <div className="ml-4">
+                          <div>
+                            {`Blue Score:${displayScore(blueScore)}`}
+                            <span
+                              className={`float-right ${myTeam}-screen-text`}
+                            >{`${
+                              myTeam === "red"
+                                ? `Round ${currentRound + 1}`
+                                : "<-My Team"
+                            }`}</span>
+                          </div>
+                          <div>
+                            {`Red Score: ${displayScore(redScore)}`}
+                            <span
+                              className={`float-right ${myTeam}-screen-text`}
+                            >{`${
+                              myTeam === "blue"
+                                ? `Round ${currentRound + 1}`
+                                : "<-My Team"
+                            }`}</span>
+                          </div>
+                        </div>
+                      )}
                       <button
                         type="button"
                         className="blue-print-button"
