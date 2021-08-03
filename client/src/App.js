@@ -122,8 +122,6 @@ export default function App() {
         }
         return <WaitRoom/>;
       case 2:
-        return <TestGame socket={socket}/>;
-      case 3:
         return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       default:
         break;
