@@ -90,7 +90,6 @@ export default function App() {
   useEffect(() => {
       socket.on("update-game", (data) => {
         if(data.event === "start-game"){
-          console.log("start-game event recienved --> ", data);
           setStartGame(true);
         }
       })
@@ -130,11 +129,11 @@ export default function App() {
       case 3:
         break;
       case 4:
-        console.log("start game == ", startGame);
-        if(startGame === true){
+        console.log("inside APP");
+        // if(startGame === true){
           return <UNOTM socket={socket} />;
-        }
-        return <WaitRoom />
+        // }
+        // return <WaitRoom />
       default:
         break;
     }

@@ -1,13 +1,11 @@
-const Game = require("../Game");
+const Game = require("../Game.js");
 const shuffleArray = require("./utils/shuffleArray");
 const PACK_OF_CARDS = require("./utils/packOfCards");
 const {
   joinRoom,
   leaveRoom,
-  getUser,
   getGameId,
   numUsersInRoom,
-  getUsersInRoom,
   getUserByNameAndCode,
 } = require("../../rooms.js");
 class UNOtm extends Game {
@@ -16,11 +14,11 @@ class UNOtm extends Game {
   **/
   constructor(roomCode, socket, io, players, minPlayers) {
     super(roomCode, socket, io, players, minPlayers);
-    this.roomCode = roomCode;
+       this.roomCode = roomCode;
     this.socket = socket;
     this.io = io;
     this.minPlayers = minPlayers;
-    this.players = [players];
+    this.turnOrder = [players];
 
     this.playerTurnIndex = 0;
     this.turnStarted = false;
@@ -83,29 +81,26 @@ class UNOtm extends Game {
 
    recieveData(data) {}
 
-   /**
-   * when minimum number of players join the GameRoom, start the game.
-   */
+
   startGame() {
-    console.log("inside start game method");
-    // console.log("--> getUserByNameAndCode(playerName, this.roomCode) ", getUserByNameAndCode(this.players[1], this.roomCode));
-    // console.log("--> getUserByNameAndCode(playerName, this.roomCode) ", getUserByNameAndCode(this.players[0], this.roomCode));
-console.log("getUsersInRoom --> ", getUsersInRoom(this.roomCode));
-     super.sendGameData({ event: "start-game" });
-  //    let player1 = getUserByNameAndCode(this.players[0], this.roomCode).id;
-  // let player2 = getUserByNameAndCode(this.players[1], this.roomCode).id;
-    super.sendDataToPlayer(this.players[0], {event: 'playerName', player: 'Player 1'});
-    super.sendDataToPlayer(this.players[1], {event: 'playerName', player: 'Player 2'});
-    //   this.io.to(player1).emit("playerDetails", {player: 'Player 1'});
-    // this.io.to(player2).emit("playerDetails", {player: 'Player 2'});
-    super.sendGameData({ 
+  super.sendGameData({ event: "start-game" });
+  this.gameStarted = true;
+  // let player1 = getUserByNameAndCode(this.turnOrder[0], this.roomCode).id;
+  // let player2 = getUserByNameAndCode(this.turnOrder[1], this.roomCode).id;
+  // this.io.to(player1).emit("playerDetails", {player: 'Player 1'});
+  // this.io.to(player2).emit("playerDetails", {player: 'Player 2'});
+
+  super.sendDataToPlayer(this.turnOrder[0],{event: "playerDetails", player: 'Player 1'} );
+   super.sendDataToPlayer(this.turnOrder[1],{event: "playerDetails", player: 'Player 2'} );
+
+super.sendGameData({ 
     event: "init-data", 
     data: 
     {
       gameStarted: true, 
       roomFull: true,
       roomCode: this.roomCode,
-      users: this.players,
+      users: this.turnOrder,
       gameOver: false,
       turn: 'Player 1',
       player1Deck: [...this.player1Deck],
@@ -122,7 +117,10 @@ console.log("getUsersInRoom --> ", getUsersInRoom(this.roomCode));
   }
 
   newPlayer(playerName) {
-    super.newPlayer(playerName);
+ super.newPlayer(playerName);
+    if (playerName) {
+      this.turnOrder.push(playerName);
+    }
   }
 
   disconnection(playerName) {}

@@ -13,7 +13,7 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children, displa
       setAllUsers(users);
     })
   }, []);
-  console.log("displaySideBar = ", displaySideBar);
+  
   return (
     <div className="flex flex-col h-screen max-h-screen w-full">
       <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
