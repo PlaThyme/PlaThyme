@@ -15,6 +15,7 @@ const {
   getGameId,
   numUsersInRoom,
   getUsersInRoom,
+  getUserByNameAndCode,
 } = require("./rooms.js");
 // const { default: UNOTM } = require("../client/src/Games/UNOtm/UNOtm");
 
@@ -46,7 +47,31 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-
+  // socket.on("updateGameState", (data) => {
+  //   try{
+  //     if (getUser(socket.id)) {
+  //       games[getUser(socket.id).roomCode].recieveData(data);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // })
+socket.on('initGameState', gameState => {
+   const user = getUser(socket.id)
+   console.log("user == ", user);
+        io.to(user.roomCode).emit('initGameState', gameState);
+    })
+     socket.on('updateGameState', gameState => {
+        const user = getUser(socket.id)
+        
+        if(user)
+            io.to(user.roomCode).emit('updateGameState', gameState)
+    })
+        socket.on('sendMessage', (payload, callback) => {
+        const user = getUser(socket.id)
+        io.to(user.roomCode).emit('message', {user: user.name, text: payload.message})
+        callback()
+    })
   //Below are the functions to to handle the socket.on events.
 
   //New game greation.
@@ -171,9 +196,12 @@ io.on("connection", (socket) => {
           console.log("inside game 4 join statement");
           
           if(games[roomCode].players.length === games[roomCode].minPlayers){
-            console.log("games[roomCode].startGame();");
+            console.log("roomData... and currentUserData...");
             // io.to(roomCode).emit('start-game');
-            games[roomCode].startGame();
+            // games[roomCode].startGame();
+            io.to(roomCode).emit('roomData', {users: games[roomCode].players, roomCode: roomCode});
+            io.to(getUserByNameAndCode(games[roomCode].players[0], roomCode).id).emit('currentUserData', {name: 'Player 1'});
+            io.to(getUserByNameAndCode(games[roomCode].players[1], roomCode).id).emit('currentUserData', {name: 'Player 2'});
           } 
           if(games[roomCode].players.length > games[roomCode]){
             // send an error event indicating thta current room i sfull and redireect them to home page agin.
