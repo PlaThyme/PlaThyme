@@ -47,6 +47,25 @@ io.on("connection", (socket) => {
     }
   });
 
+    //   socket.on('initGameState', gameState => {
+    //     console.log("serveer--> inside initGameState === ", gameState);
+    //     const user = getUser(socket.id)
+    //     if(user)
+    //         io.to(user.roomCode).emit('initGameState', gameState)
+    // })
+    //  socket.on('updateGameState', gameState => {
+    //    console.log("serveer--> inside updateGameState === ", updateGameState);
+    //     const user = getUser(socket.id)
+    //     if(user)
+    //         io.to(user.room).emit('updateGameState', gameState)
+    // })
+
+    // socket.on('sendMessage', (payload, callback) => {
+    //     const user = getUser(socket.id)
+    //     io.to(user.room).emit('message', {user: user.name, text: payload.message})
+    //     callback()
+    // })
+
   //Below are the functions to to handle the socket.on events.
 
   //New game greation.
@@ -102,7 +121,10 @@ io.on("connection", (socket) => {
       case 4:
         console.log("UNO game selected\n");
         games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
+        console.log("games[roomcode] == ", games[roomCode]);
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
+          // io.to(roomCode).emit('roomData', {roomCode: roomCode, users: getUsersInRoom(roomCode)})
+          // socket.emit('currentUserData', {name: data.name})
           games[roomCode].startGame();
           socket.emit("start-game", {}); // informs App.js to render game component.
         }
@@ -161,16 +183,21 @@ io.on("connection", (socket) => {
         // Test: enter wrong room code; got error. (add checks)
         games[roomCode].newPlayer(name);
 
+        // console.log("--> ", games[roomCode].players);
+
         if ( games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1) {
+          // console.log("inside game 1")
           games[roomCode].startGame();
         }
         if ( games[roomCode].players.length >= games[roomCode].minPlayers &&  gid === 4) {
-          console.log("inside game 4 join statement");
-          
+          console.log("inside game 4 joinRooom handle fn");
+          console.log("games[roomCode] == ", games[roomCode].players);
           if(games[roomCode].players.length === games[roomCode].minPlayers){
-            console.log(games[roomCode]);
+            // console.log(games[roomCode]);
             console.log("UNO game started");
             games[roomCode].startGame();
+            // io.to(roomCode).emit('roomData', {roomCode: roomCode, users: getUsersInRoom(roomCode)})
+            // socket.emit('currentUserData', {name: name})
           } 
           if(games[roomCode].players.length > games[roomCode]){
             // send an error event indicating thta current room i sfull and redireect them to home page agin.

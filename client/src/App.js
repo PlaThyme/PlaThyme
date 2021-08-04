@@ -130,6 +130,7 @@ export default function App() {
       case 3:
         break;
       case 4:
+        console.log("start game == ", startGame);
         if(startGame === true){
           return <UNOTM socket={socket} />;
         }
