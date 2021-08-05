@@ -79,6 +79,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   //These will show your guesses, and the results in the middle of the hints and guess portion of the screen.
   const [actualNums, setActualNums] = useState(["?", "?", "?", "?", "?", "?"]);
   const [guessResults, setGuessResults] = useState(["", "", "", "", "", ""]);
+  const [guesses, setGuesses] = useState([[],[]]);
 
   //This simply controls the join team modal.
   const [isOpen, setIsOpen] = useState(false);
@@ -282,6 +283,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       if (data.event === "guess-data") {
         setShowGuesses(true);
         setGuessResults(data.guess);
+        if(myTeamRef.current === "red"){
+          setGuesses([data.guess,["","","","","",""]]);
+        } else {
+          setGuesses([["","","","","",""],data.guess]);
+        }
       }
     });
     const handleDecryption = (data) => {
@@ -454,6 +460,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setButtonMessage("NEXT ROUND");
     setActualNums(data.codes);
     setGameState(data.state);
+    setGuesses([data.guesses[0],data.guesses[1]]);
   };
 
   const printBlueHst = () => {
@@ -967,11 +974,14 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <div className="selector-box mr-3">
                       {gameState > 4 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="red-num-selector red-screen-text red-checked-selector">
-                            {currentRound > 0 || myTeam === "red"
-                              ? guessResults[0]
-                              : ""}
-                          </div>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                              {guesses[0][0]}
+                          </span>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0
+                              ? guesses[1][0]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "red" && gameState > 2)) &&
@@ -980,18 +990,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={redOne}
                           setSelected={updateRedOne}
-                          color="red"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>
                       )}
                       {gameState === 5 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="red-num-selector red-screen-text red-checked-selector">
-                            {currentRound > 0 || myTeam === "red"
-                              ? guessResults[1]
-                              : ""}
-                          </div>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                              {guesses[0][1]}
+                          </span>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0
+                              ? guesses[1][1]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "red" && gameState > 2)) &&
@@ -1000,18 +1013,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={redTwo}
                           setSelected={updateRedTwo}
-                          color="red"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>
                       )}
                       {gameState === 5 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="red-num-selector red-screen-text red-checked-selector">
-                            {currentRound > 0 || myTeam === "red"
-                              ? guessResults[2]
-                              : ""}
-                          </div>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                              {guesses[0][2]}
+                          </span>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                            {currentRound > 0
+                              ? guesses[1][2]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "red" && gameState > 2)) &&
@@ -1020,7 +1036,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={redThree}
                           setSelected={updateRedThree}
-                          color="red"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>
@@ -1213,11 +1229,14 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                     <div className="selector-box mr-3">
                       {gameState === 5 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                            {currentRound > 0 || myTeam === "blue"
-                              ? guessResults[3]
-                              : ""}
-                          </div>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                              {guesses[1][3]}
+                          </span>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0
+                              ? guesses[0][3]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "blue" && gameState > 2)) &&
@@ -1226,18 +1245,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={blueOne}
                           setSelected={updateBlueOne}
-                          color="blue"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>
                       )}
                       {gameState === 5 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                            {currentRound > 0 || myTeam === "blue"
-                              ? guessResults[4]
-                              : ""}
-                          </div>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                              {guesses[1][4]}
+                          </span>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0
+                              ? guesses[0][4]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "blue" && gameState > 2)) &&
@@ -1246,18 +1268,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={blueTwo}
                           setSelected={updateBlueTwo}
-                          color="blue"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>
                       )}
                       {gameState === 5 || showGuesses ? (
                         <div className="grid justify-content-center content-center">
-                          <div className="blue-num-selector blue-screen-text blue-checked-selector">
-                            {currentRound > 0 || myTeam === "blue"
-                              ? guessResults[5]
-                              : ""}
-                          </div>
+                          <span className="blue-num-selector blue-screen-text blue-checked-selector">
+                              {guesses[1][5]}
+                          </span>
+                          <span className="red-num-selector red-screen-text red-checked-selector">
+                            {currentRound > 0
+                              ? guesses[0][5]
+                              :""}
+                          </span>
                         </div>
                       ) : (currentRound > 0 ||
                           (myTeam === "blue" && gameState > 2)) &&
@@ -1266,7 +1291,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <NumberSelector
                           selected={blueThree}
                           setSelected={updateBlueThree}
-                          color="blue"
+                          color={myTeam}
                         />
                       ) : (
                         <div></div>

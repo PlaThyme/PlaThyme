@@ -466,6 +466,7 @@ class EnigmaBreaker extends Game {
         state: this.gameState,
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
+        guesses: [redGuess, blueGuess],
       });
       super.sendChat({
         sender: "Game-Over",
@@ -485,6 +486,7 @@ class EnigmaBreaker extends Game {
       state: this.gameState,
       redHistory: this.redHistory,
       blueHistory: this.blueHistory,
+      guesses: [redGuess, blueGuess],
     });
   }
 
@@ -494,7 +496,6 @@ class EnigmaBreaker extends Game {
       this.redNum += 1;
       this.redTurnOrder.push(data.playerName);
       super.updatePlayerScore(data.playerName, "Red");
-      console.log("Score to red");
     }
     if (data.team === "blue") {
       this.teams[data.playerName] = "blue";
