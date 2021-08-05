@@ -33,7 +33,7 @@ Once the hints have been created each team must work together to guess the secre
 When both teams have guessed, the results for the round are displayed. If the game has ended, the winner is indicated in the status area.
 
 ## __Detailed Round Structure__
-When the game starts you need to wait untl each team has at least two players. When you have reached the minimum the game can be started. Players can join after the game has started, as well as leave. If the number of players on a team drops to one, the game can't proceed past most rounds until a 2nd player for that team joins. If everyone from one team leaves, the game simply ends and players are given the opportunity to switch up the teams and start a new game.
+When the game starts you need to wait until each team has at least two players. When you have reached the minimum the game can be started. Players can join after the game has started, as well as leave. If the number of players on a team drops to one, the game can't proceed past most rounds until a 2nd player for that team joins. If everyone from one team leaves, the game simply ends and players are given the opportunity to switch up the teams and start a new game.
 
 1. The first part of a round is the __encoding phase__. During this part each teams encoder must take the secret code that they have been given and come up with hints for their team to get them to guess the secret code. If you haven't been given the secret code, you just need to wait during this phase. The code corresponds to the numbers next to the secret words at the top. The hints should be created with the following restrictions:
    * The hints must not contain the secret word its self.
