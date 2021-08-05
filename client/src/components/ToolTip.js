@@ -23,7 +23,7 @@ const ToolTip = ({ children, text }) => {
   return (
     <div className="relative flex items-center">
       <div>
-        <div className="absolute whitespace-no-wrap text-md text-thyme-light bg-gray-700 opacity-0 bg-opacity-60 p-1 rounded-md shadow-md transition-all duration-200 z-40" ref={ttRef}>
+        <div className="absolute whitespace-no-wrap text-md text-thyme-light bg-gray-700 opacity-0 bg-opacity-60 p-1 rounded-md shadow-md transition-all duration-200" ref={ttRef}>
           {text}
         </div>
       </div>
