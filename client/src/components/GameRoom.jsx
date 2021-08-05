@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react';
+import "./GameRoom.css"
 import io from 'socket.io-client';
 
 import SideBar from "./SideBar";
@@ -15,8 +16,8 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
   }, []);
   
   return (
-    <div className="flex flex-col h-screen max-h-screen w-full">
-      <nav className="flex bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3 justify-between">
+    <div className="whole-room">
+      <nav className="bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3">
         <h1 className="inline text-thyme-lightest text-3xl">
           {gameInfo.gameName}
         </h1>
@@ -34,8 +35,8 @@ const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children}) => {
           </ToolTip>
         </div>
       </nav>
-      <div className="flex inline h-full">
-        <div className="game-box bg-gray-800 flex-grow overflow-auto">
+      <div className="game-and-sidebars">
+        <div className="game-window bg-gray-800 overflow-auto">
           {children}
         </div>
         <div className="flex bg-gray-900">

@@ -890,9 +890,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       </div>
                     ) : gameState > 4 ? (
                       <div className="code-box red-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`${actualNums[0]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[1]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[2]}->`}</div>
-                        <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
                       </div>
                     ) : (
                       <div className="code-box blue-screen-text ml-5">
