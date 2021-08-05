@@ -2,7 +2,7 @@
   display: grid;
   /* font-family: pixel; */
   width: 1208px;
-  height: 858px;
+  height: 800px;
   grid-template-rows: 7% 40% 55% 6.5%;
   overflow: hidden;
 }
