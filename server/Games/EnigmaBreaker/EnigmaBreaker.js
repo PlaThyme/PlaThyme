@@ -88,19 +88,23 @@ class EnigmaBreaker extends Game {
       if (this.redTurnOrder[0] === playerName) {
         first = true;
       }
-      this.redTurnOrder = this.redTurnOrder.filter((player) => player != playerName);
+      this.redTurnOrder = this.redTurnOrder.filter(
+        (player) => player != playerName
+      );
     }
     if (team === "blue") {
       this.blueNum -= 1;
       if (this.blueTurnOrder[0] === playerName) {
         first = true;
       }
-      this.blueTurnOrder = this.blueTurnOrder.filter((player) => player != playerName);
+      this.blueTurnOrder = this.blueTurnOrder.filter(
+        (player) => player != playerName
+      );
     }
 
     //Determine if a new person needs to generate the hint.
     if (this.gameState > 0) {
-      if (first && (team === "red")) {
+      if (first && team === "red") {
         if (
           this.gameState === 1 ||
           (this.gameState === 2 && this.redHints.length <= this.currentRound)
@@ -111,7 +115,7 @@ class EnigmaBreaker extends Game {
           });
         }
       }
-      if (first && (team === "blue")) {
+      if (first && team === "blue") {
         if (
           this.gameState === 1 ||
           (this.gameState === 2 && this.blueHints.length <= this.currentRound)
@@ -128,7 +132,7 @@ class EnigmaBreaker extends Game {
       if (this.blueNum < 2) {
         super.sendGameData({ event: "blue-needs-players" });
       }
-      if (this.redNum === 0 || this.blueNum === 0){
+      if (this.redNum === 0 || this.blueNum === 0) {
         this.handleNewGame();
       }
     }
@@ -237,6 +241,7 @@ class EnigmaBreaker extends Game {
 
   //When a team submits hints this records the hints, and distributes them to the other players.
   handleRedHints(data) {
+    if(this.redHints.length === this.currentRound && this.gameState < 3){ //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
     this.redHints.push([data.hint1, data.hint2, data.hint3]);
     this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
     super.sendGameData({ event: "red-hints-in", state: this.gameState });
@@ -246,7 +251,9 @@ class EnigmaBreaker extends Game {
       this.handleHintsSubmitted();
     }
   }
+  }
   handleBlueHints(data) {
+    if(this.blueHints.length === this.currentRound && this.gameState < 3){ //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
     this.blueHints.push([data.hint1, data.hint2, data.hint3]);
     this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
     super.sendGameData({ event: "blue-hints-in", state: this.gameState });
@@ -255,6 +262,7 @@ class EnigmaBreaker extends Game {
     if (this.gameState === 3) {
       this.handleHintsSubmitted();
     }
+  }
   }
 
   //Both teams hints are in, present them to the players.
@@ -308,190 +316,215 @@ class EnigmaBreaker extends Game {
   handleGuess(data) {
     //Handle red team guess
     if (data.team === "red") {
-      this.redGuessHistory.push(data.guess);
-      this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
-      if (this.gameState === 4) {
-        //Check to see if both teams have guessed yet.
-        super.sendGameData({ event: "wait-blue-guess", state: this.gameState });
-      } else {
-        // Both teams have guessed, score game.
-        this.handleScoreGame();
-        return;
-      }
-      this.redTurnOrder.forEach((player) => {
-        //Distribute final guesses for a team to all their players
-        super.sendDataToPlayer(player, {
-          event: "guess-data",
-          guess: data.guess,
+      if (this.redGuessHistory.length < this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+        this.redGuessHistory.push(data.guess);
+        this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
+        if (this.gameState === 4) {
+          //Check to see if both teams have guessed yet.
+          super.sendGameData({
+            event: "wait-blue-guess",
+            state: this.gameState,
+          });
+        } else {
+          // Both teams have guessed, score game.
+          this.handleScoreGame();
+          return;
+        }
+        this.redTurnOrder.forEach((player) => {
+          //Distribute final guesses for a team to all their players
+          super.sendDataToPlayer(player, {
+            event: "guess-data",
+            guess: data.guess,
+          });
         });
-      });
+      }
     } else {
       //Handle blue team guess
-      this.blueGuessHistory.push(data.guess);
-      this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
-      if (this.gameState === 4) {
-        //Check to see if both teams have guessed yet.
-        super.sendGameData({ event: "wait-red-guess", state: this.gameState });
-      } else {
-        // Both teams have guessed, score game.
-        this.handleScoreGame();
-        return;
-      }
-      this.blueTurnOrder.forEach((player) => {
-        //Distribute final guesses for a team to all their players
-        super.sendDataToPlayer(player, {
-          event: "guess-data",
-          guess: data.guess,
+      if (this.blueGuessHistory.length < this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+        this.blueGuessHistory.push(data.guess);
+        this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
+        if (this.gameState === 4) {
+          //Check to see if both teams have guessed yet.
+          super.sendGameData({
+            event: "wait-red-guess",
+            state: this.gameState,
+          });
+        } else {
+          // Both teams have guessed, score game.
+          this.handleScoreGame();
+          return;
+        }
+        this.blueTurnOrder.forEach((player) => {
+          //Distribute final guesses for a team to all their players
+          super.sendDataToPlayer(player, {
+            event: "guess-data",
+            guess: data.guess,
+          });
         });
-      });
+      }
     }
   }
 
   //Score the round.
   handleScoreGame() {
-    let redGuess = this.redGuessHistory[this.currentRound];
-    let blueGuess = this.blueGuessHistory[this.currentRound];
-    let score = [0, 0, 0, 0];
-    let actual = [
-      this.redCode[0],
-      this.redCode[1],
-      this.redCode[2],
-      this.blueCode[0],
-      this.blueCode[1],
-      this.blueCode[2],
-    ];
-    let redRoundHistory = [
-      "<<------------------------->>",
-      "<<------------------------->>",
-      "<<------------------------->>",
-      "<<------------------------->>",
-    ];
-    redRoundHistory[parseInt(this.redCode[0]) - 1] =
-      redGuess[0] + " >> " + this.redHints[this.currentRound][0];
-    redRoundHistory[parseInt(this.redCode[1]) - 1] =
-      redGuess[1] + " >> " + this.redHints[this.currentRound][1];
-    redRoundHistory[parseInt(this.redCode[2]) - 1] =
-      redGuess[2] + " >> " + this.redHints[this.currentRound][2];
-    this.redHistory.push(redRoundHistory);
+    if (this.gameState === 5) { //Double check that the game is actually in the state where its ready to be scored.
 
-    let blueRoundHistory = [
-      "<<------------------------->>",
-      "<<------------------------->>",
-      "<<------------------------->>",
-      "<<------------------------->>",
-    ];
-    blueRoundHistory[parseInt(this.blueCode[0]) - 1] =
-      blueGuess[3] + " >> " + this.blueHints[this.currentRound][0];
-    blueRoundHistory[parseInt(this.blueCode[1]) - 1] =
-      blueGuess[4] + " >> " + this.blueHints[this.currentRound][1];
-    blueRoundHistory[parseInt(this.blueCode[2]) - 1] =
-      blueGuess[5] + " >> " + this.blueHints[this.currentRound][2];
-    this.blueHistory.push(blueRoundHistory);
+      //Build the history for the printer that records what the guesses were too.
+      let redGuess = this.redGuessHistory[this.currentRound];
+      let blueGuess = this.blueGuessHistory[this.currentRound];
+      let score = [0, 0, 0, 0];
+      let actual = [
+        this.redCode[0],
+        this.redCode[1],
+        this.redCode[2],
+        this.blueCode[0],
+        this.blueCode[1],
+        this.blueCode[2],
+      ];
+      let redRoundHistory = [
+        "<<------------------------->>",
+        "<<------------------------->>",
+        "<<------------------------->>",
+        "<<------------------------->>",
+      ];
+      redRoundHistory[parseInt(this.redCode[0]) - 1] =
+        redGuess[0] + " >> " + this.redHints[this.currentRound][0];
+      redRoundHistory[parseInt(this.redCode[1]) - 1] =
+        redGuess[1] + " >> " + this.redHints[this.currentRound][1];
+      redRoundHistory[parseInt(this.redCode[2]) - 1] =
+        redGuess[2] + " >> " + this.redHints[this.currentRound][2];
+      this.redHistory.push(redRoundHistory);
 
-    if (
-      //check to see if red guessed their code correctly. No score change if they did.
-      redGuess[0] === this.redCode[0] &&
-      redGuess[1] === this.redCode[1] &&
-      redGuess[2] === this.redCode[2]
-    ) {
-    } else {
-      //If red didn't guess their code correctly, they get a miss
-      score[1] = 1;
-      this.redScore[1] += 1;
-    }
-    if (
-      //Check to see if red guessed blue's code correctly. Award a hint if they did.
-      redGuess[3] === this.blueCode[0] &&
-      redGuess[4] === this.blueCode[1] &&
-      redGuess[5] === this.blueCode[2]
-    ) {
-      score[0] = 1;
-      this.redScore[0] += 1;
-    }
+      let blueRoundHistory = [
+        "<<------------------------->>",
+        "<<------------------------->>",
+        "<<------------------------->>",
+        "<<------------------------->>",
+      ];
+      blueRoundHistory[parseInt(this.blueCode[0]) - 1] =
+        blueGuess[3] + " >> " + this.blueHints[this.currentRound][0];
+      blueRoundHistory[parseInt(this.blueCode[1]) - 1] =
+        blueGuess[4] + " >> " + this.blueHints[this.currentRound][1];
+      blueRoundHistory[parseInt(this.blueCode[2]) - 1] =
+        blueGuess[5] + " >> " + this.blueHints[this.currentRound][2];
+      this.blueHistory.push(blueRoundHistory);
+      
 
-    if (
-      //check to see if blue guessed their code correctly. No score change if they did.
-      blueGuess[3] === this.blueCode[0] &&
-      blueGuess[4] === this.blueCode[1] &&
-      blueGuess[5] === this.blueCode[2]
-    ) {
-    } else {
-      //If blue didn't guess their code correctly, they get a miss
-      score[3] = 1;
-      this.blueScore[1] += 1;
-    }
-    if (
-      //Check to see if blue guessed red's codeAward a hint if they did.
-      blueGuess[0] === this.redCode[0] &&
-      blueGuess[1] === this.redCode[1] &&
-      blueGuess[2] === this.redCode[2]
-    ) {
-      score[2] = 1;
-      this.blueScore[0] += 1;
-    }
-
-    //Check for end of game conditions.
-    if (
-      this.redScore[0] === 2 ||
-      this.redScore[1] === 2 ||
-      this.blueScore[0] === 2 ||
-      this.blueScore[1] === 2 ||
-      this.currentRound === 7
-    ) {
-      // If any score has reached 2, or 8th round is over, the game ends.
-      //Check for outright victory by red or blue
-      let rScore = this.redScore[0] - this.redScore[1];
-      let bScore = this.blueScore[0] - this.blueScore[1];
-      let victor = "tie";
-      if((this.redScore[0] == 2) && (this.redScore[1] != 2) && (this.blueScore[0] != 2)){
-          victor = "Red";
+      //Evaluate the guesses.
+      if (
+        //check to see if red guessed their code correctly. No score change if they did.
+        redGuess[0] === this.redCode[0] &&
+        redGuess[1] === this.redCode[1] &&
+        redGuess[2] === this.redCode[2]
+      ) {
       } else {
-        if((this.blueScore[0] == 2) && (this.blueScore[1] != 2) && (this.redScore[0] != 2)){
-          victor = "Blue"
-        } else{
-          if (rScore > bScore) {
-            victor = "Red";
-          }
-          if (bScore > rScore) {
+        //If red didn't guess their code correctly, they get a miss
+        score[1] = 1;
+        this.redScore[1] += 1;
+      }
+      if (
+        //Check to see if red guessed blue's code correctly. Award a hint if they did.
+        redGuess[3] === this.blueCode[0] &&
+        redGuess[4] === this.blueCode[1] &&
+        redGuess[5] === this.blueCode[2]
+      ) {
+        score[0] = 1;
+        this.redScore[0] += 1;
+      }
+
+      if (
+        //check to see if blue guessed their code correctly. No score change if they did.
+        blueGuess[3] === this.blueCode[0] &&
+        blueGuess[4] === this.blueCode[1] &&
+        blueGuess[5] === this.blueCode[2]
+      ) {
+      } else {
+        //If blue didn't guess their code correctly, they get a miss
+        score[3] = 1;
+        this.blueScore[1] += 1;
+      }
+      if (
+        //Check to see if blue guessed red's codeAward a hint if they did.
+        blueGuess[0] === this.redCode[0] &&
+        blueGuess[1] === this.redCode[1] &&
+        blueGuess[2] === this.redCode[2]
+      ) {
+        score[2] = 1;
+        this.blueScore[0] += 1;
+      }
+
+      //Check for end of game conditions.
+      if (
+        this.redScore[0] === 2 ||
+        this.redScore[1] === 2 ||
+        this.blueScore[0] === 2 ||
+        this.blueScore[1] === 2 ||
+        this.currentRound === 7
+      ) {
+        // If any score has reached 2, or 8th round is over, the game ends.
+        //Check for outright victory by red or blue
+        let rScore = this.redScore[0] - this.redScore[1];
+        let bScore = this.blueScore[0] - this.blueScore[1];
+        let victor = "tie";
+        if (
+          this.redScore[0] == 2 &&
+          this.redScore[1] != 2 &&
+          this.blueScore[0] != 2
+        ) {
+          victor = "Red";
+        } else {
+          if (
+            this.blueScore[0] == 2 &&
+            this.blueScore[1] != 2 &&
+            this.redScore[0] != 2
+          ) {
             victor = "Blue";
+          } else {
+            if (rScore > bScore) {
+              victor = "Red";
+            }
+            if (bScore > rScore) {
+              victor = "Blue";
+            }
           }
         }
+        this.gameState += 1; //Advance game state to end of the game.
+        super.sendGameData({
+          event: "game-over",
+          score: score,
+          codes: actual,
+          redScore: this.redScore,
+          blueScore: this.blueScore,
+          winner: victor,
+          state: this.gameState,
+          redHistory: this.redHistory,
+          blueHistory: this.blueHistory,
+          guesses: [redGuess, blueGuess],
+        });
+        super.sendChat({
+          sender: "Game-Over",
+          text: "To start a new game press continue",
+        });
+        return;
       }
-      this.gameState += 1; //Advance game state to end of the game.
+
+      //If the game isn't over, send the results.
+      this.counter += 1;
       super.sendGameData({
-        event: "game-over",
+        event: "score-result",
         score: score,
         codes: actual,
         redScore: this.redScore,
         blueScore: this.blueScore,
-        winner: victor,
         state: this.gameState,
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
         guesses: [redGuess, blueGuess],
       });
-      super.sendChat({
-        sender: "Game-Over",
-        text: "To start a new game press continue",
-      });
-      return;
     }
-
-    //If the game isn't over, send the results.
-    this.counter += 1;
-    super.sendGameData({
-      event: "score-result",
-      score: score,
-      codes: actual,
-      redScore: this.redScore,
-      blueScore: this.blueScore,
-      state: this.gameState,
-      redHistory: this.redHistory,
-      blueHistory: this.blueHistory,
-      guesses: [redGuess, blueGuess],
-    });
   }
 
+  //Joins a player to a team.
   handleJoinTeam(data) {
     if (data.team === "red") {
       this.teams[data.playerName] = "red";
@@ -521,15 +554,22 @@ class EnigmaBreaker extends Game {
 
     //Determine if the game is in state 4, and this player will be waiting on the other teams action.
     let wait = false;
-    if(this.gameState === 4){
-      if((this.teams[data.playerName] === "red") && (this.redGuessHistory.length > this.currentRound)){ //Red team already guessed, they will be waiting.
+    if (this.gameState === 4) {
+      if (
+        this.teams[data.playerName] === "red" &&
+        this.redGuessHistory.length > this.currentRound
+      ) {
+        //Red team already guessed, they will be waiting.
         wait = true;
-      } 
-      if((this.teams[data.playerName] === "blue") && (this.blueGuessHistory.length > this.currentRound)){ //Blue team already guessed, they will be waiting.
+      }
+      if (
+        this.teams[data.playerName] === "blue" &&
+        this.blueGuessHistory.length > this.currentRound
+      ) {
+        //Blue team already guessed, they will be waiting.
         wait = true;
-      } 
+      }
     }
-
 
     if (this.teams[data.playerName] === "red") {
       super.sendDataToPlayer(data.playerName, {
@@ -540,7 +580,10 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
-        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
+        guesses: [
+          this.redGuessHistory[this.currentRound],
+          this.blueGuessHistory[this.currentRound],
+        ],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
@@ -558,7 +601,10 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
-        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
+        guesses: [
+          this.redGuessHistory[this.currentRound],
+          this.blueGuessHistory[this.currentRound],
+        ],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
