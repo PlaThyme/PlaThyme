@@ -316,6 +316,7 @@ class EnigmaBreaker extends Game {
       } else {
         // Both teams have guessed, score game.
         this.handleScoreGame();
+        return;
       }
       this.redTurnOrder.forEach((player) => {
         //Distribute final guesses for a team to all their players
@@ -334,6 +335,7 @@ class EnigmaBreaker extends Game {
       } else {
         // Both teams have guessed, score game.
         this.handleScoreGame();
+        return;
       }
       this.blueTurnOrder.forEach((player) => {
         //Distribute final guesses for a team to all their players
@@ -538,6 +540,7 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
+        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
@@ -555,6 +558,7 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
+        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
