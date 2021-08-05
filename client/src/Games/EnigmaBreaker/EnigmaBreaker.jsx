@@ -123,12 +123,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           handleNewTurn(data);
         }
         if (data.event === "red-hints-in") {
-          setRedOne("0");
-          setRedTwo("0");
-          setRedThree("0");
-          setBlueOne("0");
-          setBlueTwo("0");
-          setBlueThree("0");
           setStatusMessage(
             "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
           );
@@ -163,6 +157,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           return;
         }
         if (data.event === "decryption") {
+          setActiveConfirm(false);
           handleDecryption(data);
           return;
         }
@@ -334,6 +329,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setHistory({ redHistory: [], blueHistory: [] });
     setGameState(0);
     setCurrentRound(0);
+    setRedOne("0");
+    setRedTwo("0");
+    setRedThree("0");
+    setBlueOne("0");
+    setBlueTwo("0");
+    setBlueThree("0");
     setMyTeam("");
     setCoder(false);
     setActualNums(["?", "?", "?", "?", "?", "?"]);
@@ -368,6 +369,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   };
 
   const handleNewTurn = (data) => {
+    setRedOne("0");
+    setRedTwo("0");
+    setRedThree("0");
+    setBlueOne("0");
+    setBlueTwo("0");
+    setBlueThree("0");
     setShowGuesses(false);
     setCoder(false);
     setSubmitted(false);
@@ -418,6 +425,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setGameState(data.state);
     setHints([data.redHints, data.blueHints]);
     if (coder === true) {
+      console.log("Decryption");
       setActiveConfirm(false);
       setButtonMessage("Inactive");
       if (currentRound === 0) {
@@ -744,7 +752,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //This is what actually renders the element.
   return (
-      <div>
+    <div>
       <audio id="print1" src={print1} crossorigin="anonymous"></audio>
       <audio id="print2" src={print2} crossorigin="anonymous"></audio>
       <audio id="print3" src={print3} crossorigin="anonymous"></audio>
@@ -754,24 +762,24 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       <audio id="print7" src={print7} crossorigin="anonymous"></audio>
       <audio id="print8" src={print8} crossorigin="anonymous"></audio>
 
-    <div className={`${myTeam}-screen-text`}>
-      <span>
+      <div className={`${myTeam}-screen-text float-left`}>
         <button onClick={toggleSound}>
           {soundToggle ? (
             <VolumeUpIcon className="h-10 w-10" />
-            ) : (
-              <VolumeOffIcon className="h-10 w-10" />
-              )}
+          ) : (
+            <VolumeOffIcon className="h-10 w-10" />
+          )}
         </button>
-        <span className="float-right">
-            <a
-              href="https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/README.md"
-              target="_blank" className="float-left">
-              <QuestionMarkCircleIcon className="h-10 w-10 float-right" />
-            </a>
-        </span>
-      </span>
-              </div>
+      </div>
+      <div className={`${myTeam}-screen-text float-right`}>
+        <a
+          href="https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/README.md"
+          target="_blank"
+          className="float-left"
+        >
+          <QuestionMarkCircleIcon className="h-10 w-10 float-right" />
+        </a>
+      </div>
       <div
         className={`${
           myTeam === "red"
