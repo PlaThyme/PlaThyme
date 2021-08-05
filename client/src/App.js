@@ -107,7 +107,7 @@ export default function App() {
   }
 
   const handleJoinGame = (playerName, roomCode) => {
-    let truncName = playerName.slice(0,14);
+    let truncName = playerName.slice(0,19);
     setCurrentPlayer(truncName);
     socket.emit("joinGame", { 
       name: truncName, 

@@ -223,8 +223,8 @@ class EnigmaBreaker extends Game {
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
-    this.redCode = ["E", "R", "R"];
-    this.blueCode = ["E", "R", "R"];
+    this.redCode = ["?", "?", "?"];
+    this.blueCode = ["?", "?", "?"];
     this.redGuessHistory = [];
     this.blueGuessHistory = [];
     this.redHistory = [];

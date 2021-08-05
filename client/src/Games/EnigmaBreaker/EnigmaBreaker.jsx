@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useRef, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import "./EnigmaBreakerStyle.css";
 import print1 from "./audio/print1.mp3";
@@ -15,12 +15,13 @@ import {
   VolumeOffIcon,
   VolumeUpIcon,
 } from "@heroicons/react/solid";
-import ToolTip from "../../components/ToolTip";
 
 const EnigmaBreaker = ({ socket, playerName }) => {
   //Used to track current state of the game.
   const [currentRound, setCurrentRound] = useState(0);
+  const currentRoundRef = useRef(currentRound);
   const [gameState, setGameState] = useState(0);
+  const gameStateRef = useRef(gameState);
   // Game flow:
   // #0 : pre game, waiting for players
   // #1 : code sent out, waiting for both teams hints to be submitted
@@ -33,6 +34,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //Coder indicates if this client is the active player.
   const [coder, setCoder] = useState(false);
+  const coderRef = useRef(coder);
 
   //Emojis... really?
   const miss = "☠️";
@@ -61,12 +63,12 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   );
 
   //There might be a better way to handle these, but this is for the guess selector
-  const [redOne, setRedOne] = useState("1");
-  const [redTwo, setRedTwo] = useState("1");
-  const [redThree, setRedThree] = useState("1");
-  const [blueOne, setBlueOne] = useState("1");
-  const [blueTwo, setBlueTwo] = useState("1");
-  const [blueThree, setBlueThree] = useState("1");
+  const [redOne, setRedOne] = useState("0");
+  const [redTwo, setRedTwo] = useState("0");
+  const [redThree, setRedThree] = useState("0");
+  const [blueOne, setBlueOne] = useState("0");
+  const [blueTwo, setBlueTwo] = useState("0");
+  const [blueThree, setBlueThree] = useState("0");
 
   //Dispaly guesses when your team has finalzed them.
   const [showGuesses, setShowGuesses] = useState(false);
@@ -83,6 +85,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //This keeps track of what team you're on locally.
   const [myTeam, setMyTeam] = useState("");
+  const myTeamRef = useRef(myTeam);
 
   const [soundToggle, SetSoundToggle] = useState(false);
 
@@ -94,6 +97,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const b2HintRef = useRef();
   const b3HintRef = useRef();
   const chatRef = useRef();
+
+  useEffect(() => {
+    coderRef.current = coder;
+    currentRoundRef.current = currentRound;
+    myTeamRef.current = myTeam;
+    gameStateRef.current = gameState;
+  })
 
   //These are all the socket events.
   useEffect(() => {
@@ -121,6 +131,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         }
         if (data.event === "new-turn") {
           handleNewTurn(data);
+          return;
         }
         if (data.event === "red-hints-in") {
           setStatusMessage(
@@ -184,8 +195,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         if (data.event === "reset-game") {
           handleResetGame();
         }
-      },
-      []
+      }
     );
     socket.on("update-game-player", (data) => {
       if (data.event === "team-info") {
@@ -274,17 +284,41 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setGuessResults(data.guess);
       }
     });
-  }, []);
-
+    const handleDecryption = (data) => {
+      setGameState(data.state);
+      setHints([data.redHints, data.blueHints]);
+      if (coderRef.current) {
+        setActiveConfirm(false);
+        setButtonMessage("Inactive");
+        if (currentRoundRef.current === 0) {
+          setStatusMessage(
+            "Hint sumbmitted. Round 1 no information on other team yet... Cannot assist in breaking their code."
+          );
+        } else {
+          setStatusMessage(
+            "Transmission received. Assist agents in breaking enemy code."
+          );
+        }
+      } else {
+        setActiveConfirm(true);
+        setButtonMessage("./SUBMIT");
+        setStatusMessage(
+          "Transmission received. Agents, decode the secret messages above. Match the hints, to the words above."
+        );
+      }
+      return;
+    };
+  }, [socket]);
+  
   //Join team modal functionality
   useEffect(() => {
-    if (myTeam === "") {
+    if (myTeamRef.current === "") {
       setIsOpen(true);
     }
   }, [myTeam]);
 
   useEffect(() => {
-    if (gameState === 5 || gameState === 6) {
+    if (gameStateRef.current === 5 || gameStateRef.current === 6) {
       if (myTeam === "red") {
         printHst(history.redHistory, "redType", false);
       }
@@ -293,6 +327,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       }
     }
   }, [gameState]);
+  
 
   const parseScores = (data) => {
     let rs = "";
@@ -419,32 +454,6 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setButtonMessage("NEXT ROUND");
     setActualNums(data.codes);
     setGameState(data.state);
-  };
-
-  const handleDecryption = (data) => {
-    setGameState(data.state);
-    setHints([data.redHints, data.blueHints]);
-    if (coder === true) {
-      console.log("Decryption");
-      setActiveConfirm(false);
-      setButtonMessage("Inactive");
-      if (currentRound === 0) {
-        setStatusMessage(
-          "Hint sumbmitted. Round 1 no information on other team yet... Cannot assist in breaking their code."
-        );
-      } else {
-        setStatusMessage(
-          "Transmission received. Assist agents in breaking enemy code."
-        );
-      }
-    } else {
-      setActiveConfirm(true);
-      setButtonMessage("./SUBMIT");
-      setStatusMessage(
-        "Transmission received. Agents, decode the secret messages above. Match the hints, to the words above."
-      );
-    }
-    return;
   };
 
   const printBlueHst = () => {
@@ -647,14 +656,14 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   //Confirm button is multi-function, so this controls that.
   const handleConfirm = () => {
     //If the game hasn't started yet, this starts it. For example, players still joining.
-    if (gameState === 0) {
+    if (gameStateRef.current === 0) {
       socket.emit("game-data", { event: "begin-game" });
     }
     //If the round has ended, now its
-    if (gameState === 5) {
+    if (gameStateRef.current === 5) {
       socket.emit("game-data", { event: "next-round" });
     }
-    if ((gameState === 1 || gameState === 2) && coder) {
+    if ((gameStateRef.current === 1 || gameStateRef.current === 2) && coderRef.current) {
       //Handle submitting red hints
       if (myTeam === "red") {
         //Truncate hints to the maximum width for the field.
@@ -703,7 +712,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
 
     //Submit your teams guesses
-    if ((gameState === 3 || gameState === 4) && !coder) {
+    if ((gameStateRef.current === 3 || gameStateRef.current === 4) && !coderRef.current) {
       const redGuess = new Set([redOne, redTwo, redThree]);
       const blueGuess = new Set([blueOne, blueTwo, blueThree]);
       const allguess = [redOne, redTwo, redThree, blueOne, blueTwo, blueThree];
@@ -711,8 +720,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       //1: Each hint must have a unique number associated with it. That's what the set creation is about. If 3 are found, then we know each hint has a different number guessed.
       //2: First round you only guess on your own teams hints. In figure rounds you need to guess on both.
       if (
-        (myTeam === "blue" && currentRound === 0 && blueGuess.size === 3) ||
-        (myTeam === "red" && currentRound === 0 && redGuess.size === 3) ||
+        (myTeam === "blue" && currentRoundRef.current === 0 && blueGuess.size === 3) ||
+        (myTeam === "red" && currentRoundRef.current === 0 && redGuess.size === 3) ||
         (redGuess.size === 3 &&
           blueGuess.size === 3 &&
           redGuess.has("0") !== true &&
@@ -731,7 +740,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
 
     //Offer to start new game
-    if (gameState === 6) {
+    if (gameStateRef.current === 6) {
       socket.emit("game-data", { event: "new-game" });
     }
   };
@@ -895,7 +904,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
                       </div>
                     ) : (
-                      <div className="code-box blue-screen-text ml-5">
+                      <div className="code-box red-screen-text ml-5">
                         <div className="ml-1 text-3xl">{`?->`}</div>
                         <div className="ml-1 text-3xl">{`?->`}</div>
                         <div className="ml-1 text-3xl">{`?->`}</div>
