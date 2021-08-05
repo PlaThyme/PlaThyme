@@ -223,8 +223,8 @@ class EnigmaBreaker extends Game {
     this.blueSel = ["0", "0", "0", "0", "0", "0"];
     this.redWords = this.generateWords();
     this.blueWords = this.generateWords();
-    this.redCode = ["E", "R", "R"];
-    this.blueCode = ["E", "R", "R"];
+    this.redCode = ["?", "?", "?"];
+    this.blueCode = ["?", "?", "?"];
     this.redGuessHistory = [];
     this.blueGuessHistory = [];
     this.redHistory = [];
@@ -316,6 +316,7 @@ class EnigmaBreaker extends Game {
       } else {
         // Both teams have guessed, score game.
         this.handleScoreGame();
+        return;
       }
       this.redTurnOrder.forEach((player) => {
         //Distribute final guesses for a team to all their players
@@ -334,6 +335,7 @@ class EnigmaBreaker extends Game {
       } else {
         // Both teams have guessed, score game.
         this.handleScoreGame();
+        return;
       }
       this.blueTurnOrder.forEach((player) => {
         //Distribute final guesses for a team to all their players
@@ -466,6 +468,7 @@ class EnigmaBreaker extends Game {
         state: this.gameState,
         redHistory: this.redHistory,
         blueHistory: this.blueHistory,
+        guesses: [redGuess, blueGuess],
       });
       super.sendChat({
         sender: "Game-Over",
@@ -485,6 +488,7 @@ class EnigmaBreaker extends Game {
       state: this.gameState,
       redHistory: this.redHistory,
       blueHistory: this.blueHistory,
+      guesses: [redGuess, blueGuess],
     });
   }
 
@@ -493,21 +497,25 @@ class EnigmaBreaker extends Game {
       this.teams[data.playerName] = "red";
       this.redNum += 1;
       this.redTurnOrder.push(data.playerName);
+      super.updatePlayerScore(data.playerName, "Red");
     }
     if (data.team === "blue") {
       this.teams[data.playerName] = "blue";
       this.blueNum += 1;
       this.blueTurnOrder.push(data.playerName);
+      super.updatePlayerScore(data.playerName, "Blue");
     }
     if (data.team === "any") {
       if (this.redNum > this.blueNum) {
         this.teams[data.playerName] = "blue";
         this.blueNum += 1;
         this.blueTurnOrder.push(data.playerName);
+        super.updatePlayerScore(data.playerName, "Blue");
       } else {
         this.teams[data.playerName] = "red";
         this.redNum += 1;
         this.redTurnOrder.push(data.playerName);
+        super.updatePlayerScore(data.playerName, "Red");
       }
     }
 
@@ -532,6 +540,7 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
+        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
@@ -549,6 +558,7 @@ class EnigmaBreaker extends Game {
         gameState: this.gameState,
         redHints: this.redHints[this.currentRound],
         blueHints: this.blueHints[this.currentRound],
+        guesses: [this.redGuessHistory[this.currentRound],this.blueGuessHistory[this.currentRound]],
         currentRound: this.currentRound,
         redScore: this.redScore,
         blueScore: this.blueScore,
