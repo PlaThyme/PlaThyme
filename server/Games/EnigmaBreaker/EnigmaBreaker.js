@@ -493,21 +493,26 @@ class EnigmaBreaker extends Game {
       this.teams[data.playerName] = "red";
       this.redNum += 1;
       this.redTurnOrder.push(data.playerName);
+      super.updatePlayerScore(data.playerName, "Red");
+      console.log("Score to red");
     }
     if (data.team === "blue") {
       this.teams[data.playerName] = "blue";
       this.blueNum += 1;
       this.blueTurnOrder.push(data.playerName);
+      super.updatePlayerScore(data.playerName, "Blue");
     }
     if (data.team === "any") {
       if (this.redNum > this.blueNum) {
         this.teams[data.playerName] = "blue";
         this.blueNum += 1;
         this.blueTurnOrder.push(data.playerName);
+        super.updatePlayerScore(data.playerName, "Blue");
       } else {
         this.teams[data.playerName] = "red";
         this.redNum += 1;
         this.redTurnOrder.push(data.playerName);
+        super.updatePlayerScore(data.playerName, "Red");
       }
     }
 

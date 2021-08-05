@@ -899,9 +899,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       </div>
                     ) : gameState > 4 ? (
                       <div className="code-box red-screen-text ml-5">
+                        <div className="ml-1 text-3xl">{`${actualNums[0]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[1]}->`}</div>
                         <div className="ml-1 text-3xl">{`${actualNums[2]}->`}</div>
-                        <div className="ml-1 text-3xl">{`${actualNums[3]}->`}</div>
                       </div>
                     ) : (
                       <div className="code-box red-screen-text ml-5">
@@ -1190,7 +1190,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         <div className="blue-hint-box">
                           {gameState > 2
                             ? hints[1][1]
-                            : "Awaiting Trainsmission"}
+                            : "Awaiting Transmission"}
                         </div>
                       )}
                       {myTeam === "blue" &&
@@ -1206,7 +1206,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                         />
                       ) : (
                         <div className="blue-hint-box">
-                          {gameState > 2 ? hints[1][2] : "Awaiting Transmssion"}
+                          {gameState > 2 ? hints[1][2] : "Awaiting Transmission"}
                         </div>
                       )}
                     </div>
