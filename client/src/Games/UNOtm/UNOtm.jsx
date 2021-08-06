@@ -1,5 +1,5 @@
 // UNO?™
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PACK_OF_CARDS from "./utils/packOfCards";
 import shuffleArray from "./utils/shuffleArray";
 import Spinner from "./Spinner";
@@ -47,6 +47,8 @@ export default function UNOTM({ socket }) {
   const [playWildCardSound] = useSound(wildCardSound);
   const [playDraw4CardSound] = useSound(draw4CardSound);
   const [playGameOverSound] = useSound(gameOverSound);
+
+  const chatBodyRef = useRef(null);
 
   //runs once on component mount
   useEffect(() => {
@@ -207,12 +209,30 @@ export default function UNOTM({ socket }) {
     });
 
     socket.on("message", (message) => {
-      // setMessages((messages) => [...messages, message]);
-      // const chatBody = document.querySelector(".chat-body");
-      // chatBody.scrollTop = chatBody.scrollHeight;
+      console.log("calling handle fn");
+      handlemsg();
+      console.log("end of handlemsg");
+      // console.log("Message ===========>", message);
+      // console.log("message logs ==> ", messages);
+      setMessages((messages) => [...messages, message]);
+      const chatBody = document.querySelector(".chat-body");
+      // console.log("chatBody === > ", chatBody);
+      // console.log("chatBodyRef ===> ", chatBodyRef.current);
+      if (chatBody !== null) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+        console.log("Inside scrollHeight = ", chatBody.scrollHeight);
+        console.log("Inside scrollTop === ", chatBody.scrollTop);
+      }
     });
   }, []);
-
+  const handlemsg = () => {
+    console.log("+++++++++++");
+    console.log(
+      messages.map((msg) => {
+        return msg.text;
+      })
+    );
+  };
   //some util functions
   const checkGameOver = (arr) => {
     return arr.length === 1;
@@ -2095,6 +2115,7 @@ export default function UNOTM({ socket }) {
     }
   };
 
+  // console.log("message logs ==> ", messages);
   return (
     <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
       {
@@ -2185,7 +2206,7 @@ export default function UNOTM({ socket }) {
                         ))}
                       </div>
                       <div className="chatBoxWrapper">
-                        <div className="chat-box chat-box-player1">
+                        <div className="chat-box chat-box-player2">
                           <div className="chat-head">
                             <h2>Chat Box</h2>
                             {!isChatBoxHidden ? (
@@ -2207,13 +2228,13 @@ export default function UNOTM({ socket }) {
                           <div className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
-                                if (msg.user === "Player 2")
+                                if (msg.user === "player1")
                                   return (
                                     <div className="msg-receive">
                                       {msg.text}
                                     </div>
                                   );
-                                if (msg.user === "Player 1")
+                                if (msg.user === "player2")
                                   return (
                                     <div className="msg-send">{msg.text}</div>
                                   );
@@ -2234,7 +2255,7 @@ export default function UNOTM({ socket }) {
                             </div>
                           </div>
                         </div>
-                      </div>{" "}
+                      </div>
                     </>
                   )}
 
@@ -2334,16 +2355,16 @@ export default function UNOTM({ socket }) {
                               </span>
                             )}
                           </div>
-                          <div className="chat-body">
+                          <div ref={chatBodyRef} className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
-                                if (msg.user === "Player 1")
+                                if (msg.user === "player1")
                                   return (
                                     <div className="msg-receive">
                                       {msg.text}
                                     </div>
                                   );
-                                if (msg.user === "Player 2")
+                                if (msg.user === "player2")
                                   return (
                                     <div className="msg-send">{msg.text}</div>
                                   );
