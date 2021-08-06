@@ -2122,6 +2122,39 @@ export default function UNOTM({ socket }) {
         <>
           {users.length === 2 ? (
             <>
+              <div className="topInfo">
+                <img
+                  src={require("./assets/logo.png").default}
+                  alt="asset logo"
+                />
+                <span>
+                  <button
+                    className="game-button green"
+                    onClick={() => setSoundMuted(!isSoundMuted)}
+                  >
+                    {isSoundMuted ? (
+                      <span className="material-icons">volume_off</span>
+                    ) : (
+                      <span className="material-icons">volume_up</span>
+                    )}
+                  </button>
+                  <button
+                    className="game-button green"
+                    onClick={() => {
+                      if (isMusicMuted) playBBgMusic();
+                      else pause();
+                      setMusicMuted(!isMusicMuted);
+                    }}
+                  >
+                    {isMusicMuted ? (
+                      <span className="material-icons">music_off</span>
+                    ) : (
+                      <span className="material-icons">music_note</span>
+                    )}
+                  </button>
+                </span>
+              </div>
+
               {winner !== "" ? (
                 <>
                   <h1>GAME OVER</h1>
