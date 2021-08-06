@@ -42,8 +42,10 @@ class EnigmaBreaker extends Game {
   recieveData(data) {
     switch (data.event) {
       case "begin-game":
-        this.handleStartGame();
-        this.handleStartTurn();
+        if (this.gameState === 0) {
+          this.handleStartGame();
+          this.handleStartTurn();
+        }
         break;
       case "join-team":
         this.handleJoinTeam(data);
@@ -67,12 +69,16 @@ class EnigmaBreaker extends Game {
         this.handleGuess(data);
         break;
       case "next-round":
-        this.advanceTurnOrder();
-        this.currentRound += 1;
-        this.handleStartTurn();
+        if (this.gameState === 5) {
+          this.advanceTurnOrder();
+          this.currentRound += 1;
+          this.handleStartTurn();
+        }
         break;
       case "new-game":
-        this.handleNewGame();
+        if (this.gameState === 6) {
+          this.handleNewGame();
+        }
         break;
       default:
         break;
@@ -133,6 +139,7 @@ class EnigmaBreaker extends Game {
         super.sendGameData({ event: "blue-needs-players" });
       }
       if (this.redNum === 0 || this.blueNum === 0) {
+        this.gameState = 6;
         this.handleNewGame();
       }
     }
@@ -241,28 +248,38 @@ class EnigmaBreaker extends Game {
 
   //When a team submits hints this records the hints, and distributes them to the other players.
   handleRedHints(data) {
-    if(this.redHints.length === this.currentRound && this.gameState < 3){ //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
-    this.redHints.push([data.hint1, data.hint2, data.hint3]);
-    this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
-    super.sendGameData({ event: "red-hints-in", state: this.gameState });
+    if (
+      this.redHints.length === this.currentRound &&
+      this.gameState < 3 &&
+      this.gameState > 0
+    ) {
+      //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
+      this.redHints.push([data.hint1, data.hint2, data.hint3]);
+      this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
+      super.sendGameData({ event: "red-hints-in", state: this.gameState });
 
-    //If both hints are in notify clients, and distribute hints.
-    if (this.gameState === 3) {
-      this.handleHintsSubmitted();
+      //If both hints are in notify clients, and distribute hints.
+      if (this.gameState === 3) {
+        this.handleHintsSubmitted();
+      }
     }
-  }
   }
   handleBlueHints(data) {
-    if(this.blueHints.length === this.currentRound && this.gameState < 3){ //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
-    this.blueHints.push([data.hint1, data.hint2, data.hint3]);
-    this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
-    super.sendGameData({ event: "blue-hints-in", state: this.gameState });
+    if (
+      this.blueHints.length === this.currentRound &&
+      this.gameState < 3 &&
+      this.gameState > 0
+    ) {
+      //Make sure that they haven't submitted hints this round, and that we aren't past submitting hints
+      this.blueHints.push([data.hint1, data.hint2, data.hint3]);
+      this.gameState += 1; //Advance the game state. 2 indicates one team has hint in, 3 indicates that both are in.
+      super.sendGameData({ event: "blue-hints-in", state: this.gameState });
 
-    //If both hints are in notify clients, and distribute hints.
-    if (this.gameState === 3) {
-      this.handleHintsSubmitted();
+      //If both hints are in notify clients, and distribute hints.
+      if (this.gameState === 3) {
+        this.handleHintsSubmitted();
+      }
     }
-  }
   }
 
   //Both teams hints are in, present them to the players.
@@ -316,7 +333,11 @@ class EnigmaBreaker extends Game {
   handleGuess(data) {
     //Handle red team guess
     if (data.team === "red") {
-      if (this.redGuessHistory.length === this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+      if (
+        this.redGuessHistory.length === this.currentRound &&
+        this.gameState > 2 &&
+        this.gameState < 5
+      ) {
         this.redGuessHistory.push(data.guess);
         this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
         if (this.gameState === 4) {
@@ -340,7 +361,11 @@ class EnigmaBreaker extends Game {
       }
     } else {
       //Handle blue team guess
-      if (this.blueGuessHistory.length === this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+      if (
+        this.blueGuessHistory.length === this.currentRound &&
+        this.gameState > 2 &&
+        this.gameState < 5
+      ) {
         this.blueGuessHistory.push(data.guess);
         this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
         if (this.gameState === 4) {
@@ -367,7 +392,8 @@ class EnigmaBreaker extends Game {
 
   //Score the round.
   handleScoreGame() {
-    if (this.gameState === 5) { //Double check that the game is actually in the state where its ready to be scored.
+    if (this.gameState === 5) {
+      //Double check that the game is actually in the state where its ready to be scored.
 
       //Build the history for the printer that records what the guesses were too.
       let redGuess = this.redGuessHistory[this.currentRound];
@@ -408,7 +434,6 @@ class EnigmaBreaker extends Game {
       blueRoundHistory[parseInt(this.blueCode[2]) - 1] =
         blueGuess[5] + " >> " + this.blueHints[this.currentRound][2];
       this.blueHistory.push(blueRoundHistory);
-      
 
       //Evaluate the guesses.
       if (
