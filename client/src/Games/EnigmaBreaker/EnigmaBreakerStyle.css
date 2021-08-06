@@ -426,10 +426,6 @@
   line-height: 180%;
 }
 
-/* .num-btn{
-  font-family: 'Courier New', Courier, monospace;
-} */
-
 .num-border {
   border-radius: 90% / 15%;
   position: relative;
@@ -456,13 +452,6 @@
   background: linear-gradient(#ddd 5%, #999 20%, #999 80%, #ddd 95%);
   border-left: 2px solid #666;
   border-right: 2px solid #666;
-}
-
-.confirm-box {
-  border: 10px solid transparent;
-  border-image: url("./screwborder.png") round;
-  border-image-slice: 100 fill;
-  border-image-repeat: stretch;
 }
 
 .team-chat {

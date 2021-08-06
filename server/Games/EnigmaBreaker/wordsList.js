@@ -292,7 +292,7 @@ wordsList = [
   "YELLOW",
   "DRAGON",
   "POCKET",
-  "BARRAKS",
+  "BARRACKS",
   "RAIN",
   "PUPPET",
   "WOLF",

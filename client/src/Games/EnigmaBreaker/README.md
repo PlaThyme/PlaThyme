@@ -60,5 +60,9 @@ https://freesfx.co.uk/sfx/dot-matrix
 Licence is here:
 https://freesfx.co.uk/Page/4/End-User-License-Agreement
 
+* Thanks Ken for your assistance troubleshooting, as well as the CSS for the printer paper! Incredible.
+
+* Thanks to everyone who helped me playtest, Michaël, Ken, Keoni, Sam, Mathew, Tim, Michael K.
+
 * Game is inspired by iello's wonderful Decrypto game by Scorpion Masque. Their website is here, and I encourage everyone to buy and play it with friends:
 https://iellousa.com/collections/scorpion-masque/products/decrypto

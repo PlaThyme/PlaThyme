@@ -525,21 +525,21 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       let listLength = historyList.length;
       let timeOutValue;
 
-      const beginPrinting = (listLength, color) => {
-        if (listLength > 0) {
-          printLine(historyList[listLength - 1], color);
+      const beginPrinting = (listLength, index, color) => {
+        if (index < listLength ) {
+          printLine(historyList[index], color);
           if (timeOutValue !== undefined) {
             clearTimeout(timeOutValue);
           }
-          listLength--;
+          index++;
           timeOutValue = setTimeout(() => {
-            beginPrinting(listLength, color);
+            beginPrinting(listLength, index, color);
           }, 500);
         } else {
           printing = false;
         }
       };
-      beginPrinting(listLength, color);
+      beginPrinting(listLength, 0, color);
     }
   };
 
@@ -614,6 +614,9 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
     for (let i = 0; i < score[1]; i++) {
       text += miss;
+    }
+    if(text === ""){
+      text = "0";
     }
     return text;
   };
@@ -758,7 +761,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const sendChat = (e) => {
     e.preventDefault();
     if (chatRef.current.value) {
-      let truncMessage = chatRef.current.value.slice(0, 39);
+      let truncMessage = chatRef.current.value.slice(0, 60);
       socket.emit("game-data", {
         event: "team-chat",
         team: myTeam,
@@ -1054,7 +1057,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                             type="text"
                             placeholder="team chat here"
                             required
-                            maxlength="40"
+                            maxlength="60"
                             ref={chatRef}
                             autocomplete="off"
                             className={`${myTeam}-input w-full px-1`}
@@ -1309,7 +1312,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                             type="text"
                             placeholder="team chat here"
                             required
-                            maxlength="40"
+                            maxlength="60"
                             ref={chatRef}
                             autocomplete="off"
                             className={`${myTeam}-input w-full px-1`}

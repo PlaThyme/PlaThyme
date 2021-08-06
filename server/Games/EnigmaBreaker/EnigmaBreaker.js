@@ -115,6 +115,7 @@ class EnigmaBreaker extends Game {
           this.gameState === 1 ||
           (this.gameState === 2 && this.redHints.length <= this.currentRound)
         ) {
+          super.updatePlayerScore(this.redTurnOrder[0], ">>RED<<");
           super.sendDataToPlayer(this.redTurnOrder[0], {
             event: "your-turn",
             code: this.redCode,
@@ -126,6 +127,7 @@ class EnigmaBreaker extends Game {
           this.gameState === 1 ||
           (this.gameState === 2 && this.blueHints.length <= this.currentRound)
         ) {
+          super.updatePlayerScore(this.blueTurnOrder[0], ">>BLUE<<");
           super.sendDataToPlayer(this.blueTurnOrder[0], {
             event: "your-turn",
             code: this.blueCode,
@@ -167,6 +169,8 @@ class EnigmaBreaker extends Game {
 
   //Advances turn order to determine who the next coder is.
   advanceTurnOrder() {
+    super.updatePlayerScore(this.redTurnOrder[0], "Red");
+    super.updatePlayerScore(this.blueTurnOrder[0], "Blue");
     const lastPlayer = this.redTurnOrder.shift();
     this.redTurnOrder.push(lastPlayer);
     const lastPlayer2 = this.blueTurnOrder.shift();
@@ -222,6 +226,8 @@ class EnigmaBreaker extends Game {
 
   //Reset game state, to start new game.
   handleNewGame() {
+    this.redTurnOrder.forEach((player) => {super.updatePlayerScore(player, "")});
+    this.blueTurnOrder.forEach((player) => {super.updatePlayerScore(player, "")});
     this.teams = {};
     this.redTurnOrder = [];
     this.blueTurnOrder = [];
@@ -319,6 +325,8 @@ class EnigmaBreaker extends Game {
     this.blueCode = this.generateCode();
 
     //Send blue, and red team active player the code.
+    super.updatePlayerScore(this.redTurnOrder[0], ">>RED<<");
+    super.updatePlayerScore(this.blueTurnOrder[0], ">>BLUE<<");
     super.sendDataToPlayer(this.redTurnOrder[0], {
       event: "your-turn",
       code: this.redCode,
