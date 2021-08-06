@@ -52,20 +52,20 @@ export default function UNOTM({ socket }) {
 
   useEffect(() => {
     socket.on("roomData", ({ users, roomCode }) => {
-      console.log("users == ", users);
+      // console.log("users == ", users);
       setUsers(users);
       setRoomFull(true);
       setRoom(roomCode);
-      console.log("roomCode == ", roomCode);
+      // console.log("roomCode == ", roomCode);
     });
     socket.on("currentUserData", ({ name }) => {
       setCurrentUser(name);
-      console.log("player --> ", name);
-      if (name === "Player 1") {
-        console.log("currentUser === Player 1 true");
-      } else {
-        console.log("currentUser === Player 1 false");
-      }
+      // console.log("player --> ", name);
+      // if (name === "Player 1") {
+      //   console.log("currentUser === Player 1 true");
+      // } else {
+      //   console.log("currentUser === Player 1 false");
+      // }
     });
   });
 
@@ -138,13 +138,21 @@ export default function UNOTM({ socket }) {
       }) => {
         console.log(
           "initData --> ",
+          "gameOver = ",
           gameOver,
+          "turn = ",
           turn,
+          "player1Deck = ",
           player1Deck,
+          "player2Deck = ",
           player2Deck,
+          "currentColor = ",
           currentColor,
+          "currentNumber = ",
           currentNumber,
+          "playedCardsPile = ",
           playedCardsPile,
+          "drawCardPile = ",
           drawCardPile
         );
         setGameOver(gameOver);
@@ -173,14 +181,23 @@ export default function UNOTM({ socket }) {
       }) => {
         console.log(
           "updateGameState --> ",
+          "gameOver = ",
           gameOver,
+          "winner = ",
           winner,
+          "turn = ",
           turn,
+          "player1Deck = ",
           player1Deck,
+          "player2Deck = ",
           player2Deck,
+          "currentColor = ",
           currentColor,
+          "currentNumber = ",
           currentNumber,
+          "playedCardsPile = ",
           playedCardsPile,
+          "drawCardPile = ",
           drawCardPile
         );
         gameOver && setGameOver(gameOver);
@@ -194,6 +211,17 @@ export default function UNOTM({ socket }) {
         playedCardsPile && setPlayedCardsPile(playedCardsPile);
         drawCardPile && setDrawCardPile(drawCardPile);
         setUnoButtonPressed(false);
+        // setGameOver(gameOver);
+        // playGameOverSound();
+        // setWinner(winner);
+        // setTurn(turn);
+        // setPlayer1Deck(player1Deck);
+        // setPlayer2Deck(player2Deck);
+        // setCurrentColor(currentColor);
+        // setCurrentNumber(currentNumber);
+        // setPlayedCardsPile(playedCardsPile);
+        // setDrawCardPile(drawCardPile);
+        // setUnoButtonPressed(false);
       }
     );
 
@@ -1104,9 +1132,14 @@ export default function UNOTM({ socket }) {
         //check who played the card and return new state accordingly
         if (cardPlayedBy === "Player 1") {
           //ask for new color
-          const newColor = prompt(
-            "Enter first letter of new color (R/G/B/Y)"
-          ).toUpperCase();
+          let newColor = "";
+          do {
+            newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+            if (newColor !== null) {
+              newColor = newColor.toUpperCase();
+            }
+            console.log("newColor -------> ", newColor);
+          } while (newColor === null || newColor === "");
           //remove the played card from player1's deck and add it to playedCardsPile (immutably)
           const removeIndex = player1Deck.indexOf(played_card);
           //then update turn, currentColor and currentNumber
@@ -1165,9 +1198,14 @@ export default function UNOTM({ socket }) {
           }
         } else {
           //ask for new color
-          const newColor = prompt(
-            "Enter first letter of new color (R/G/B/Y)"
-          ).toUpperCase();
+          let newColor = "";
+          do {
+            newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+            if (newColor !== null) {
+              newColor = newColor.toUpperCase();
+            }
+            console.log("newColor -------> ", newColor);
+          } while (newColor === null || newColor === "");
           //remove the played card from player2's deck and add it to playedCardsPile (immutably)
           const removeIndex = player2Deck.indexOf(played_card);
           //then update turn, currentColor and currentNumber
@@ -1232,9 +1270,14 @@ export default function UNOTM({ socket }) {
         //check who played the card and return new state accordingly
         if (cardPlayedBy === "Player 1") {
           //ask for new color
-          const newColor = prompt(
-            "Enter first letter of new color (R/G/B/Y)"
-          ).toUpperCase();
+          let newColor = "";
+          do {
+            newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+            if (newColor !== null) {
+              newColor = newColor.toUpperCase();
+            }
+            console.log("newColor -------> ", newColor);
+          } while (newColor === null || newColor === "");
           //remove the played card from player1's deck and add it to playedCardsPile (immutably)
           const removeIndex = player1Deck.indexOf(played_card);
           //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
@@ -1314,9 +1357,14 @@ export default function UNOTM({ socket }) {
           }
         } else {
           //ask for new color
-          const newColor = prompt(
-            "Enter first letter of new color (R/G/B/Y)"
-          ).toUpperCase();
+          let newColor = "";
+          do {
+            newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+            if (newColor !== null) {
+              newColor = newColor.toUpperCase();
+            }
+            console.log("newColor -------> ", newColor);
+          } while (newColor === null || newColor === "");
           //remove the played card from player2's deck and add it to playedCardsPile (immutably)
           const removeIndex = player2Deck.indexOf(played_card);
           //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
@@ -1497,9 +1545,14 @@ export default function UNOTM({ socket }) {
       } else if (drawCard === "W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
-        const newColor = prompt(
-          "Enter first letter of new color (R/G/B/Y)"
-        ).toUpperCase();
+        let newColor = "";
+        do {
+          newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+          if (newColor !== null) {
+            newColor = newColor.toUpperCase();
+          }
+          console.log("newColor -------> ", newColor);
+        } while (newColor === null || newColor === "");
         !isSoundMuted && playWildCardSound();
         //send new state to server
         socket.emit("updateGameState", {
@@ -1516,9 +1569,14 @@ export default function UNOTM({ socket }) {
       } else if (drawCard === "D4W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
-        const newColor = prompt(
-          "Enter first letter of new color (R/G/B/Y)"
-        ).toUpperCase();
+        let newColor = "";
+        do {
+          newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+          if (newColor !== null) {
+            newColor = newColor.toUpperCase();
+          }
+          console.log("newColor -------> ", newColor);
+        } while (newColor === null || newColor === "");
         //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
         //make a copy of drawCardPile array
         const copiedDrawCardPileArray = [...drawCardPile];
@@ -1646,9 +1704,14 @@ export default function UNOTM({ socket }) {
       } else if (drawCard === "W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
-        const newColor = prompt(
-          "Enter first letter of new color (R/G/B/Y)"
-        ).toUpperCase();
+        let newColor = "";
+        do {
+          newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+          if (newColor !== null) {
+            newColor = newColor.toUpperCase();
+          }
+          console.log("newColor -------> ", newColor);
+        } while (newColor === null || newColor === "");
         !isSoundMuted && playWildCardSound();
         //send new state to server
         socket.emit("updateGameState", {
@@ -1665,9 +1728,14 @@ export default function UNOTM({ socket }) {
       } else if (drawCard === "D4W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
-        const newColor = prompt(
-          "Enter first letter of new color (R/G/B/Y)"
-        ).toUpperCase();
+        let newColor = "";
+        do {
+          newColor = prompt("Enter first letter of new color (R/G/B/Y)");
+          if (newColor !== null) {
+            newColor = newColor.toUpperCase();
+          }
+          console.log("newColor -------> ", newColor);
+        } while (newColor === null || newColor === "");
         //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
         //make a copy of drawCardPile array
         const copiedDrawCardPileArray = [...drawCardPile];
@@ -1733,21 +1801,20 @@ export default function UNOTM({ socket }) {
       }
     }
   };
-  console.log(
-    "Inside UNO game --> roomFull = ",
-    roomFull,
-    " user.length = ",
-    users.length,
-    " currentUser = ",
-    currentUser,
-    " gameOver = ",
-    gameOver
-  );
+  // console.log(
+  //   "Inside UNO game --> roomFull = ",
+  //   roomFull,
+  //   " user.length = ",
+  //   users.length,
+  //   " currentUser = ",
+  //   currentUser,
+  //   " gameOver = ",
+  //   gameOver
+  // );
   return (
     <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
       {
-      // !roomFull ? 
-      (
+        // !roomFull ?
         <>
           {/* <div className="topInfo">
             <img src={require("./assets/logo.png").default} alt="asset logo" />
@@ -1790,7 +1857,7 @@ export default function UNOTM({ socket }) {
             </h1>
           )} */}
 
-          {users.length === 2 && (
+          {users.length === 2 ? (
             <>
               {/* {gameOver ? 
               (
@@ -1803,6 +1870,12 @@ export default function UNOTM({ socket }) {
                   )}
                 </div>
               ) : ( */}
+              {winner !== "" ? (
+                <>
+                  <h1>GAME OVER</h1>
+                  <h2>{winner} wins!</h2>
+                </>
+              ) : (
                 <div>
                   {/* PLAYER 1 VIEW */}
                   {currentUser === "Player 1" && (
@@ -2064,13 +2137,18 @@ export default function UNOTM({ socket }) {
                     </>
                   )}
                 </div>
+              )}
               {/* )} */}
+            </>
+          ) : (
+            <>
+              <h1>Waiting for Player 2 to Join the game...</h1>
             </>
           )}
         </>
-      // ) : (
+        // ) : (
         // <h1>Room full</h1>
-      )}
+      }
 
       <br />
       <a href="/">
