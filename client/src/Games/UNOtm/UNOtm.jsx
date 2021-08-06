@@ -207,9 +207,9 @@ export default function UNOTM({ socket }) {
     });
 
     socket.on("message", (message) => {
-      setMessages((messages) => [...messages, message]);
-      const chatBody = document.querySelector(".chat-body");
-      chatBody.scrollTop = chatBody.scrollHeight;
+      // setMessages((messages) => [...messages, message]);
+      // const chatBody = document.querySelector(".chat-body");
+      // chatBody.scrollTop = chatBody.scrollHeight;
     });
   }, []);
 
@@ -240,6 +240,25 @@ export default function UNOTM({ socket }) {
         setMessage("");
       });
     }
+  };
+
+  const refillDrawCardPile = (copiedDrawCardPileArray) => {
+    let newCopiedDrawCardPileArray = [];
+    for (let i = 0; i < PACK_OF_CARDS.length; i++) {
+      if (
+        player1Deck.indexOf(PACK_OF_CARDS[i]) === -1 ||
+        player2Deck.indexOf(PACK_OF_CARDS[i]) === -1 ||
+        copiedDrawCardPileArray.indexOf(PACK_OF_CARDS[i]) === -1
+      ) {
+        newCopiedDrawCardPileArray.push(PACK_OF_CARDS[i]);
+      }
+    }
+    if (copiedDrawCardPileArray.length !== 0) {
+      for (let i = 0; i < copiedDrawCardPileArray.length; i++) {
+        newCopiedDrawCardPileArray.push(copiedDrawCardPileArray[i]);
+      }
+    }
+    return newCopiedDrawCardPileArray;
   };
 
   //driver functions
@@ -310,8 +329,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -371,8 +398,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -438,8 +473,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -499,8 +542,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -579,8 +630,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -638,8 +697,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -703,8 +770,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -762,8 +837,16 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //make a copy of drawCardPile array
-              const copiedDrawCardPileArray = [...drawCardPile];
+              let copiedDrawCardPileArray = [...drawCardPile];
               //pull out last two elements from it
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1 = copiedDrawCardPileArray.pop();
               const drawCard2 = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -835,8 +918,16 @@ export default function UNOTM({ socket }) {
             //then update currentColor and currentNumber - turn will remain same
             const removeIndex = player1Deck.indexOf(played_card);
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             //if two cards remaining check if player pressed UNO button
@@ -846,6 +937,14 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //pull out last two elements from drawCardPile
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1X = copiedDrawCardPileArray.pop();
               const drawCard2X = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -911,8 +1010,16 @@ export default function UNOTM({ socket }) {
             //then update currentColor and currentNumber - turn will remain same
             const removeIndex = player2Deck.indexOf(played_card);
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             //if two cards remaining check if player pressed UNO button
@@ -922,6 +1029,14 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //pull out last two elements from drawCardPile
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1X = copiedDrawCardPileArray.pop();
               const drawCard2X = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -993,8 +1108,16 @@ export default function UNOTM({ socket }) {
             //then update currentColor and currentNumber - turn will remain same
             const removeIndex = player1Deck.indexOf(played_card);
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             //if two cards remaining check if player pressed UNO button
@@ -1004,6 +1127,14 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //pull out last two elements from drawCardPile
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1X = copiedDrawCardPileArray.pop();
               const drawCard2X = copiedDrawCardPileArray.pop();
               const updatedPlayer1Deck = [
@@ -1069,8 +1200,16 @@ export default function UNOTM({ socket }) {
             //then update currentColor and currentNumber - turn will remain same
             const removeIndex = player2Deck.indexOf(played_card);
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             //if two cards remaining check if player pressed UNO button
@@ -1080,6 +1219,14 @@ export default function UNOTM({ socket }) {
                 "Oops! You forgot to press UNO. You drew 2 cards as penalty."
               );
               //pull out last two elements from drawCardPile
+              let num_of_pop = 2;
+              let num_of_drawCardPile_after_pop =
+                copiedDrawCardPileArray.length - num_of_pop;
+              if (num_of_drawCardPile_after_pop < 0) {
+                copiedDrawCardPileArray = refillDrawCardPile(
+                  copiedDrawCardPileArray
+                );
+              }
               const drawCard1X = copiedDrawCardPileArray.pop();
               const drawCard2X = copiedDrawCardPileArray.pop();
               const updatedPlayer2Deck = [
@@ -1170,8 +1317,16 @@ export default function UNOTM({ socket }) {
               "Oops! You forgot to press UNO. You drew 2 cards as penalty."
             );
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             const updatedPlayer1Deck = [
@@ -1240,8 +1395,16 @@ export default function UNOTM({ socket }) {
               "Oops! You forgot to press UNO. You drew 2 cards as penalty."
             );
             //make a copy of drawCardPile array
-            const copiedDrawCardPileArray = [...drawCardPile];
+            let copiedDrawCardPileArray = [...drawCardPile];
             //pull out last two elements from it
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1 = copiedDrawCardPileArray.pop();
             const drawCard2 = copiedDrawCardPileArray.pop();
             const updatedPlayer2Deck = [
@@ -1310,8 +1473,16 @@ export default function UNOTM({ socket }) {
           const removeIndex = player1Deck.indexOf(played_card);
           //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
           //make a copy of drawCardPile array
-          const copiedDrawCardPileArray = [...drawCardPile];
-          //pull out last four elements from it
+          let copiedDrawCardPileArray = [...drawCardPile];
+          //pull out last two elements from it
+          let num_of_pop = 4;
+          let num_of_drawCardPile_after_pop =
+            copiedDrawCardPileArray.length - num_of_pop;
+          if (num_of_drawCardPile_after_pop < 0) {
+            copiedDrawCardPileArray = refillDrawCardPile(
+              copiedDrawCardPileArray
+            );
+          }
           const drawCard1 = copiedDrawCardPileArray.pop();
           const drawCard2 = copiedDrawCardPileArray.pop();
           const drawCard3 = copiedDrawCardPileArray.pop();
@@ -1324,6 +1495,14 @@ export default function UNOTM({ socket }) {
               "Oops! You forgot to press UNO. You drew 2 cards as penalty."
             );
             //pull out last two elements from drawCardPile
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1X = copiedDrawCardPileArray.pop();
             const drawCard2X = copiedDrawCardPileArray.pop();
             const updatedPlayer1Deck = [
@@ -1401,8 +1580,16 @@ export default function UNOTM({ socket }) {
           const removeIndex = player2Deck.indexOf(played_card);
           //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
           //make a copy of drawCardPile array
-          const copiedDrawCardPileArray = [...drawCardPile];
-          //pull out last four elements from it
+          let copiedDrawCardPileArray = [...drawCardPile];
+          //pull out last two elements from it
+          let num_of_pop = 4;
+          let num_of_drawCardPile_after_pop =
+            copiedDrawCardPileArray.length - num_of_pop;
+          if (num_of_drawCardPile_after_pop < 0) {
+            copiedDrawCardPileArray = refillDrawCardPile(
+              copiedDrawCardPileArray
+            );
+          }
           const drawCard1 = copiedDrawCardPileArray.pop();
           const drawCard2 = copiedDrawCardPileArray.pop();
           const drawCard3 = copiedDrawCardPileArray.pop();
@@ -1443,6 +1630,14 @@ export default function UNOTM({ socket }) {
               "Oops! You forgot to press UNO. You drew 2 cards as penalty."
             );
             //pull out last two elements from drawCardPile
+            let num_of_pop = 2;
+            let num_of_drawCardPile_after_pop =
+              copiedDrawCardPileArray.length - num_of_pop;
+            if (num_of_drawCardPile_after_pop < 0) {
+              copiedDrawCardPileArray = refillDrawCardPile(
+                copiedDrawCardPileArray
+              );
+            }
             const drawCard1X = copiedDrawCardPileArray.pop();
             const drawCard2X = copiedDrawCardPileArray.pop();
             const updatedPlayer2Deck = [
@@ -1522,8 +1717,14 @@ export default function UNOTM({ socket }) {
     if (cardDrawnBy === "Player 1") {
       //remove 1 new card from drawCardPile and add it to player1's deck (immutably)
       //make a copy of drawCardPile array
-      const copiedDrawCardPileArray = [...drawCardPile];
-      //pull out last element from it
+      let copiedDrawCardPileArray = [...drawCardPile];
+      //pull out last two elements from it
+      let num_of_pop = 1;
+      let num_of_drawCardPile_after_pop =
+        copiedDrawCardPileArray.length - num_of_pop;
+      if (num_of_drawCardPile_after_pop < 0) {
+        copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+      }
       const drawCard = copiedDrawCardPileArray.pop();
       //extract number and color of drawn card
       const colorOfDrawnCard = drawCard.charAt(drawCard.length - 1);
@@ -1560,8 +1761,14 @@ export default function UNOTM({ socket }) {
         alert(`You drew ${drawCard}. It was played for you.`);
         //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
         //make a copy of drawCardPile array
-        const copiedDrawCardPileArray = [...drawCardPile];
+        let copiedDrawCardPileArray = [...drawCardPile];
         //pull out last two elements from it
+        let num_of_pop = 2;
+        let num_of_drawCardPile_after_pop =
+          copiedDrawCardPileArray.length - num_of_pop;
+        if (num_of_drawCardPile_after_pop < 0) {
+          copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+        }
         const drawCard1 = copiedDrawCardPileArray.pop();
         const drawCard2 = copiedDrawCardPileArray.pop();
         !isSoundMuted && playDraw2CardSound();
@@ -1623,8 +1830,14 @@ export default function UNOTM({ socket }) {
         } while (newColor === null || newColor === "");
         //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
         //make a copy of drawCardPile array
-        const copiedDrawCardPileArray = [...drawCardPile];
-        //pull out last four elements from it
+        let copiedDrawCardPileArray = [...drawCardPile];
+        //pull out last two elements from it
+        let num_of_pop = 4;
+        let num_of_drawCardPile_after_pop =
+          copiedDrawCardPileArray.length - num_of_pop;
+        if (num_of_drawCardPile_after_pop < 0) {
+          copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+        }
         const drawCard1 = copiedDrawCardPileArray.pop();
         const drawCard2 = copiedDrawCardPileArray.pop();
         const drawCard3 = copiedDrawCardPileArray.pop();
@@ -1693,8 +1906,14 @@ export default function UNOTM({ socket }) {
     } else {
       //remove 1 new card from drawCardPile and add it to player2's deck (immutably)
       //make a copy of drawCardPile array
-      const copiedDrawCardPileArray = [...drawCardPile];
-      //pull out last element from it
+      let copiedDrawCardPileArray = [...drawCardPile];
+      //pull out last two elements from it
+      let num_of_pop = 1;
+      let num_of_drawCardPile_after_pop =
+        copiedDrawCardPileArray.length - num_of_pop;
+      if (num_of_drawCardPile_after_pop < 0) {
+        copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+      }
       const drawCard = copiedDrawCardPileArray.pop();
       //extract number and color of drawn card
       const colorOfDrawnCard = drawCard.charAt(drawCard.length - 1);
@@ -1731,8 +1950,14 @@ export default function UNOTM({ socket }) {
         alert(`You drew ${drawCard}. It was played for you.`);
         //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
         //make a copy of drawCardPile array
-        const copiedDrawCardPileArray = [...drawCardPile];
+        let copiedDrawCardPileArray = [...drawCardPile];
         //pull out last two elements from it
+        let num_of_pop = 2;
+        let num_of_drawCardPile_after_pop =
+          copiedDrawCardPileArray.length - num_of_pop;
+        if (num_of_drawCardPile_after_pop < 0) {
+          copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+        }
         const drawCard1 = copiedDrawCardPileArray.pop();
         const drawCard2 = copiedDrawCardPileArray.pop();
         !isSoundMuted && playDraw2CardSound();
@@ -1794,8 +2019,14 @@ export default function UNOTM({ socket }) {
         } while (newColor === null || newColor === "");
         //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
         //make a copy of drawCardPile array
-        const copiedDrawCardPileArray = [...drawCardPile];
-        //pull out last four elements from it
+        let copiedDrawCardPileArray = [...drawCardPile];
+        //pull out last two elements from it
+        let num_of_pop = 4;
+        let num_of_drawCardPile_after_pop =
+          copiedDrawCardPileArray.length - num_of_pop;
+        if (num_of_drawCardPile_after_pop < 0) {
+          copiedDrawCardPileArray = refillDrawCardPile(copiedDrawCardPileArray);
+        }
         const drawCard1 = copiedDrawCardPileArray.pop();
         const drawCard2 = copiedDrawCardPileArray.pop();
         const drawCard3 = copiedDrawCardPileArray.pop();
