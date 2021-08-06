@@ -445,6 +445,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     );
     setActualNums(data.codes);
     setGameState(data.state);
+    setGuesses(data.guesses);
   };
 
   const handleScoreResult = (data) => {
@@ -996,7 +997,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       ) : (
                         <div></div>
                       )}
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="">
                           <span className="red-num-selector red-screen-text red-checked-selector">
                               {guesses[0][1]}
@@ -1019,7 +1020,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       ) : (
                         <div></div>
                       )}
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="">
                           <span className="red-num-selector red-screen-text red-checked-selector">
                               {guesses[0][2]}
@@ -1228,7 +1229,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       )}
                     </div>
                     <div className="selector-box mr-3">
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="">
                           <span className="blue-num-selector blue-screen-text blue-checked-selector">
                               {guesses[1][3]}
@@ -1251,7 +1252,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       ) : (
                         <div></div>
                       )}
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="">
                           <span className="blue-num-selector blue-screen-text blue-checked-selector">
                               {guesses[1][4]}
@@ -1274,7 +1275,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
                       ) : (
                         <div></div>
                       )}
-                      {gameState === 5 || showGuesses ? (
+                      {gameState > 4 || showGuesses ? (
                         <div className="">
                           <span className="blue-num-selector blue-screen-text blue-checked-selector">
                               {guesses[1][5]}

@@ -316,7 +316,7 @@ class EnigmaBreaker extends Game {
   handleGuess(data) {
     //Handle red team guess
     if (data.team === "red") {
-      if (this.redGuessHistory.length < this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+      if (this.redGuessHistory.length === this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
         this.redGuessHistory.push(data.guess);
         this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
         if (this.gameState === 4) {
@@ -340,7 +340,7 @@ class EnigmaBreaker extends Game {
       }
     } else {
       //Handle blue team guess
-      if (this.blueGuessHistory.length < this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
+      if (this.blueGuessHistory.length === this.currentRound && (this.gameState > 2 && this.gameState < 5)) {
         this.blueGuessHistory.push(data.guess);
         this.gameState += 1; //Advance the game state. 4 indicates 1 guess is in, 5 is both.
         if (this.gameState === 4) {
