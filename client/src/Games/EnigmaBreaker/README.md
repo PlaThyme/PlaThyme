@@ -47,3 +47,18 @@ When the game starts you need to wait until each team has at least two players. 
 ## __TIPS__
 * Don't make the references so obscure that your team won't understand them. Otherwise you risk a miss ☠️. But don't make them so obvious that the other team will clearly understand what your secret word is, to prevent them from getting a hit 💾.
 * Watching the history is critical to uncovering the other teams secret words, and decoding their messages. Since you don't know the words associated with each hint, you can view what they wrote down to try to guess what they meant. In the screenshot up top, you can see that "Elephant Trunk" was in Red's #1 column... Could trunk have anything to do with the steering wheel hint displayed above? Maybe their secret word has something to do with a car? As more rounds go by and more history is produced, you can use this to find patterns.
+
+
+# __Souces and Thanks__
+* Dot matrix printer font is from:
+http://www.dionaea.com/information/fonts.html
+Licence file which came with fond is here:
+https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/fonts/DOTMATRI_Licence.txt
+
+* Dot matrix printer sounds were sampled from:
+https://freesfx.co.uk/sfx/dot-matrix
+Licence is here:
+https://freesfx.co.uk/Page/4/End-User-License-Agreement
+
+* Game is inspired by iello's wonderful Decrypto game by Scorpion Masque. Their website is here, and I encourage everyone to buy and play it with friends:
+https://iellousa.com/collections/scorpion-masque/products/decrypto
