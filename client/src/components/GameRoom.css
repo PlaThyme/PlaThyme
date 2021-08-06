@@ -1,18 +1,23 @@
 .whole-room{
     display:grid;
-    grid-template-rows: 6% 94%;
-    height: 100%;
-    width: 100%;
+    grid-template-rows: 60px;
+    height:100vh;
+    width: 100vw;
 }
 
 .game-and-sidebars{
     display: grid;
-    grid-template-columns: 90% 10%;
+    grid-template-columns: 10% 80% 10%;
+    grid-auto-flow: column;
     height: 100%;
     width: 100%;
 }
 
+
 .game-window{
-    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-content: center;
     height: 100%;
+    width: 100%;
 }

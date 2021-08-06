@@ -16,8 +16,8 @@ import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
 
 
-// const SERVER = "http://localhost:3001";
-const SERVER = "https://enigmabreaker.herokuapp.com";
+const SERVER = "http://localhost:3001";
+// const SERVER = "https://enigmabreaker.herokuapp.com";
 let socket;
 let title;
 let dialogText;
@@ -135,7 +135,6 @@ export default function App() {
 
       {/** Game Room of Selected Game */}
       {inGame ? (
-        <>
           <GameRoom
             gameInfo={gameInfo}
             currentPlayer={currentPlayer}
@@ -146,7 +145,6 @@ export default function App() {
               renderGame(gameInfo.gameId)
             }
           </GameRoom>
-        </>
       ) 
       : 
       // Landing page for user to select Game from dropdown 
