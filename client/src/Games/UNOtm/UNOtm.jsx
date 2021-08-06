@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import PACK_OF_CARDS from "./utils/packOfCards";
 import shuffleArray from "./utils/shuffleArray";
-import io from "socket.io-client";
-import queryString from "query-string";
 import Spinner from "./Spinner";
 import useSound from "use-sound";
 
@@ -50,25 +48,6 @@ export default function UNOTM({ socket }) {
   const [playDraw4CardSound] = useSound(draw4CardSound);
   const [playGameOverSound] = useSound(gameOverSound);
 
-  useEffect(() => {
-    // socket.on("roomData", ({ users, roomCode }) => {
-    //   // console.log("users == ", users);
-    //   setUsers(users);
-    //   setRoomFull(true);
-    //   setRoom(roomCode);
-    //   // console.log("roomCode == ", roomCode);
-    // });
-    // socket.on("currentUserData", ({ name }) => {
-    //   setCurrentUser(name);
-    //   // console.log("player --> ", name);
-    //   // if (name === "Player 1") {
-    //   //   console.log("currentUser === Player 1 true");
-    //   // } else {
-    //   //   console.log("currentUser === Player 1 false");
-    //   // }
-    // });
-  });
-
   //runs once on component mount
   useEffect(() => {
     //shuffle PACK_OF_CARDS array
@@ -109,18 +88,6 @@ export default function UNOTM({ socket }) {
 
     //store all remaining cards into drawCardPile
     const drawCardPile = shuffledCards;
-
-    //send initial state to server
-    // socket.emit("initGameState", {
-    //   gameOver: false,
-    //   turn: "Player 1",
-    //   player1Deck: [...player1Deck],
-    //   player2Deck: [...player2Deck],
-    //   currentColor: playedCardsPile[0].charAt(1),
-    //   currentNumber: playedCardsPile[0].charAt(0),
-    //   playedCardsPile: [...playedCardsPile],
-    //   drawCardPile: [...drawCardPile],
-    // });
 
     socket.emit("game-data", {
       event: "initGameState",
@@ -239,78 +206,10 @@ export default function UNOTM({ socket }) {
       }
     });
 
-    // socket.on(
-    //   "updateGameState",
-    //   ({
-    //     gameOver,
-    //     winner,
-    //     turn,
-    //     player1Deck,
-    //     player2Deck,
-    //     currentColor,
-    //     currentNumber,
-    //     playedCardsPile,
-    //     drawCardPile,
-    //   }) => {
-    //     console.log(
-    //       "updateGameState --> ",
-    //       "gameOver = ",
-    //       gameOver,
-    //       "winner = ",
-    //       winner,
-    //       "turn = ",
-    //       turn,
-    //       "player1Deck = ",
-    //       player1Deck,
-    //       "player2Deck = ",
-    //       player2Deck,
-    //       "currentColor = ",
-    //       currentColor,
-    //       "currentNumber = ",
-    //       currentNumber,
-    //       "playedCardsPile = ",
-    //       playedCardsPile,
-    //       "drawCardPile = ",
-    //       drawCardPile
-    //     );
-    //     gameOver && setGameOver(gameOver);
-    //     gameOver === true && playGameOverSound();
-    //     winner && setWinner(winner);
-    //     turn && setTurn(turn);
-    //     player1Deck && setPlayer1Deck(player1Deck);
-    //     player2Deck && setPlayer2Deck(player2Deck);
-    //     currentColor && setCurrentColor(currentColor);
-    //     currentNumber && setCurrentNumber(currentNumber);
-    //     playedCardsPile && setPlayedCardsPile(playedCardsPile);
-    //     drawCardPile && setDrawCardPile(drawCardPile);
-    //     setUnoButtonPressed(false);
-    //     // setGameOver(gameOver);
-    //     // playGameOverSound();
-    //     // setWinner(winner);
-    //     // setTurn(turn);
-    //     // setPlayer1Deck(player1Deck);
-    //     // setPlayer2Deck(player2Deck);
-    //     // setCurrentColor(currentColor);
-    //     // setCurrentNumber(currentNumber);
-    //     // setPlayedCardsPile(playedCardsPile);
-    //     // setDrawCardPile(drawCardPile);
-    //     // setUnoButtonPressed(false);
-    //   }
-    // );
-
-    // socket.on("roomData", ({ users }) => {
-    //   console.log("Room data --> ", users)
-    //   setUsers(users);
-    // });
-
-    // socket.on("currentUserData", ({ name }) => {
-    //   setCurrentUser(name);
-    // });
-
     socket.on("message", (message) => {
-      // setMessages((messages) => [...messages, message]);
-      // const chatBody = document.querySelector(".chat-body");
-      // chatBody.scrollTop = chatBody.scrollHeight;
+      setMessages((messages) => [...messages, message]);
+      const chatBody = document.querySelector(".chat-body");
+      chatBody.scrollTop = chatBody.scrollHeight;
     });
   }, []);
 
@@ -439,21 +338,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: numberOfPlayedCard,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   turn: "Player 2",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playShufflingSound();
               //send new state to server
@@ -475,23 +359,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: numberOfPlayedCard,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   turn: "Player 2",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -532,21 +399,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: numberOfPlayedCard,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   turn: "Player 1",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playShufflingSound();
               //send new state to server
@@ -568,23 +420,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: numberOfPlayedCard,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   turn: "Player 1",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              // });
             }
           }
         }
@@ -631,21 +466,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: numberOfPlayedCard,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   turn: "Player 2",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playShufflingSound();
               //send new state to server
@@ -667,23 +487,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: numberOfPlayedCard,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   turn: "Player 2",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -724,21 +527,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: numberOfPlayedCard,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   turn: "Player 1",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playShufflingSound();
               //send new state to server
@@ -760,23 +548,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: numberOfPlayedCard,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   turn: "Player 1",
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: numberOfPlayedCard,
-              // });
             }
           }
         }
@@ -835,20 +606,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 404,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playSkipCardSound();
               //send new state to server
@@ -869,22 +626,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: 404,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -924,20 +665,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 404,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playSkipCardSound();
               //send new state to server
@@ -958,22 +685,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: 404,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              // });
             }
           }
         }
@@ -1019,20 +730,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 404,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playSkipCardSound();
               //send new state to server
@@ -1053,22 +750,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: 404,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -1108,20 +789,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 404,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playSkipCardSound();
               //send new state to server
@@ -1142,22 +809,6 @@ export default function UNOTM({ socket }) {
                 currentColor: colorOfPlayedCard,
                 currentNumber: 404,
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 2"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 404,
-              // });
             }
           }
         }
@@ -1226,26 +877,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, player2Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player2Deck.slice(player2Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playDraw2CardSound();
               //send new state to server
@@ -1273,29 +904,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, player2Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player2Deck.slice(player2Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -1345,26 +953,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, player1Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player1Deck.slice(player1Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playDraw2CardSound();
               //send new state to server
@@ -1392,29 +980,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, player1Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player1Deck.slice(player1Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             }
           }
         }
@@ -1470,26 +1035,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [...updatedPlayer1Deck],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, player2Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player2Deck.slice(player2Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playDraw2CardSound();
               //send new state to server
@@ -1517,29 +1062,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player1Deck),
-              //   winner: checkWinner(player1Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, removeIndex),
-              //     ...player1Deck.slice(removeIndex + 1),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, player2Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player2Deck.slice(player2Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             }
           } else {
             //remove the played card from player2's deck and add it to playedCardsPile (immutably)
@@ -1589,26 +1111,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [...updatedPlayer2Deck],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, player1Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player1Deck.slice(player1Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             } else {
               !isSoundMuted && playDraw2CardSound();
               //send new state to server
@@ -1636,29 +1138,6 @@ export default function UNOTM({ socket }) {
                 currentNumber: 252,
                 drawCardPile: [...copiedDrawCardPileArray],
               });
-
-              // socket.emit("updateGameState", {
-              //   gameOver: checkGameOver(player2Deck),
-              //   winner: checkWinner(player2Deck, "Player 1"),
-              //   playedCardsPile: [
-              //     ...playedCardsPile.slice(0, playedCardsPile.length),
-              //     played_card,
-              //     ...playedCardsPile.slice(playedCardsPile.length),
-              //   ],
-              //   player2Deck: [
-              //     ...player2Deck.slice(0, removeIndex),
-              //     ...player2Deck.slice(removeIndex + 1),
-              //   ],
-              //   player1Deck: [
-              //     ...player1Deck.slice(0, player1Deck.length),
-              //     drawCard1,
-              //     drawCard2,
-              //     ...player1Deck.slice(player1Deck.length),
-              //   ],
-              //   currentColor: colorOfPlayedCard,
-              //   currentNumber: 252,
-              //   drawCardPile: [...copiedDrawCardPileArray],
-              // });
             }
           }
         }
@@ -1719,21 +1198,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 300,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player1Deck),
-            //   winner: checkWinner(player1Deck, "Player 1"),
-            //   turn: "Player 2",
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player1Deck: [...updatedPlayer1Deck],
-            //   currentColor: newColor,
-            //   currentNumber: 300,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           } else {
             !isSoundMuted && playWildCardSound();
             //send new state to server
@@ -1755,23 +1219,6 @@ export default function UNOTM({ socket }) {
               currentColor: newColor,
               currentNumber: 300,
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player1Deck),
-            //   winner: checkWinner(player1Deck, "Player 1"),
-            //   turn: "Player 2",
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player1Deck: [
-            //     ...player1Deck.slice(0, removeIndex),
-            //     ...player1Deck.slice(removeIndex + 1),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 300,
-            // });
           }
         } else {
           //ask for new color
@@ -1821,21 +1268,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 300,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player2Deck),
-            //   winner: checkWinner(player2Deck, "Player 2"),
-            //   turn: "Player 1",
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player2Deck: [...updatedPlayer2Deck],
-            //   currentColor: newColor,
-            //   currentNumber: 300,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           } else {
             !isSoundMuted && playWildCardSound();
             //send new state to server
@@ -1857,23 +1289,6 @@ export default function UNOTM({ socket }) {
               currentColor: newColor,
               currentNumber: 300,
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player2Deck),
-            //   winner: checkWinner(player2Deck, "Player 2"),
-            //   turn: "Player 1",
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player2Deck: [
-            //     ...player2Deck.slice(0, removeIndex),
-            //     ...player2Deck.slice(removeIndex + 1),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 300,
-            // });
           }
         }
         break;
@@ -1942,28 +1357,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 600,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player1Deck),
-            //   winner: checkWinner(player1Deck, "Player 1"),
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player1Deck: [...updatedPlayer1Deck],
-            //   player2Deck: [
-            //     ...player2Deck.slice(0, player2Deck.length),
-            //     drawCard1,
-            //     drawCard2,
-            //     drawCard3,
-            //     drawCard4,
-            //     ...player2Deck.slice(player2Deck.length),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 600,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           } else {
             !isSoundMuted && playDraw4CardSound();
             //send new state to server
@@ -1993,31 +1386,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 600,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player1Deck),
-            //   winner: checkWinner(player1Deck, "Player 1"),
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player1Deck: [
-            //     ...player1Deck.slice(0, removeIndex),
-            //     ...player1Deck.slice(removeIndex + 1),
-            //   ],
-            //   player2Deck: [
-            //     ...player2Deck.slice(0, player2Deck.length),
-            //     drawCard1,
-            //     drawCard2,
-            //     drawCard3,
-            //     drawCard4,
-            //     ...player2Deck.slice(player2Deck.length),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 600,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           }
         } else {
           //ask for new color
@@ -2068,31 +1436,6 @@ export default function UNOTM({ socket }) {
             currentNumber: 600,
             drawCardPile: [...copiedDrawCardPileArray],
           });
-
-          // socket.emit("updateGameState", {
-          //   gameOver: checkGameOver(player2Deck),
-          //   winner: checkWinner(player2Deck, "Player 2"),
-          //   playedCardsPile: [
-          //     ...playedCardsPile.slice(0, playedCardsPile.length),
-          //     played_card,
-          //     ...playedCardsPile.slice(playedCardsPile.length),
-          //   ],
-          //   player2Deck: [
-          //     ...player2Deck.slice(0, removeIndex),
-          //     ...player2Deck.slice(removeIndex + 1),
-          //   ],
-          //   player1Deck: [
-          //     ...player1Deck.slice(0, player1Deck.length),
-          //     drawCard1,
-          //     drawCard2,
-          //     drawCard3,
-          //     drawCard4,
-          //     ...player1Deck.slice(player1Deck.length),
-          //   ],
-          //   currentColor: newColor,
-          //   currentNumber: 600,
-          //   drawCardPile: [...copiedDrawCardPileArray],
-          // });
           //if two cards remaining check if player pressed UNO button
           //if not pressed add 2 cards as penalty
           if (player2Deck.length === 2 && !isUnoButtonPressed) {
@@ -2133,28 +1476,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 600,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player2Deck),
-            //   winner: checkWinner(player2Deck, "Player 2"),
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player2Deck: [...updatedPlayer2Deck],
-            //   player1Deck: [
-            //     ...player1Deck.slice(0, player1Deck.length),
-            //     drawCard1,
-            //     drawCard2,
-            //     drawCard3,
-            //     drawCard4,
-            //     ...player1Deck.slice(player1Deck.length),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 600,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           } else {
             !isSoundMuted && playDraw4CardSound();
             //send new state to server
@@ -2184,31 +1505,6 @@ export default function UNOTM({ socket }) {
               currentNumber: 600,
               drawCardPile: [...copiedDrawCardPileArray],
             });
-
-            // socket.emit("updateGameState", {
-            //   gameOver: checkGameOver(player2Deck),
-            //   winner: checkWinner(player2Deck, "Player 2"),
-            //   playedCardsPile: [
-            //     ...playedCardsPile.slice(0, playedCardsPile.length),
-            //     played_card,
-            //     ...playedCardsPile.slice(playedCardsPile.length),
-            //   ],
-            //   player2Deck: [
-            //     ...player2Deck.slice(0, removeIndex),
-            //     ...player2Deck.slice(removeIndex + 1),
-            //   ],
-            //   player1Deck: [
-            //     ...player1Deck.slice(0, player1Deck.length),
-            //     drawCard1,
-            //     drawCard2,
-            //     drawCard3,
-            //     drawCard4,
-            //     ...player1Deck.slice(player1Deck.length),
-            //   ],
-            //   currentColor: newColor,
-            //   currentNumber: 600,
-            //   drawCardPile: [...copiedDrawCardPileArray],
-            // });
           }
         }
 
@@ -2254,17 +1550,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 404,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: 404,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (
         colorOfDrawnCard === currentColor &&
         (drawCard === "D2R" ||
@@ -2299,23 +1584,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 252,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   player2Deck: [
-        //     ...player2Deck.slice(0, player2Deck.length),
-        //     drawCard1,
-        //     drawCard2,
-        //     ...player2Deck.slice(player2Deck.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: 252,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (drawCard === "W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
@@ -2342,18 +1610,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 300,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 2",
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: newColor,
-        //   currentNumber: 300,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (drawCard === "D4W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
@@ -2395,25 +1651,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 600,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   player2Deck: [
-        //     ...player2Deck.slice(0, player2Deck.length),
-        //     drawCard1,
-        //     drawCard2,
-        //     drawCard3,
-        //     drawCard4,
-        //     ...player2Deck.slice(player2Deck.length),
-        //   ],
-        //   currentColor: newColor,
-        //   currentNumber: 600,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
       //if not action card - check if drawn card is playable
       else if (
@@ -2436,18 +1673,6 @@ export default function UNOTM({ socket }) {
           currentNumber: numberOfDrawnCard,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 2",
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: numberOfDrawnCard,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
       //else add the drawn card to player1's deck
       else {
@@ -2464,16 +1689,6 @@ export default function UNOTM({ socket }) {
           ],
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 2",
-        //   player1Deck: [
-        //     ...player1Deck.slice(0, player1Deck.length),
-        //     drawCard,
-        //     ...player1Deck.slice(player1Deck.length),
-        //   ],
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
     } else {
       //remove 1 new card from drawCardPile and add it to player2's deck (immutably)
@@ -2506,17 +1721,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 404,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: 404,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (
         colorOfDrawnCard === currentColor &&
         (drawCard === "D2R" ||
@@ -2551,23 +1755,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 252,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   player1Deck: [
-        //     ...player1Deck.slice(0, player1Deck.length),
-        //     drawCard1,
-        //     drawCard2,
-        //     ...player1Deck.slice(player1Deck.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: 252,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (drawCard === "W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
@@ -2594,18 +1781,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 300,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 1",
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: newColor,
-        //   currentNumber: 300,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       } else if (drawCard === "D4W") {
         alert(`You drew ${drawCard}. It was played for you.`);
         //ask for new color
@@ -2647,25 +1822,6 @@ export default function UNOTM({ socket }) {
           currentNumber: 600,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   player1Deck: [
-        //     ...player1Deck.slice(0, player1Deck.length),
-        //     drawCard1,
-        //     drawCard2,
-        //     drawCard3,
-        //     drawCard4,
-        //     ...player1Deck.slice(player1Deck.length),
-        //   ],
-        //   currentColor: newColor,
-        //   currentNumber: 600,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
       //if not action card - check if drawn card is playable
       else if (
@@ -2688,18 +1844,6 @@ export default function UNOTM({ socket }) {
           currentNumber: numberOfDrawnCard,
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 1",
-        //   playedCardsPile: [
-        //     ...playedCardsPile.slice(0, playedCardsPile.length),
-        //     drawCard,
-        //     ...playedCardsPile.slice(playedCardsPile.length),
-        //   ],
-        //   currentColor: colorOfDrawnCard,
-        //   currentNumber: numberOfDrawnCard,
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
       //else add the drawn card to player2's deck
       else {
@@ -2716,88 +1860,16 @@ export default function UNOTM({ socket }) {
           ],
           drawCardPile: [...copiedDrawCardPileArray],
         });
-
-        // socket.emit("updateGameState", {
-        //   turn: "Player 1",
-        //   player2Deck: [
-        //     ...player2Deck.slice(0, player2Deck.length),
-        //     drawCard,
-        //     ...player2Deck.slice(player2Deck.length),
-        //   ],
-        //   drawCardPile: [...copiedDrawCardPileArray],
-        // });
       }
     }
   };
-  // console.log(
-  //   "Inside UNO game --> roomFull = ",
-  //   roomFull,
-  //   " user.length = ",
-  //   users.length,
-  //   " currentUser = ",
-  //   currentUser,
-  //   " gameOver = ",
-  //   gameOver
-  // );
+
   return (
     <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
       {
-        // !roomFull ?
         <>
-          {/* <div className="topInfo">
-            <img src={require("./assets/logo.png").default} alt="asset logo" />
-            <h1>Game Code: {room}</h1>
-            <span>
-              <button
-                className="game-button green"
-                onClick={() => setSoundMuted(!isSoundMuted)}
-              >
-                {isSoundMuted ? (
-                  <span className="material-icons">volume_off</span>
-                ) : (
-                  <span className="material-icons">volume_up</span>
-                )}
-              </button>
-              <button
-                className="game-button green"
-                onClick={() => {
-                  if (isMusicMuted) playBBgMusic();
-                  else pause();
-                  setMusicMuted(!isMusicMuted);
-                }}
-              >
-                {isMusicMuted ? (
-                  <span className="material-icons">music_off</span>
-                ) : (
-                  <span className="material-icons">music_note</span>
-                )}
-              </button>
-            </span>
-          </div> */}
-
-          {/* PLAYER LEFT MESSAGES */}
-          {/* {users.length === 1 && currentUser === "Player 2" && (
-            <h1 className="topInfoText">Player 1 has left the game.</h1>
-          )}
-          {users.length === 1 && currentUser === "Player 1" && (
-            <h1 className="topInfoText">
-              Waiting for Player 2 to join the game.
-            </h1>
-          )} */}
-
           {users.length === 2 ? (
             <>
-              {/* {gameOver ? 
-              (
-                <div>
-                  {winner !== "" && (
-                    <>
-                      <h1>GAME OVER</h1>
-                      <h2>{winner} wins!</h2>
-                    </>
-                  )}
-                </div>
-              ) : ( */}
               {winner !== "" ? (
                 <>
                   <h1>GAME OVER</h1>
@@ -3066,7 +2138,6 @@ export default function UNOTM({ socket }) {
                   )}
                 </div>
               )}
-              {/* )} */}
             </>
           ) : (
             <>
@@ -3074,8 +2145,6 @@ export default function UNOTM({ socket }) {
             </>
           )}
         </>
-        // ) : (
-        // <h1>Room full</h1>
       }
 
       <br />
