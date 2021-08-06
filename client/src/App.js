@@ -8,11 +8,13 @@ import GameRoom from './components/GameRoom';
 import WaitRoom from './components/WaitRoom';
 import logo from './images/plathyme.png';
 
+import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
 
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
+
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -25,9 +27,8 @@ export default function App() {
   // Enter the new game in this Dictionary.
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
-    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Card game", minPlayers: 2 },
+    { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
+    { gameId: 4, gameName: "Uno", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -41,6 +42,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [carSelect, setCarSelect] = useState(0);
 
   useEffect(() => {
     const openModal = () =>  setIsOpen(true);
@@ -93,7 +95,7 @@ export default function App() {
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
-    let truncName = playerName.slice(0,14);
+    let truncName = playerName.slice(0,19);
     setCurrentPlayer(truncName);
     const id = selectedGame.gameId;
     socket.emit("newRoom", { 
@@ -104,7 +106,7 @@ export default function App() {
   }
 
   const handleJoinGame = (playerName, roomCode) => {
-    let truncName = playerName.slice(0,14);
+    let truncName = playerName.slice(0,19);
     setCurrentPlayer(truncName);
     socket.emit("joinGame", { 
       name: truncName, 
@@ -120,9 +122,7 @@ export default function App() {
         }
         return <WaitRoom/>;
       case 2:
-        return <TestGame socket={socket}/>;
-      case 3:
-        break;
+        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       default:
         break;
     }
@@ -156,10 +156,12 @@ export default function App() {
             listofGames={listofGames}
             createGame={handleCreateGame}
             joinGame={handleJoinGame}
+            setSelectedGame={setCarSelect}
           />
-          <Carousel />
+          <Carousel selectedGame={carSelect}/>
         </div>
       )}
+     
 
       {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
@@ -171,7 +173,7 @@ export default function App() {
           <div className="min-h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
               <Dialog.Overlay className="fixed inset-0" />
-            </Transition.Child>
+            </Transition.Child> 
 
             <span
               className="inline-block h-screen align-middle"

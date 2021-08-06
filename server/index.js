@@ -6,6 +6,7 @@ const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
+const EnigmaBreaker = require("./Games/EnigmaBreaker/EnigmaBreaker");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -44,9 +45,9 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-
+  
   //Below are the functions to to handle the socket.on events.
-
+  
   //New game greation.
   const handleCreateGame = (data) => {
     //Generate a random room code.
@@ -95,14 +96,10 @@ io.on("connection", (socket) => {
         }
         break;
       case 2:
-        games[roomCode] = new TestGame(roomCode, socket, io, data.name);
+        games[roomCode] = new EnigmaBreaker(roomCode, socket, io, [data.name], data.minPlayers);
         break;
       default:
         break;
-    }
-
-    if (data.gameId === 2) {
-      games[roomCode] = new TestGame(roomCode, socket, io, data.name);
     }
 
     //Send all players updated user list.
@@ -115,7 +112,7 @@ io.on("connection", (socket) => {
       const gid = getGameId(roomCode);
 
       //Make sure game room exists.
-      if (gid === null) {
+      if (gid === null || games[roomCode] === undefined) {
         socket.emit("error", { error: "gid" });
         return;
       }
@@ -166,8 +163,9 @@ io.on("connection", (socket) => {
   //Perform client disconnection actions
   const handleDisconnect = () => {
     try {
-      //Remove the user from room tracking.
+      //Remove the user from room tracking, and socket.
       const userName = leaveRoom(socket.id);
+      socket.leave(roomCode);
 
       //Verify the user was in a room, then perform the other actions upon disconnect
       if (userName) {
