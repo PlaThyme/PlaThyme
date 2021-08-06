@@ -56,22 +56,31 @@ io.on("connection", (socket) => {
   //     console.error(error);
   //   }
   // })
-socket.on('initGameState', gameState => {
-   const user = getUser(socket.id)
-   console.log("user == ", user);
-        io.to(user.roomCode).emit('initGameState', gameState);
-    })
-     socket.on('updateGameState', gameState => {
-        const user = getUser(socket.id)
+
+
+  /**
+   * UNOtm game Socket Events
+   */
+// socket.on('initGameState', gameState => {
+//    const user = getUser(socket.id)
+//    console.log("user == ", user);
+//         io.to(user.roomCode).emit('initGameState', gameState);
+//     })
+    //  socket.on('updateGameState', gameState => {
+    //     const user = getUser(socket.id)
         
-        if(user)
-            io.to(user.roomCode).emit('updateGameState', gameState)
-    })
+    //     if(user)
+    //         io.to(user.roomCode).emit('updateGameState', gameState)
+    // })
         socket.on('sendMessage', (payload, callback) => {
         const user = getUser(socket.id)
         io.to(user.roomCode).emit('message', {user: user.name, text: payload.message})
         callback()
     })
+/**
+ * End of UNOtm socket events
+ */
+
   //Below are the functions to to handle the socket.on events.
 
   //New game greation.
@@ -199,9 +208,11 @@ socket.on('initGameState', gameState => {
             console.log("roomData... and currentUserData...");
             // io.to(roomCode).emit('start-game');
             // games[roomCode].startGame();
-            io.to(roomCode).emit('roomData', {users: games[roomCode].players, roomCode: roomCode});
-            io.to(getUserByNameAndCode(games[roomCode].players[0], roomCode).id).emit('currentUserData', {name: 'Player 1'});
-            io.to(getUserByNameAndCode(games[roomCode].players[1], roomCode).id).emit('currentUserData', {name: 'Player 2'});
+            
+            games[roomCode].startGame();
+            // io.to(roomCode).emit('roomData', {users: games[roomCode].players, roomCode: roomCode});
+            // io.to(getUserByNameAndCode(games[roomCode].players[0], roomCode).id).emit('currentUserData', {name: 'Player 1'});
+            // io.to(getUserByNameAndCode(games[roomCode].players[1], roomCode).id).emit('currentUserData', {name: 'Player 2'});
           } 
           if(games[roomCode].players.length > games[roomCode]){
             // send an error event indicating thta current room i sfull and redireect them to home page agin.
