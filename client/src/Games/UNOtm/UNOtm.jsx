@@ -194,7 +194,9 @@ export default function UNOTM({ socket }) {
         );
         gameOver && setGameOver(gameOver);
         gameOver === true && playGameOverSound();
-        winner && setWinner(winner);
+        winner && winner === "Player 1"
+          ? setWinner(users[0])
+          : setWinner(users[1]);
         turn && setTurn(turn);
         player1Deck && setPlayer1Deck(player1Deck);
         player2Deck && setPlayer2Deck(player2Deck);
@@ -1825,7 +1827,9 @@ export default function UNOTM({ socket }) {
       {
         <>
           {playerLeftName.length > 0 ? (
-            <h1 className="topInfoText">{playerLeftName} has left the game.</h1>
+            <h1 className="topInfoText text-white font-bold pt-20">
+              {playerLeftName} has left the game.
+            </h1>
           ) : (
             <>
               {users.length === 2 ? (
@@ -1871,10 +1875,10 @@ export default function UNOTM({ socket }) {
                   </div>
 
                   {winner !== "" ? (
-                    <>
+                    <div className="font-bold text-4xl text-white">
                       <h1>GAME OVER</h1>
                       <h2>{winner} wins!</h2>
-                    </>
+                    </div>
                   ) : (
                     <>
                       <div
@@ -2110,9 +2114,12 @@ export default function UNOTM({ socket }) {
                   )}
                 </>
               ) : (
-                <>
-                  <h1>Waiting for Player 2 to Join the game...</h1>
-                </>
+                <div className="pt-48">
+                  <h1 className="text-white font-bold text-4xl">
+                    Waiting for Player 2 to Join the game
+                  </h1>
+                  <Spinner />
+                </div>
               )}
             </>
           )}
