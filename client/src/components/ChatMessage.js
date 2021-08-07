@@ -1,4 +1,4 @@
-import React from 'react';
+import "./GameRoom.css";
 
 const ChatMessage = ({ message, currentPlayer}) => {
 
@@ -9,22 +9,24 @@ const ChatMessage = ({ message, currentPlayer}) => {
   return (
     <div className="p-px">
       {sentByCurrentUser ? (
-        <div className="pl-3 py-px">
-          <div className="flex flex-col rounded bg-gray-100">
-            <p className="flex justify-end text-red-700">{message.sender}</p>
+        <div className="send-message pl-3 py-px">
+          <div className="rounded bg-gray-100">
             <div>
-              <p className="flex justify-start text-thyme-800">
+              <div className="send-person text-red-700 mr-1">{message.sender}</div>
+            </div>
+            <div className="send-body">
+              <p className="ml-1 text-thyme-800">
                 {message.text}
               </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="pr-3 py-px">
-          <div className="flex flex-col pr-2 rounded bg-thyme-100">
-            <p className="flex justify-start text-blue-700">{message.sender}</p>
-            <div className="flex">
-              <p className="flex justify-start text-thyme-800">
+        <div className="inc-message pr-3 py-px">
+          <div className="pr-2 rounded bg-thyme-100">
+            <p className="inc-person text-blue-700 ml-1">{message.sender}</p>
+            <div className="inc-body">
+              <p className="ml-1 text-thyme-800">
                 {message.text}
               </p>
             </div>

@@ -3,14 +3,16 @@
     grid-template-rows: 60px;
     height:100vh;
     width: 100vw;
+    overflow:hidden;
 }
 
 .game-and-sidebars{
     display: grid;
-    grid-template-columns: 10% 80% 10%;
+    grid-template-columns: 250px 1fr 250px;
     grid-auto-flow: column;
     height: 100%;
     width: 100%;
+    overflow:auto;
 }
 
 
@@ -20,4 +22,67 @@
     align-content: center;
     height: 100%;
     width: 100%;
+    overflow:auto;
+}
+
+.player-list{
+    display: grid;
+    grid-template-rows: 1fr 40px;
+}
+
+.chat-bar{
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    height: 100%;
+    width: 100%;
+}
+
+.chat-container{
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    height: 100%;
+    width: 100%;
+}
+
+.message-feed{
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.chat-room{
+    display:grid;
+    grid-template-rows: 1fr 30px;
+    width: 98%;
+    height: 100%;
+}
+
+.message-feed-container{
+    width: 100%;
+    position: relative;
+}
+
+.send-message{
+    overflow-wrap: anywhere;
+}
+
+.inc-message{
+    overflow-wrap: anywhere;
+}
+
+.send-person{
+    float: right;
+}
+
+.send-body{
+    clear: both;
+}
+
+.chat-send{
+    display: inline;
+}
+.chat-text-field{
+    width: 73%;
 }
