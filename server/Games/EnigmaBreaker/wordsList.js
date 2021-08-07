@@ -282,7 +282,7 @@ wordsList = [
   "CLOWN",
   "CROWN",
   "PIT",
-  "MAMAL",
+  "MAMMAL",
   "SUBMARINE",
   "NUCLEAR",
   "SLAUGHTER",
