@@ -16,8 +16,7 @@ import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
 
 
-const SERVER = "https://enigmabreaker.herokuapp.com";
-// const SERVER = "http://localhost:3001";
+const SERVER = "http://localhost:3001";
 let socket;
 let title;
 let dialogText;
