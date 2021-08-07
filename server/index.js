@@ -73,7 +73,13 @@ io.on("connection", (socket) => {
     //         io.to(user.roomCode).emit('updateGameState', gameState)
     // })
         socket.on('sendMessage', (payload, callback) => {
+      //      const senderId = getUser(socket.id);
+      //       io.to(senderId.roomCode).emit("message", {
+      //   user: message.sender,
+      //   text: message.text,
+      // });
         const user = getUser(socket.id)
+        console.log("@@@@ user === ", user);
         io.to(user.roomCode).emit('message', {user: user.name, text: payload.message})
         callback()
     })

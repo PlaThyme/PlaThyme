@@ -293,8 +293,10 @@ a {
 /* Chat Box */
 .chat-box{
 	position: absolute;
-	bottom: 0px;
-	background: white;
+	bottom: 15px;
+  margin-left: 90px;
+	/* background: white; */
+  background: #CCFCCB;
 	width: 355px;
 	border-radius: 5px 5px 0px 0px;
   z-index: 100;

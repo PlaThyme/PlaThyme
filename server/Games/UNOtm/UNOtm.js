@@ -37,6 +37,7 @@ super.sendDataToPlayer(this.turnOrder[1], { event: "currentUserData", name: 'Pla
   disconnection(playerName) {}
 
   handleEndOfTurn() {}
+    chatMessage(messageData) {}
 
 }
 

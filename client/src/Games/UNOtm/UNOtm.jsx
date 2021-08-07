@@ -14,6 +14,7 @@ import wildCardSound from "./assets/sounds/wild-sound.mp3";
 import draw4CardSound from "./assets/sounds/draw4-sound.mp3";
 import gameOverSound from "./assets/sounds/game-over-sound.mp3";
 import "./unotm.css";
+import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 export default function UNOTM({ socket }) {
   const [room, setRoom] = useState("");
@@ -47,7 +48,7 @@ export default function UNOTM({ socket }) {
   const [playWildCardSound] = useSound(wildCardSound);
   const [playDraw4CardSound] = useSound(draw4CardSound);
   const [playGameOverSound] = useSound(gameOverSound);
-
+  const messageRef = useRef();
   const chatBodyRef = useRef(null);
 
   //runs once on component mount
@@ -261,6 +262,15 @@ export default function UNOTM({ socket }) {
       });
     }
   };
+  // const handleSend = (e) => {
+  //     e.preventDefault();
+  //     if(messageRef.current.value){
+  //         socket.emit('messageSend', {text: messageRef.current.value}, () => {
+  //     setMessage("");
+  //   });
+  //     }
+  //     document.getElementById('send-box').reset();
+  // }
 
   const refillDrawCardPile = (copiedDrawCardPileArray) => {
     let newCopiedDrawCardPileArray = [];
@@ -2261,13 +2271,13 @@ export default function UNOTM({ socket }) {
                           <div className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
-                                if (msg.user === "player1")
+                                if (msg.user === users[0])
                                   return (
                                     <div className="msg-receive">
                                       {msg.text}
                                     </div>
                                   );
-                                if (msg.user === "player2")
+                                if (msg.user === users[1])
                                   return (
                                     <div className="msg-send">{msg.text}</div>
                                   );
@@ -2391,13 +2401,13 @@ export default function UNOTM({ socket }) {
                           <div ref={chatBodyRef} className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
-                                if (msg.user === "player1")
+                                if (msg.user === users[0])
                                   return (
                                     <div className="msg-receive">
                                       {msg.text}
                                     </div>
                                   );
-                                if (msg.user === "player2")
+                                if (msg.user === users[1])
                                   return (
                                     <div className="msg-send">{msg.text}</div>
                                   );
