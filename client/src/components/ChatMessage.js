@@ -1,4 +1,5 @@
 import "./GameRoom.css";
+import React from "react";
 
 const ChatMessage = ({ message, currentPlayer}) => {
 
