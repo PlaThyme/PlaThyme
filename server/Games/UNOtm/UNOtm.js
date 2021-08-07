@@ -19,6 +19,9 @@ class UNOtm extends Game {
      if (data.event === "updateGameState") {
       super.sendGameData(data);
     }
+    if(data.event === "playerLeft"){
+      super.sendGameData(data);
+    }
 }
 
   startGame() {
