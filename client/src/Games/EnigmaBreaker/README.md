@@ -52,7 +52,7 @@ When the game starts you need to wait until each team has at least two players. 
 # __Souces and Thanks__
 * Dot matrix printer font is from:
 http://www.dionaea.com/information/fonts.html
-Licence file which came with fond is here:
+Licence file which came with font is here:
 https://github.com/dwareb/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/fonts/DOTMATRI_Licence.txt
 
 * Dot matrix printer sounds were sampled from:
