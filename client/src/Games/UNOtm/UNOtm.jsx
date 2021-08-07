@@ -2171,14 +2171,15 @@ export default function UNOTM({ socket }) {
                   <h2>{winner} wins!</h2>
                 </>
               ) : (
-                <div>
-                  {/* PLAYER 1 VIEW */}
-                  {currentUser === "Player 1" && (
-                    <>
-                      <div
-                        className="player2Deck"
-                        style={{ pointerEvents: "none" }}
-                      >
+                <>
+                  <div
+                    className={`${
+                      currentUser === "Player 1" ? "player2Deck" : "player1Deck"
+                    }`}
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {currentUser === "Player 1" ? (
+                      <>
                         <p className="playerDeckText">Player 2</p>
                         {player2Deck.map((item, i) => (
                           <img
@@ -2190,50 +2191,90 @@ export default function UNOTM({ socket }) {
                           />
                         ))}
                         {turn === "Player 2" && <Spinner />}
-                      </div>
-                      <br />
-                      <div
-                        className="middleInfo"
-                        style={
-                          turn === "Player 2" ? { pointerEvents: "none" } : null
-                        }
-                      >
-                        <button
-                          className="game-button"
-                          disabled={turn !== "Player 1"}
-                          onClick={onCardDrawnHandler}
-                        >
-                          DRAW CARD
-                        </button>
-                        {playedCardsPile && playedCardsPile.length > 0 && (
+                      </>
+                    ) : (
+                      <>
+                        <p className="playerDeckText">Player 1</p>
+                        {player1Deck.map((item, i) => (
                           <img
+                            key={i}
                             className="Card"
-                            src={
-                              require(`./assets/cards-front/${
-                                playedCardsPile[playedCardsPile.length - 1]
-                              }.png`).default
-                            }
-                            alt="card img alt"
+                            onClick={() => onCardPlayedHandler(item)}
+                            src={require(`./assets/card-back.png`).default}
+                            alt="alt pic text"
                           />
-                        )}
-                        <button
-                          className="game-button orange"
-                          disabled={player1Deck.length !== 2}
-                          onClick={() => {
-                            setUnoButtonPressed(!isUnoButtonPressed);
-                            playUnoSound();
-                          }}
-                        >
-                          UNO
-                        </button>
-                      </div>
-                      <br />
-                      <div
-                        className="player1Deck"
-                        style={
-                          turn === "Player 1" ? null : { pointerEvents: "none" }
+                        ))}
+                        {turn === "Player 1" && <Spinner />}
+                      </>
+                    )}
+                  </div>
+
+                  <br />
+
+                  <div
+                    className="middleInfo"
+                    style={
+                      currentUser === "Player 1" && turn === "Player 2"
+                        ? { pointerEvents: "none" }
+                        : currentUser === "Player 2" && turn === "Player 1"
+                        ? { pointerEvents: "none" }
+                        : null
+                    }
+                  >
+                    <button
+                      className="game-button"
+                      disabled={
+                        currentUser === "Player 1"
+                          ? turn !== "Player 1"
+                          : turn !== "Player 2"
+                      }
+                      onClick={onCardDrawnHandler}
+                    >
+                      DRAW CARD
+                    </button>
+                    {playedCardsPile && playedCardsPile.length > 0 && (
+                      <img
+                        className="Card"
+                        src={
+                          require(`./assets/cards-front/${
+                            playedCardsPile[playedCardsPile.length - 1]
+                          }.png`).default
                         }
-                      >
+                        alt="card img alt"
+                      />
+                    )}
+                    <button
+                      className="game-button orange"
+                      disabled={
+                        currentUser === "Player 1"
+                          ? player1Deck.length !== 2
+                          : player2Deck.length !== 2
+                      }
+                      onClick={() => {
+                        setUnoButtonPressed(!isUnoButtonPressed);
+                        playUnoSound();
+                      }}
+                    >
+                      UNO
+                    </button>
+                  </div>
+
+                  <br />
+
+                  <div
+                    className={
+                      currentUser === "Player 1" ? "player1Deck" : "player2Deck"
+                    }
+                    style={
+                      currentUser === "Player 1" && turn !== "Player 1"
+                        ? { pointerEvents: "none" }
+                        : currentUser === "Player 2" && turn !== "Player 2"
+                        ? { pointerEvents: "none" }
+                        : null
+                    }
+                  >
+                    {currentUser === "Player 1" ? (
+                      <>
                         <p className="playerDeckText">Player 1</p>
                         {player1Deck.map((item, i) => (
                           <img
@@ -2247,123 +2288,9 @@ export default function UNOTM({ socket }) {
                             alt="ceard pic1"
                           />
                         ))}
-                      </div>
-                      <div className="chatBoxWrapper float-right">
-                        <div className="chat-box chat-box-player1">
-                          <div className="chat-head">
-                            <h2>Chat Box</h2>
-                            {!isChatBoxHidden ? (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_down
-                              </span>
-                            ) : (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_up
-                              </span>
-                            )}
-                          </div>
-                          <div className="chat-body">
-                            <div className="msg-insert">
-                              {messages.map((msg) => {
-                                if (msg.user === users[1])
-                                  return (
-                                    <div className="msg-receive">
-                                      {msg.text}
-                                    </div>
-                                  );
-                                if (msg.user === users[0])
-                                  return (
-                                    <div className="msg-send">{msg.text}</div>
-                                  );
-                              })}
-                            </div>
-                            <div className="chat-text">
-                              <input
-                                type="text"
-                                placeholder="Type a message..."
-                                value={message}
-                                onChange={(event) =>
-                                  setMessage(event.target.value)
-                                }
-                                onKeyPress={(event) =>
-                                  event.key === "Enter" && sendMessage(event)
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* PLAYER 2 VIEW */}
-                  {currentUser === "Player 2" && (
-                    <>
-                      <div
-                        className="player1Deck"
-                        style={{ pointerEvents: "none" }}
-                      >
-                        <p className="playerDeckText">Player 1</p>
-                        {player1Deck.map((item, i) => (
-                          <img
-                            key={i}
-                            className="Card"
-                            onClick={() => onCardPlayedHandler(item)}
-                            src={require(`./assets/card-back.png`).default}
-                            alt="alt pic text"
-                          />
-                        ))}
-                        {turn === "Player 1" && <Spinner />}
-                      </div>
-                      <br />
-                      <div
-                        className="middleInfo"
-                        style={
-                          turn === "Player 1" ? { pointerEvents: "none" } : null
-                        }
-                      >
-                        <button
-                          className="game-button"
-                          disabled={turn !== "Player 2"}
-                          onClick={onCardDrawnHandler}
-                        >
-                          DRAW CARD
-                        </button>
-                        {playedCardsPile && playedCardsPile.length > 0 && (
-                          <img
-                            className="Card"
-                            src={
-                              require(`./assets/cards-front/${
-                                playedCardsPile[playedCardsPile.length - 1]
-                              }.png`).default
-                            }
-                            alt="alt pic test2"
-                          />
-                        )}
-                        <button
-                          className="game-button orange"
-                          disabled={player2Deck.length !== 2}
-                          onClick={() => {
-                            setUnoButtonPressed(!isUnoButtonPressed);
-                            playUnoSound();
-                          }}
-                        >
-                          UNO
-                        </button>
-                      </div>
-                      <br />
-                      <div
-                        className="player2Deck"
-                        style={
-                          turn === "Player 1" ? { pointerEvents: "none" } : null
-                        }
-                      >
+                      </>
+                    ) : (
+                      <>
                         <p className="playerDeckText">Player 2</p>
                         {player2Deck.map((item, i) => (
                           <img
@@ -2377,34 +2304,61 @@ export default function UNOTM({ socket }) {
                             alt="alt pic img"
                           />
                         ))}
+                      </>
+                    )}
+                  </div>
+                  <div className="chatBoxWrapper">
+                    <div
+                      className={`${
+                        currentUser === "Player 1"
+                          ? "chat-box chat-box-player1"
+                          : "chat-box chat-box-player2"
+                      }`}
+                    >
+                      <div className="chat-head">
+                        <h2>Chat Box</h2>
+                        {!isChatBoxHidden ? (
+                          <span
+                            onClick={toggleChatBox}
+                            className="material-icons"
+                          >
+                            keyboard_arrow_down
+                          </span>
+                        ) : (
+                          <span
+                            onClick={toggleChatBox}
+                            className="material-icons"
+                          >
+                            keyboard_arrow_up
+                          </span>
+                        )}
                       </div>
-                      <div className="chatBoxWrapper">
-                        <div className="chat-box chat-box-player2">
-                          <div className="chat-head">
-                            <h2>Chat Box</h2>
-                            {!isChatBoxHidden ? (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_down
-                              </span>
-                            ) : (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_up
-                              </span>
-                            )}
-                          </div>
-                          <div className="chat-body">
-                            <div className="msg-insert">
+                      <div className="chat-body">
+                        <div className="msg-insert">
+                          {currentUser === "Player 1" ? (
+                            <>
+                              {messages.map((msg) => {
+                                if (msg.user === users[1])
+                                  return (
+                                    <div className="msg-receive">
+                                      {" "}
+                                      {msg.text}{" "}
+                                    </div>
+                                  );
+                                if (msg.user === users[0])
+                                  return (
+                                    <div className="msg-send">{msg.text}</div>
+                                  );
+                              })}
+                            </>
+                          ) : (
+                            <>
                               {messages.map((msg) => {
                                 if (msg.user === users[0])
                                   return (
                                     <div className="msg-receive">
-                                      {msg.text}
+                                      {" "}
+                                      {msg.text}{" "}
                                     </div>
                                   );
                                 if (msg.user === users[1])
@@ -2412,26 +2366,24 @@ export default function UNOTM({ socket }) {
                                     <div className="msg-send">{msg.text}</div>
                                   );
                               })}
-                            </div>
-                            <div className="chat-text">
-                              <input
-                                type="text"
-                                placeholder="Type a message..."
-                                value={message}
-                                onChange={(event) =>
-                                  setMessage(event.target.value)
-                                }
-                                onKeyPress={(event) =>
-                                  event.key === "Enter" && sendMessage(event)
-                                }
-                              />
-                            </div>
-                          </div>
+                            </>
+                          )}
                         </div>
-                      </div>{" "}
-                    </>
-                  )}
-                </div>
+                        <div className="chat-text">
+                          <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={message}
+                            onChange={(event) => setMessage(event.target.value)}
+                            onKeyPress={(event) =>
+                              event.key === "Enter" && sendMessage(event)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </>
           ) : (
