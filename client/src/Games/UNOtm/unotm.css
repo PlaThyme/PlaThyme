@@ -8,7 +8,7 @@ a {
 
 /* Homepage */
 .Homepage {
-  background-image: url('./assets/Landing-Page.gif');
+  /* background-image: url('./assets/Landing-Page.gif'); */
   background-size: cover;
   margin: 0;
   height: 100vh;

@@ -14,7 +14,6 @@ import wildCardSound from "./assets/sounds/wild-sound.mp3";
 import draw4CardSound from "./assets/sounds/draw4-sound.mp3";
 import gameOverSound from "./assets/sounds/game-over-sound.mp3";
 import "./unotm.css";
-import { PaperAirplaneIcon } from "@heroicons/react/solid";
 
 export default function UNOTM({ socket }) {
   const [room, setRoom] = useState("");
