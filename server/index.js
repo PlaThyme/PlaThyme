@@ -6,7 +6,7 @@ const app = express();
 const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
-const UNOtm = require("./Games/UNOtm/UNOtm");
+const UNOtm = require("./Games/UNOtm");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -17,11 +17,9 @@ const {
   getUsersInRoom,
   getUserByNameAndCode,
 } = require("./rooms.js");
-// const { default: UNOTM } = require("../client/src/Games/UNOtm/UNOtm");
 
 //games is a dict of the game state objects, indexed bt the roomCode.
 const games = {};
-
 //Get sockets running
 const io = require("socket.io")(http, {cors:{origin:'*'}});
 app.use(cors());
@@ -47,41 +45,11 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-    socket.on('sendMessage-callback', (data, callback) => {
-        const user = getUser(socket.id)
-        console.log("@@@@ user === ", user);
-        io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
-        callback()
-    })
-  // socket.on("updateGameState", (data) => {
-  //   try{
-  //     if (getUser(socket.id)) {
-  //       games[getUser(socket.id).roomCode].recieveData(data);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // })
-
-
-  /**
-   * UNOtm game Socket Events
-   */
-// socket.on('initGameState', gameState => {
-//    const user = getUser(socket.id)
-//    console.log("user == ", user);
-//         io.to(user.roomCode).emit('initGameState', gameState);
-//     })
-    //  socket.on('updateGameState', gameState => {
-    //     const user = getUser(socket.id)
-        
-    //     if(user)
-    //         io.to(user.roomCode).emit('updateGameState', gameState)
-    // })
-
-/**
- * End of UNOtm socket events
- */
+  socket.on('sendMessage-callback', (data, callback) => {
+    const user = getUser(socket.id)
+    io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
+    callback()
+  })
 
   //Below are the functions to to handle the socket.on events.
 
@@ -120,35 +88,26 @@ io.on("connection", (socket) => {
     //When Making a game, the game must be added to the list below for its creation with its matching ID.
     //Create a new game object for the selected game, and call its start game function.
     switch (data.gameId) {
-      case 1:
+      case 1: // DrawTheWord
         games[roomCode] = new DrawTheWord(roomCode, socket, io, data.name, data.minPlayers );
-        /**
-         * Notify the new game object that its been started.
-         * "DrawTheWord" game has a "waitingRoom". (the game will not start till all the minimum players join the `GameRoom`),
-         * events related to that are implemented within startGame() within game logic file (DrawTheWord.js).
-         * */
+        //"DrawTheWord" game has a "waitingRoom". (the game will not start till all the minimum players join the `GameRoom`),
+        //events related to that are implemented within startGame() within game logic file (DrawTheWord.js).
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
           games[roomCode].startGame();
           socket.emit("start-game", {}); // informs App.js to render game component.
         }
         break;
-      case 2:
+      case 2: // TestGame
         games[roomCode] = new TestGame(roomCode, socket, io, data.name);
         break;
-      case 4:
-        console.log("UNO game selected\n");
+      case 4: // UNO™
         games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
           games[roomCode].startGame();
-          socket.emit("start-game", {}); // informs App.js to render game component.
         }
         break;
       default:
         break;
-    }
-
-    if (data.gameId === 2) {
-      games[roomCode] = new TestGame(roomCode, socket, io, data.name);
     }
 
     //Send all players updated user list.
@@ -159,71 +118,74 @@ io.on("connection", (socket) => {
   const handleJoinGame = ({ name, roomCode }) => {
     try {
       const gid = getGameId(roomCode);
+      const userId = socket.id;
 
-      //Make sure game room exists.
-      if (gid === null) {
-        socket.emit("error", { error: "gid" });
-        return;
-      }
+      // allow only min number of players to join the room; expect for game id: 1 (DrawTheWord)
+      if((games[roomCode].players.length + 1) <= games[roomCode].minPlayers || (gid == 1)){
 
-      //Try to join the user to the room.
-      let error = joinRoom({
-        id: socket.id,
-        gameId: gid,
-        name: name,
-        roomCode: roomCode,
-        score: 0,
-      });
+        //Make sure game room exists.
+        if (gid === null) {
+          socket.emit("error", { error: "gid" });
+          return;
+        }
 
-      //Check for duplicate user.
-      if (error.error === "dup") {
-        socket.emit("error", { error: "dup" });
-        return;
-      }
-
-      //If the user name is valid, join the player to the room, aand
-      if (error.error !== "dup" && error.error !== "dup") {
-        socket.broadcast.to(roomCode).emit("message", {
-          sender: "",
-          text: `"${name}" has joined the game.`,
+        //Try to join the user to the room.
+        let error = joinRoom({
+          id: socket.id,
+          gameId: gid,
+          name: name,
+          roomCode: roomCode,
+          score: 0,
         });
 
-        //Broadcast the game information to the client who just joined the game, and join them to the roomCode socket channel.
-        const gameData = { playerName: name, code: roomCode, gameId: gid };
-        const userId = socket.id;
-        games[roomCode].newPlayer(name);
-
-        socket.emit("gameData", gameData);
-        socket.join(roomCode);
-
-        //Notify the game object that a new player has joined.
-        // Test: enter wrong room code; got error. (add checks)
-        
-
-        if ( games[roomCode].players.length >= games[roomCode].minPlayers && gid === 1) {
-          games[roomCode].startGame();
+        //Check for duplicate user.
+        if (error.error === "dup") {
+          socket.emit("error", { error: "dup" });
+          return;
         }
-        if ( games[roomCode].players.length >= games[roomCode].minPlayers &&  gid === 4) {
-          console.log("inside game 4 join statement");
-          
-          if(games[roomCode].players.length === games[roomCode].minPlayers){
-            console.log("roomData... and currentUserData...");
-            // io.to(roomCode).emit('start-game');
-            // games[roomCode].startGame();
-            
-            games[roomCode].startGame();
-            // io.to(roomCode).emit('roomData', {users: games[roomCode].players, roomCode: roomCode});
-            // io.to(getUserByNameAndCode(games[roomCode].players[0], roomCode).id).emit('currentUserData', {name: 'Player 1'});
-            // io.to(getUserByNameAndCode(games[roomCode].players[1], roomCode).id).emit('currentUserData', {name: 'Player 2'});
-          } 
-          if(games[roomCode].players.length > games[roomCode]){
-            // send an error event indicating thta current room i sfull and redireect them to home page agin.
-            console.log("*Room full*");
+
+        //If the user name is valid, join the player to the room, aand
+        if (error.error !== "dup" && error.error !== "dup") {
+
+          socket.broadcast.to(roomCode).emit("message", {
+            sender: "",
+            text: `"${name}" has joined the game.`,
+          });
+
+          //Broadcast the game information to the client who just joined the game, and join them to the roomCode socket channel.
+          const gameData = { playerName: name, code: roomCode, gameId: gid };
+          games[roomCode].newPlayer(name);
+          socket.emit("gameData", gameData);
+          socket.join(roomCode);
+
+          //Notify the game object that a new player has joined.
+          // Test: enter wrong room code; got error. (add checks)
+          switch(gid){
+            case 1: // DrawTheWord
+              if ( games[roomCode].players.length >= games[roomCode].minPlayers) {
+                games[roomCode].startGame();
+              }
+              break;
+
+            case 4: // UNO?™
+              if(games[roomCode].players.length === games[roomCode].minPlayers){
+                  games[roomCode].startGame();
+                } 
+            break;
+
+            default:
+              break;
           }
+
+          //Send all players updated user list.
+          io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
         }
-        //Send all players updated user list.
-        io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
-      }
+
+      } else {
+          // send an error event indicating thta current room is full and redireect them to home page agin.
+          console.log("*Room full*");
+          io.to(userId).emit("GameRoomFullAlert");
+        }
     } catch (error) {
       console.error(error);
     }

@@ -93,6 +93,13 @@ export default function App() {
           setStartGame(true);
         }
       })
+
+      socket.on("GameRoomFullAlert", () => {
+        title = "Room Full";
+        dialogText = "The room you are trying to enter is already full. Try creating another room.";
+        buttonText = "ok";
+        setIsOpen(true);
+      })
   }, []);
 
   const closeModal = () => setIsOpen(false);
@@ -130,10 +137,7 @@ export default function App() {
         break;
       case 4:
         console.log("inside APP");
-        // if(startGame === true){
-          return <UNOTM socket={socket} />;
-        // }
-        // return <WaitRoom />
+        return <UNOTM socket={socket} />;
       default:
         break;
     }
