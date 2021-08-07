@@ -209,7 +209,7 @@ export default function UNOTM({ socket }) {
       }
     });
 
-    socket.on("message", (message) => {
+    socket.on("message-callback", (message) => {
       console.log("calling handle fn");
       handlemsg();
       console.log("end of handlemsg");
@@ -257,7 +257,7 @@ export default function UNOTM({ socket }) {
   const sendMessage = (event) => {
     event.preventDefault();
     if (message) {
-      socket.emit("sendMessage", { message: message }, () => {
+      socket.emit("sendMessage-callback", { message: message }, () => {
         setMessage("");
       });
     }
@@ -2248,8 +2248,8 @@ export default function UNOTM({ socket }) {
                           />
                         ))}
                       </div>
-                      <div className="chatBoxWrapper">
-                        <div className="chat-box chat-box-player2">
+                      <div className="chatBoxWrapper float-right">
+                        <div className="chat-box chat-box-player1">
                           <div className="chat-head">
                             <h2>Chat Box</h2>
                             {!isChatBoxHidden ? (
@@ -2271,13 +2271,13 @@ export default function UNOTM({ socket }) {
                           <div className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
-                                if (msg.user === users[0])
+                                if (msg.user === users[1])
                                   return (
                                     <div className="msg-receive">
                                       {msg.text}
                                     </div>
                                   );
-                                if (msg.user === users[1])
+                                if (msg.user === users[0])
                                   return (
                                     <div className="msg-send">{msg.text}</div>
                                   );
@@ -2398,7 +2398,7 @@ export default function UNOTM({ socket }) {
                               </span>
                             )}
                           </div>
-                          <div ref={chatBodyRef} className="chat-body">
+                          <div className="chat-body">
                             <div className="msg-insert">
                               {messages.map((msg) => {
                                 if (msg.user === users[0])

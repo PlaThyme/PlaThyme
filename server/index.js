@@ -47,6 +47,12 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
+    socket.on('sendMessage-callback', (data, callback) => {
+        const user = getUser(socket.id)
+        console.log("@@@@ user === ", user);
+        io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
+        callback()
+    })
   // socket.on("updateGameState", (data) => {
   //   try{
   //     if (getUser(socket.id)) {
@@ -72,17 +78,7 @@ io.on("connection", (socket) => {
     //     if(user)
     //         io.to(user.roomCode).emit('updateGameState', gameState)
     // })
-        socket.on('sendMessage', (payload, callback) => {
-      //      const senderId = getUser(socket.id);
-      //       io.to(senderId.roomCode).emit("message", {
-      //   user: message.sender,
-      //   text: message.text,
-      // });
-        const user = getUser(socket.id)
-        console.log("@@@@ user === ", user);
-        io.to(user.roomCode).emit('message', {user: user.name, text: payload.message})
-        callback()
-    })
+
 /**
  * End of UNOtm socket events
  */

@@ -293,19 +293,17 @@ a {
 /* Chat Box */
 .chat-box{
 	position: absolute;
-	bottom: 15px;
-  margin-left: 90px;
-	/* background: white; */
+	bottom: 20px;
   background: #CCFCCB;
 	width: 355px;
 	border-radius: 5px 5px 0px 0px;
   z-index: 100;
 }
 .chat-box-player1{
-  right: 20px;
+  right: 100px;
 }
 .chat-box-player2{
-  left: 20px;
+  left: 100px;
 }
 .chat-head{
 	width: inherit;
