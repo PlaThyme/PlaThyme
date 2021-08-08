@@ -46,11 +46,11 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-  socket.on('sendMessage-callback', (data, callback) => {
-    const user = getUser(socket.id)
-    io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
-    callback()
-  })
+  // socket.on('sendMessage-callback', (data, callback) => {
+  //   const user = getUser(socket.id)
+  //   io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
+  //   callback()
+  // })
 
   //Below are the functions to to handle the socket.on events.
   
@@ -208,6 +208,10 @@ io.on("connection", (socket) => {
         io.to(userName.roomCode).emit(
           "userData",
           getUsersInRoom(userName.roomCode)
+        );
+        io.to(userName.roomCode).emit("playerLeft",{
+          leftPlayerName: userName.name,
+        }
         );
         //Notify game object that the player has left, if the game exists.
         if (games[userName.roomCode]) {

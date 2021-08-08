@@ -43,7 +43,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [displaySideBar, setDisplaySideBar] = useState(true);
+  const [displayPlayersList, setDisplayPlayersList] = useState(true);
   const [carSelect, setCarSelect] = useState(0);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function App() {
         (id) => id.gameId === gameData.gameId
       ).gameName;
       if(gameData.gameId === 4){
-        setDisplaySideBar(false);
+        setDisplayPlayersList(false);
       }
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
@@ -156,7 +156,7 @@ export default function App() {
             currentPlayer={currentPlayer}
             leaveGame={setInGame}
             socket={socket}
-            displaySideBar={displaySideBar}
+            displayPlayersList={displayPlayersList}
           >
             { 
               renderGame(gameInfo.gameId)

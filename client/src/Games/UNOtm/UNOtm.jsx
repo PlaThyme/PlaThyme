@@ -20,8 +20,8 @@ export default function UNOTM({ socket }) {
   const [roomFull, setRoomFull] = useState(false);
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  // const [message, setMessage] = useState("");
+  // const [messages, setMessages] = useState([]);
 
   //initialize game state
   const [gameOver, setGameOver] = useState(false);
@@ -34,7 +34,7 @@ export default function UNOTM({ socket }) {
   const [playedCardsPile, setPlayedCardsPile] = useState([]);
   const [drawCardPile, setDrawCardPile] = useState([]);
 
-  const [isChatBoxHidden, setChatBoxHidden] = useState(true);
+  // const [isChatBoxHidden, setChatBoxHidden] = useState(true);
   const [isUnoButtonPressed, setUnoButtonPressed] = useState(false);
   const [isSoundMuted, setSoundMuted] = useState(false);
   const [isMusicMuted, setMusicMuted] = useState(true);
@@ -47,7 +47,9 @@ export default function UNOTM({ socket }) {
   const [playWildCardSound] = useSound(wildCardSound);
   const [playDraw4CardSound] = useSound(draw4CardSound);
   const [playGameOverSound] = useSound(gameOverSound);
-  const [playerLeftName, setPlayerLeftName] = useState("");
+  // const [playerLeftName, setPlayerLeftName] = useState("");
+  const [playerLeft, setPlayerLeft] = useState(false);
+  const [leftPlayerName, setLeftPlayerName] = useState("");
 
   //runs once on component mount
   useEffect(() => {
@@ -104,6 +106,11 @@ export default function UNOTM({ socket }) {
   }, []);
 
   useEffect(() => {
+    socket.on("playerLeft", (data) => {
+      setPlayerLeft(true);
+      setLeftPlayerName(data.leftPlayerName);
+    })
+
     socket.on("update-game-player", (data) => {
       if (data.event === "currentUserData") {
         let { name } = data;
@@ -113,7 +120,6 @@ export default function UNOTM({ socket }) {
 
     socket.on("update-game", (data) => {
       if (data.event === "roomData") {
-        console.log("roomData ---> ", data);
         let { users, roomCode } = data;
         setUsers(users);
         setRoomFull(true);
@@ -177,8 +183,6 @@ export default function UNOTM({ socket }) {
           gameOver,
           "winner = ",
           winner,
-          "winner.length = ",
-          winner.length,
           "turn = ",
           turn,
           "player1Deck = ",
@@ -194,11 +198,8 @@ export default function UNOTM({ socket }) {
           "drawCardPile = ",
           drawCardPile
         );
-        gameOver && setGameOver(gameOver);
-        gameOver === true && playGameOverSound();
-        winner && winner === "Player 1"
-          ? setWinner(users[0])
-          : setWinner(users[1]);
+
+        winner && setWinner(winner);
         turn && setTurn(turn);
         player1Deck && setPlayer1Deck(player1Deck);
         player2Deck && setPlayer2Deck(player2Deck);
@@ -206,24 +207,26 @@ export default function UNOTM({ socket }) {
         currentNumber && setCurrentNumber(currentNumber);
         playedCardsPile && setPlayedCardsPile(playedCardsPile);
         drawCardPile && setDrawCardPile(drawCardPile);
+        gameOver && setGameOver(gameOver);
+        gameOver === true && playGameOverSound();
         setUnoButtonPressed(false);
       }
 
-      if (data.event === "playerLeft") {
-        console.log("playerLeft event received ---> ", data.playerName);
-        setPlayerLeftName(data.playerName);
-      }
+      // if (data.event === "playerLeft") {
+      //   console.log("playerLeft event received ---> ", data.playerName);
+      //   setPlayerLeftName(data.playerName);
+      // }
     });
 
-    socket.on("message-callback", (message) => {
-      setMessages((messages) => [...messages, message]);
-      const chatBody = document.querySelector(".chat-body");
-      if (chatBody !== null) {
-        chatBody.scrollTop = chatBody.scrollHeight;
-        console.log("Inside scrollHeight = ", chatBody.scrollHeight);
-        console.log("Inside scrollTop === ", chatBody.scrollTop);
-      }
-    });
+    // socket.on("message-callback", (message) => {
+    //   setMessages((messages) => [...messages, message]);
+    //   const chatBody = document.querySelector(".chat-body");
+    //   if (chatBody !== null) {
+    //     chatBody.scrollTop = chatBody.scrollHeight;
+    //     console.log("Inside scrollHeight = ", chatBody.scrollHeight);
+    //     console.log("Inside scrollTop === ", chatBody.scrollTop);
+    //   }
+    // });
   }, []);
 
   //some util functions
@@ -232,39 +235,40 @@ export default function UNOTM({ socket }) {
   };
 
   const checkWinner = (arr, player) => {
+    console.log("checking winner === ", arr, " arr.length = ", arr.length);
     return arr.length === 1 ? player : "";
   };
 
-  const toggleChatBox = () => {
-    const chatBody = document.querySelector(".chat-body");
-    if (isChatBoxHidden) {
-      chatBody.style.display = "block";
-      setChatBoxHidden(false);
-    } else {
-      chatBody.style.display = "none";
-      setChatBoxHidden(true);
-    }
-  };
+  // const toggleChatBox = () => {
+  //   const chatBody = document.querySelector(".chat-body");
+  //   if (isChatBoxHidden) {
+  //     chatBody.style.display = "block";
+  //     setChatBoxHidden(false);
+  //   } else {
+  //     chatBody.style.display = "none";
+  //     setChatBoxHidden(true);
+  //   }
+  // };
 
-  const sendMessage = (event) => {
-    event.preventDefault();
-    if (message) {
-      socket.emit("sendMessage-callback", { message: message }, () => {
-        setMessage("");
-      });
-    }
-  };
+  // const sendMessage = (event) => {
+  //   event.preventDefault();
+  //   if (message) {
+  //     socket.emit("sendMessage-callback", { message: message }, () => {
+  //       setMessage("");
+  //     });
+  //   }
+  // };
 
-  const handlePlayerQuit = () => {
-    let playerName = "";
-    if (currentUser === "Player 1") playerName = users[0];
-    else playerName = users[1];
-    socket.emit("game-data", {
-      event: "playerLeft",
-      playerName: playerName,
-    });
-    window.location.href = "/";
-  };
+  // const handlePlayerQuit = () => {
+  //   let playerName = "";
+  //   if (currentUser === "Player 1") playerName = users[0];
+  //   else playerName = users[1];
+  //   socket.emit("game-data", {
+  //     event: "playerLeft",
+  //     playerName: playerName,
+  //   });
+  //   window.location.href = "/";
+  // };
 
   const refillDrawCardPile = (copiedDrawCardPileArray) => {
     let newCopiedDrawCardPileArray = [];
@@ -1824,14 +1828,13 @@ export default function UNOTM({ socket }) {
     }
   };
 
-  console.log("users ===== ", users, " ---> users.length = ", users.length);
   return (
     <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
       {
         <>
-          {playerLeftName.length > 0 ? (
+          {playerLeft ? (
             <h1 className="topInfoText text-white font-bold pt-20">
-              {playerLeftName} has left the game.
+              {leftPlayerName} has left the game.
             </h1>
           ) : (
             <>
@@ -1867,20 +1870,26 @@ export default function UNOTM({ socket }) {
                           <span className="material-icons">music_note</span>
                         )}
                       </button>
-                      <button
+                      {/* <button
                         type="button"
                         className="game-button red"
                         onClick={handlePlayerQuit}
                       >
                         QUIT
-                      </button>
+                      </button> */}
                     </span>
                   </div>
 
-                  {winner.length > 0 ? (
-                    <div className="font-bold text-4xl text-white">
-                      <h1>GAME OVER</h1>
-                      <h2>{winner} wins!</h2>
+                  {gameOver ? (
+                    <div>
+                      {winner !== "" && (
+                        <>
+                          <h1>GAME OVER</h1>
+                          <h2>
+                            {winner === "Player 1" ? users[0] : users[1]} wins!
+                          </h2>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <>
@@ -2031,7 +2040,7 @@ export default function UNOTM({ socket }) {
                           </>
                         )}
                       </div>
-                      <div className="chatBoxWrapper">
+                      {/* <div className="chatBoxWrapper">
                         <div
                           className={`${
                             currentUser === "Player 1"
@@ -2112,7 +2121,7 @@ export default function UNOTM({ socket }) {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   )}
                 </>
