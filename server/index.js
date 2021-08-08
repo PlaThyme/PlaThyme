@@ -7,6 +7,7 @@ const http = require("http").createServer(app);
 const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
 const UNOtm = require("./Games/UNOtm");
+const EnigmaBreaker = require("./Games/EnigmaBreaker/EnigmaBreaker");
 const { makeid } = require("./makeid");
 const {
   joinRoom,
@@ -52,7 +53,7 @@ io.on("connection", (socket) => {
   })
 
   //Below are the functions to to handle the socket.on events.
-
+  
   //New game greation.
   const handleCreateGame = (data) => {
     //Generate a random room code.
@@ -97,8 +98,8 @@ io.on("connection", (socket) => {
           socket.emit("start-game", {}); // informs App.js to render game component.
         }
         break;
-      case 2: // TestGame
-        games[roomCode] = new TestGame(roomCode, socket, io, data.name);
+      case 2:
+        games[roomCode] = new EnigmaBreaker(roomCode, socket, io, [data.name], data.minPlayers);
         break;
       case 4: // UNO™
         games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
@@ -122,9 +123,8 @@ io.on("connection", (socket) => {
 
       // allow only min number of players to join the room; expect for game id: 1 (DrawTheWord)
       if((games[roomCode].players.length + 1) <= games[roomCode].minPlayers || (gid == 1)){
-
         //Make sure game room exists.
-        if (gid === null) {
+        if (gid === null || games[roomCode] === undefined) {
           socket.emit("error", { error: "gid" });
           return;
         }
@@ -183,7 +183,6 @@ io.on("connection", (socket) => {
 
       } else {
           // send an error event indicating thta current room is full and redireect them to home page agin.
-          console.log("*Room full*");
           io.to(userId).emit("GameRoomFullAlert");
         }
     } catch (error) {
@@ -194,8 +193,9 @@ io.on("connection", (socket) => {
   //Perform client disconnection actions
   const handleDisconnect = () => {
     try {
-      //Remove the user from room tracking.
+      //Remove the user from room tracking, and socket.
       const userName = leaveRoom(socket.id);
+      socket.leave(roomCode);
 
       //Verify the user was in a room, then perform the other actions upon disconnect
       if (userName) {
