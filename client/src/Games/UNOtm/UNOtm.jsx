@@ -20,8 +20,6 @@ export default function UNOTM({ socket }) {
   const [roomFull, setRoomFull] = useState(false);
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
-  // const [message, setMessage] = useState("");
-  // const [messages, setMessages] = useState([]);
 
   //initialize game state
   const [gameOver, setGameOver] = useState(false);
@@ -34,7 +32,6 @@ export default function UNOTM({ socket }) {
   const [playedCardsPile, setPlayedCardsPile] = useState([]);
   const [drawCardPile, setDrawCardPile] = useState([]);
 
-  // const [isChatBoxHidden, setChatBoxHidden] = useState(true);
   const [isUnoButtonPressed, setUnoButtonPressed] = useState(false);
   const [isSoundMuted, setSoundMuted] = useState(false);
   const [isMusicMuted, setMusicMuted] = useState(true);
@@ -47,7 +44,6 @@ export default function UNOTM({ socket }) {
   const [playWildCardSound] = useSound(wildCardSound);
   const [playDraw4CardSound] = useSound(draw4CardSound);
   const [playGameOverSound] = useSound(gameOverSound);
-  // const [playerLeftName, setPlayerLeftName] = useState("");
   const [playerLeft, setPlayerLeft] = useState(false);
   const [leftPlayerName, setLeftPlayerName] = useState("");
 
@@ -109,7 +105,7 @@ export default function UNOTM({ socket }) {
     socket.on("playerLeft", (data) => {
       setPlayerLeft(true);
       setLeftPlayerName(data.leftPlayerName);
-    })
+    });
 
     socket.on("update-game-player", (data) => {
       if (data.event === "currentUserData") {
@@ -211,22 +207,7 @@ export default function UNOTM({ socket }) {
         gameOver === true && playGameOverSound();
         setUnoButtonPressed(false);
       }
-
-      // if (data.event === "playerLeft") {
-      //   console.log("playerLeft event received ---> ", data.playerName);
-      //   setPlayerLeftName(data.playerName);
-      // }
     });
-
-    // socket.on("message-callback", (message) => {
-    //   setMessages((messages) => [...messages, message]);
-    //   const chatBody = document.querySelector(".chat-body");
-    //   if (chatBody !== null) {
-    //     chatBody.scrollTop = chatBody.scrollHeight;
-    //     console.log("Inside scrollHeight = ", chatBody.scrollHeight);
-    //     console.log("Inside scrollTop === ", chatBody.scrollTop);
-    //   }
-    // });
   }, []);
 
   //some util functions
@@ -235,40 +216,8 @@ export default function UNOTM({ socket }) {
   };
 
   const checkWinner = (arr, player) => {
-    console.log("checking winner === ", arr, " arr.length = ", arr.length);
     return arr.length === 1 ? player : "";
   };
-
-  // const toggleChatBox = () => {
-  //   const chatBody = document.querySelector(".chat-body");
-  //   if (isChatBoxHidden) {
-  //     chatBody.style.display = "block";
-  //     setChatBoxHidden(false);
-  //   } else {
-  //     chatBody.style.display = "none";
-  //     setChatBoxHidden(true);
-  //   }
-  // };
-
-  // const sendMessage = (event) => {
-  //   event.preventDefault();
-  //   if (message) {
-  //     socket.emit("sendMessage-callback", { message: message }, () => {
-  //       setMessage("");
-  //     });
-  //   }
-  // };
-
-  // const handlePlayerQuit = () => {
-  //   let playerName = "";
-  //   if (currentUser === "Player 1") playerName = users[0];
-  //   else playerName = users[1];
-  //   socket.emit("game-data", {
-  //     event: "playerLeft",
-  //     playerName: playerName,
-  //   });
-  //   window.location.href = "/";
-  // };
 
   const refillDrawCardPile = (copiedDrawCardPileArray) => {
     let newCopiedDrawCardPileArray = [];
@@ -1570,7 +1519,6 @@ export default function UNOTM({ socket }) {
 
         break;
       default:
-        console.log("in default block");
         break;
     }
   };
@@ -1845,6 +1793,11 @@ export default function UNOTM({ socket }) {
                       src={require("./assets/logo.png").default}
                       alt="asset logo"
                     />
+                    {turn === currentUser && (
+                      <span className="text-white font-bold text-2xl">
+                        <h1> -- Your Turn -- </h1>
+                      </span>
+                    )}
                     <span>
                       <button
                         className="game-button green"
@@ -1870,13 +1823,6 @@ export default function UNOTM({ socket }) {
                           <span className="material-icons">music_note</span>
                         )}
                       </button>
-                      {/* <button
-                        type="button"
-                        className="game-button red"
-                        onClick={handlePlayerQuit}
-                      >
-                        QUIT
-                      </button> */}
                     </span>
                   </div>
 
@@ -1903,7 +1849,7 @@ export default function UNOTM({ socket }) {
                       >
                         {currentUser === "Player 1" ? (
                           <>
-                            <p className="playerDeckText  text-white font-bold">
+                            <p className="playerDeckText  text-white font-bold text-xl">
                               {users[1]}
                             </p>
                             {player2Deck.map((item, i) => (
@@ -1919,7 +1865,7 @@ export default function UNOTM({ socket }) {
                           </>
                         ) : (
                           <>
-                            <p className="playerDeckText text-white font-bold">
+                            <p className="playerDeckText text-white font-bold text-xl">
                               {users[0]}
                             </p>
                             {player1Deck.map((item, i) => (
@@ -2040,88 +1986,6 @@ export default function UNOTM({ socket }) {
                           </>
                         )}
                       </div>
-                      {/* <div className="chatBoxWrapper">
-                        <div
-                          className={`${
-                            currentUser === "Player 1"
-                              ? "chat-box chat-box-player1"
-                              : "chat-box chat-box-player2"
-                          }`}
-                        >
-                          <div className="chat-head">
-                            <h2>Chat Box</h2>
-                            {!isChatBoxHidden ? (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_down
-                              </span>
-                            ) : (
-                              <span
-                                onClick={toggleChatBox}
-                                className="material-icons"
-                              >
-                                keyboard_arrow_up
-                              </span>
-                            )}
-                          </div>
-                          <div className="chat-body">
-                            <div className="msg-insert">
-                              {currentUser === "Player 1" ? (
-                                <>
-                                  {messages.map((msg) => {
-                                    if (msg.user === users[1])
-                                      return (
-                                        <div className="msg-receive">
-                                          {" "}
-                                          {msg.text}{" "}
-                                        </div>
-                                      );
-                                    if (msg.user === users[0])
-                                      return (
-                                        <div className="msg-send">
-                                          {msg.text}
-                                        </div>
-                                      );
-                                  })}
-                                </>
-                              ) : (
-                                <>
-                                  {messages.map((msg) => {
-                                    if (msg.user === users[0])
-                                      return (
-                                        <div className="msg-receive">
-                                          {" "}
-                                          {msg.text}{" "}
-                                        </div>
-                                      );
-                                    if (msg.user === users[1])
-                                      return (
-                                        <div className="msg-send">
-                                          {msg.text}
-                                        </div>
-                                      );
-                                  })}
-                                </>
-                              )}
-                            </div>
-                            <div className="chat-text">
-                              <input
-                                type="text"
-                                placeholder="Type a message..."
-                                value={message}
-                                onChange={(event) =>
-                                  setMessage(event.target.value)
-                                }
-                                onKeyPress={(event) =>
-                                  event.key === "Enter" && sendMessage(event)
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div> */}
                     </>
                   )}
                 </>
@@ -2130,7 +1994,9 @@ export default function UNOTM({ socket }) {
                   <h1 className="text-white font-bold text-4xl">
                     Waiting for Player 2 to Join the game
                   </h1>
-                  <Spinner />
+                  <div className=" flex justify-center">
+                    <Spinner />
+                  </div>
                 </div>
               )}
             </>

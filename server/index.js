@@ -120,9 +120,8 @@ io.on("connection", (socket) => {
     try {
       const gid = getGameId(roomCode);
       const userId = socket.id;
-
       // allow only min number of players to join the room; expect for game id: 1 (DrawTheWord)
-      if((games[roomCode].players.length + 1) <= games[roomCode].minPlayers || (gid == 1)){
+      if((games[roomCode].players.length + 1) <= games[roomCode].minPlayers || (gid == 1 || gid == 2)){
         //Make sure game room exists.
         if (gid === null || games[roomCode] === undefined) {
           socket.emit("error", { error: "gid" });
