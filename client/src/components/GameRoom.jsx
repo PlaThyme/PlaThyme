@@ -1,75 +1,62 @@
-//PlayerList takes in an array of players and displays them in a list.
-import { useState, Fragment, useEffect } from "react";
-import { Dialog, RadioGroup, Transition} from "@headlessui/react";
+import { useState, useEffect, Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import "./GameRoom.css";
+import io from "socket.io-client";
 
+import ToolTip from "./ToolTip";
 import Chat from "./Chat";
 
-const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
-  
-  const [selected, setSelected] = useState("chatBtn");
-  const [showPlayers, setPlayersChat] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children }) => {
+  const [allUsers, setAllUsers] = useState([]);
   const [messages, setMessages] = useState([]);
-  
-  //This is used to recieve chat messages.
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
+    socket.on("userData", (users) => {
+      setAllUsers(users);
+    });
     socket.on("message", (message) => {
       setMessages((messages) => [...messages, message]);
     });
   }, []);
 
-  //The following 3 functions are usef to create and handle the confirmation popup for leaving.
   const handleLeaveGame = () => {
     socket.emit("leaveGame");
     leaveGame(false);
-  }
+  };
 
   const closeModal = () => {
     setIsOpen(false);
-  }
+  };
 
   const openModal = () => {
     setIsOpen(true);
-  }
-
+  };
 
   return (
-    <div className="flex-col flex w-full">
-      {/* Radio Group is the tabs to select between chat and player list. */}
-      <RadioGroup
-        className="flex flex-row w-full"
-        value={selected}
-        onChange={setSelected}
-      >
-        <RadioGroup.Option value="playersBtn" className="flex w-3/6">
-          {({ checked }) => (
+    <div className="whole-room">
+      <nav className="bg-gradient-to-r from-thyme-darkest via-thyme to-thyme-darkest p-3">
+        <h1 className="float-left text-thyme-lightest text-3xl">
+          {gameInfo.gameName}
+        </h1>
+        <div className="float-right">
+          <ToolTip text="Copy to Clipboard">
             <button
-              onClick={() => setPlayersChat(true)}
-              className={`${
-                checked ? "bg-thyme" : "bg-thyme-dark"
-              } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
+              id="btn-cpy"
+              className="inline text-thyme-lightest text-3xl border-2 rounded-lg px-2 hover:bg-thyme-darkest"
+              onClick={() => {
+                navigator.clipboard.writeText(gameInfo.roomCode);
+              }}
             >
-              Players
+              Room Code: {gameInfo.roomCode}
             </button>
-          )}
-        </RadioGroup.Option>
-        <RadioGroup.Option value="chatBtn" className="flex w-3/6">
-          {({ checked }) => (
-            <button
-              onClick={() => setPlayersChat(false)}
-              className={`${
-                checked ? "bg-thyme" : "bg-thyme-dark"
-              } flex-grow p-2 w-3/6 text-2xl hover:bg-thyme-light rounded-b-lg`}
-            >
-              Chat
-            </button>
-          )}
-        </RadioGroup.Option>
-      </RadioGroup>
-      {/* Here is the content of the sidebar, either player list, or chat window. */}
-      <div className="flex-grow flex-col grid justify-items-center">
-        {showPlayers ? (
-          <div className="flex-shrink flex-rows flex">
+          </ToolTip>
+        </div>
+      </nav>
+      <div className="game-and-sidebars">
+        <div className="player-list bg-gray-900">
+          <div>
+            <div className="text-center bg-thyme">PLAYERS</div>
             <ul className="flex-col bg-gray-900 divide-y-4 divide-thyme divide-dashed content-center">
               {allUsers.map((player) => (
                 <h1 className="text-xl text-center align-middle bg-gray-900 text-thyme-lightest p-2">
@@ -78,37 +65,45 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
               ))}
             </ul>
           </div>
-        ) : (
+          <button
+            onClick={openModal}
+            className="text-thyme-lightest p-2 w-full text-xl rounded-t-lg bg-red-600 hover:bg-red-800"
+          >
+            Leave Room
+          </button>
+        </div>
+        <div className="game-container">
+          <div className="game-window bg-gray-800 overflow-auto">
+            {children}
+          </div>
+        </div>
+        <div className="chat-bar bg-gray-900">
+          <div className="text-center bg-thyme">CHAT</div>
           <Chat
             socket={socket}
             messages={messages}
             currentPlayer={currentPlayer}
             className="flex-grow"
           />
-        )}
+        </div>
       </div>
-      {/* Leave room button, and confirmation popup */}
-      <button
-        onClick={() => openModal()}
-        className=" text-thyme-lightest p-2 w-full text-xl rounded-t-lg bg-red-600 hover:bg-red-800"
-      >
-        Leave Room
-      </button>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="fixed inset-0 z-30 overflow-y-auto"
-          onClose={() => setIsOpen(false)}
+          onClose={closeModal}
         >
-          <div className="h-screen px-4 text-center">
+          <div className="min-h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
-              <Dialog.Overlay className="fixed inset-Y0" />
+              <Dialog.Overlay className="fixed inset-0 bg-gray-800 opacity-60" />
             </Transition.Child>
 
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
-            ></span>
+            >
+              &#8203;
+            </span>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-200"
@@ -154,4 +149,4 @@ const SideBar = ({ currentPlayer, allUsers, leaveGame, socket }) => {
   );
 };
 
-export default SideBar;
+export default GameRoom;

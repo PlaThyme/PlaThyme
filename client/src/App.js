@@ -134,7 +134,6 @@ export default function App() {
 
       {/** Game Room of Selected Game */}
       {inGame ? (
-        <>
           <GameRoom
             gameInfo={gameInfo}
             currentPlayer={currentPlayer}
@@ -145,7 +144,6 @@ export default function App() {
               renderGame(gameInfo.gameId)
             }
           </GameRoom>
-        </>
       ) 
       : 
       // Landing page for user to select Game from dropdown 

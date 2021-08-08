@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import ChatMessage from "./ChatMessage";
+import "./GameRoom.css";
 
 const MessageFeed = ({messages, currentPlayer}) => {
 
@@ -14,7 +15,7 @@ const MessageFeed = ({messages, currentPlayer}) => {
   }
 
   return (
-    <div id="message-list" className="flex-col w-full overflow-y-auto bg-thyme-800">
+    <div className="message-feed">
       {messages.map((message) => (
           <ChatMessage message={message} currentPlayer={currentPlayer} />
       ))}
