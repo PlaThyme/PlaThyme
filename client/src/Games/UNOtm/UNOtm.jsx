@@ -1950,8 +1950,8 @@ export default function UNOTM({ socket }) {
                       >
                         {currentUser === "Player 1" ? (
                           <>
-                            <p className="playerDeckText  text-white font-bold">
-                              {users[0] + "(You)"}
+                            <p className="playerDeckText  text-white font-bold text-xl">
+                              {users[0]}
                             </p>
                             {player1Deck.map((item, i) => (
                               <img
@@ -1968,8 +1968,8 @@ export default function UNOTM({ socket }) {
                           </>
                         ) : (
                           <>
-                            <p className="playerDeckText text-white font-bold">
-                              {users[1] + "(you)"}
+                            <p className="playerDeckText text-white font-bold text-xl">
+                              {users[1]}
                             </p>
                             {player2Deck.map((item, i) => (
                               <img
