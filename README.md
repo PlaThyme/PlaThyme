@@ -65,7 +65,7 @@ We are trying to create a safe and friendly community where you can share your t
 
 If you need more help, we highly encorage you to post your question or concern in [`Discussions`](https://github.com/PlaThyme/PlaThyme/discussions)
 
-you can also send email to <`plathymegames@gmail.com`>
+you can also send email to <plathymegames@gmail.com>
 
  # Code of Conduct
 
