@@ -6,7 +6,14 @@ import io from "socket.io-client";
 import ToolTip from "./ToolTip";
 import Chat from "./Chat";
 
-const GameRoom = ({ gameInfo, currentPlayer, leaveGame, socket, children }) => {
+const GameRoom = ({
+  gameInfo,
+  currentPlayer,
+  leaveGame,
+  socket,
+  children,
+  displaySideBar,
+}) => {
   const [allUsers, setAllUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);

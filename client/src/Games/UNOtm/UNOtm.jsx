@@ -113,6 +113,7 @@ export default function UNOTM({ socket }) {
 
     socket.on("update-game", (data) => {
       if (data.event === "roomData") {
+        console.log("roomData ---> ", data);
         let { users, roomCode } = data;
         setUsers(users);
         setRoomFull(true);
@@ -176,6 +177,8 @@ export default function UNOTM({ socket }) {
           gameOver,
           "winner = ",
           winner,
+          "winner.length = ",
+          winner.length,
           "turn = ",
           turn,
           "player1Deck = ",
@@ -1821,6 +1824,7 @@ export default function UNOTM({ socket }) {
     }
   };
 
+  console.log("users ===== ", users, " ---> users.length = ", users.length);
   return (
     <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
       {
@@ -1873,7 +1877,7 @@ export default function UNOTM({ socket }) {
                     </span>
                   </div>
 
-                  {winner !== "" ? (
+                  {winner.length > 0 ? (
                     <div className="font-bold text-4xl text-white">
                       <h1>GAME OVER</h1>
                       <h2>{winner} wins!</h2>
