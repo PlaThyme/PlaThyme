@@ -11,6 +11,7 @@ import logo from './images/plathyme.png';
 import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
+import UNOTM from './Games/UNOtm/UNOtm';
 
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
@@ -28,7 +29,7 @@ export default function App() {
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+    { gameId: 4, gameName: "The Card game - Mattle UNO™", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -42,6 +43,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [displayPlayersList, setDisplayPlayersList] = useState(true);
   const [carSelect, setCarSelect] = useState(0);
 
   useEffect(() => {
@@ -56,6 +58,9 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
+      if(gameData.gameId === 4){
+        setDisplayPlayersList(false);
+      }
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
@@ -90,6 +95,13 @@ export default function App() {
           setStartGame(true);
         }
       })
+
+      socket.on("GameRoomFullAlert", () => {
+        title = "Room Full";
+        dialogText = "The room you are trying to enter is already full. Try creating another room.";
+        buttonText = "ok";
+        setIsOpen(true);
+      })
   }, []);
 
   const closeModal = () => setIsOpen(false);
@@ -122,7 +134,12 @@ export default function App() {
         }
         return <WaitRoom/>;
       case 2:
-        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
+       return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
+      case 3:
+        break;
+      case 4:
+        console.log("inside APP");
+        return <UNOTM socket={socket} />;
       default:
         break;
     }
@@ -139,6 +156,7 @@ export default function App() {
             currentPlayer={currentPlayer}
             leaveGame={setInGame}
             socket={socket}
+            displayPlayersList={displayPlayersList}
           >
             { 
               renderGame(gameInfo.gameId)
