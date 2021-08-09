@@ -1,50 +1,10 @@
 # PlaThyme Backend
 
-This `README` provides information about `how to add New games` to backend of this Repo.
+This `README` provides information about [`All methods in Game.js class`](#-how-to-use-gamejs) and [`how to add New games`](#-how-to-add-your-game-backend-to-this-Project) to backend of PlaThyme.
 
 If your game is multiplayer, or requires a server to make decisions, keep score, relay messages between players, etc, you’ll need to build out a back end. For ease of game creation, we’ve made a class that your game can extend which you can use to encapsulate your game’s needs, as well as keeping our own server code clean. So I’ll cover all the changes each game must put in, and then I’ll cover the functionality of the __Game__ class.
 
-## How to add your Game BackEnd to this Project.
-
-__Below are the things required to be included in your game's back end.__
-
-### 1) __./server/index.js__
-There are only two changes you should make to this file.
-* The first is to include your game's class from its javascript file. Which should be located in ./server/Games/ So in the include statements in the index.js file you sould include your file as such:
-
-```javascript
-  const MyGame = require("./Games/MyGame");
-```
-
-* The second is to add your game to the object creation switch statement. In the handleCreateGame function there is a switch statement where all game instances have their object created on the server side. So when someone creates a new instance of your game, the server creates an object and adds it to its tracking object. So what do you need to do? Using the gameId number that was created in the app.js file in the front end, switching on that gameId, create your game object. Example:
-
-```javascript
-case 5:
-  games[roomCode] = new MyGameName(roomCode, socket, io, [data.name]);
-  break;
-```
-_The only thing you need to change about this statement is the case number (gameId), and the MyGameName must match the name of your game class. Of course, if you have additional parameters that need to be fed into your constructor, this is where that would be done._
-
-### 2) __./server/Games/YourGame.js__
-Here's where you need to actually implement your back end. 
-* This class must extend the Game class. So your first few lines should look like this:
-
-```javascript
-const Game = require("./Game");
-class MyGame extends Game {
-  constructor(roomCode, socket, io, players) {
-    super(roomCode, socket, io, players);
-  }
-  //add my game methods here
-}
-module.exports = MyGame;
-```
-
-So as you can see above, the MyGame class is extending the Game class, and calls its contructor. The rest of the actual game creation is up to you. 
-
-To aid you, the Game class has functionality to simplify communications, and integration with the rest of the site. The methods for that are described in the next section.
-
-## __How to use `Game.js`__
+# How to use `Game.js`
 
 The Game class has a number of built in functions for your game to use, as well as a number of methods which the server will call when specific events occur that could be useful in your game. 
 
@@ -57,7 +17,7 @@ _Default properties of a game are:_
 _*The last two, the `socket`, and `io` are used for communications between the server and the client.*_ 
 You don't need to mess with those last two if you don't want to. 
 
-### The `functionailty` of each method is included below. 
+## The `functionailty` of each method is included below. 
 
 ### 1. __startGame()__ 
 
@@ -122,3 +82,44 @@ fellInPit(playerName){
 ### 9. __updatePlayerScore(playerName, score)__ 
 
 * if your game has a score that needs to be kept track of, and displayed, this is one option. In the player list in the sidebar in the game room the score will be displayed beside each player name. It starts out as zero by default, and when this function is called it will update the score to the value passed in.
+
+
+# How to add your Game BackEnd to this Project.
+
+__Below are the things required to be included in your game's back end.__
+
+### 1) __./server/index.js__
+There are only two changes you should make to this file.
+* The first is to include your game's class from its javascript file. Which should be located in ./server/Games/ So in the include statements in the index.js file you sould include your file as such:
+
+```javascript
+  const MyGame = require("./Games/MyGame");
+```
+
+* The second is to add your game to the object creation switch statement. In the handleCreateGame function there is a switch statement where all game instances have their object created on the server side. So when someone creates a new instance of your game, the server creates an object and adds it to its tracking object. So what do you need to do? Using the gameId number that was created in the app.js file in the front end, switching on that gameId, create your game object. Example:
+
+```javascript
+case 5:
+  games[roomCode] = new MyGameName(roomCode, socket, io, [data.name]);
+  break;
+```
+_The only thing you need to change about this statement is the case number (gameId), and the MyGameName must match the name of your game class. Of course, if you have additional parameters that need to be fed into your constructor, this is where that would be done._
+
+### 2) __./server/Games/YourGame.js__
+Here's where you need to actually implement your back end. 
+* This class must extend the Game class. So your first few lines should look like this:
+
+```javascript
+const Game = require("./Game");
+class MyGame extends Game {
+  constructor(roomCode, socket, io, players) {
+    super(roomCode, socket, io, players);
+  }
+  //add my game methods here
+}
+module.exports = MyGame;
+```
+
+So as you can see above, the MyGame class is extending the Game class, and calls its contructor. The rest of the actual game creation is up to you. 
+
+To aid you, the Game class has functionality to simplify communications, and integration with the rest of the site. The methods for that are described in the next section.
