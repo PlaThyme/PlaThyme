@@ -1,3 +1,6 @@
+# Deployed URL
+https://plathyme.herokuapp.com/
+
 # Team Names
 * Sree Vandana Nadipalli
 * Zachariah Santangelo
