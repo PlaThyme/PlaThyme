@@ -6,11 +6,16 @@ import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
 import WaitRoom from './components/WaitRoom';
+import logo from './images/plathyme.png';
 
+import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
+import UNOTM from './Games/UNOtm/UNOtm';
 
 import './App.css';
+import { TruckIcon } from '@heroicons/react/solid';
+
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -23,9 +28,8 @@ export default function App() {
   // Enter the new game in this Dictionary.
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
-    { gameId: 2, gameName: "TestGame", minPlayers: 3 },
-    { gameId: 3, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "Uno", minPlayers: 2 },
+    { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
+    { gameId: 4, gameName: "The Card game - Mattle UNO™", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -39,6 +43,8 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [displayPlayersList, setDisplayPlayersList] = useState(true);
+  const [carSelect, setCarSelect] = useState(0);
 
   useEffect(() => {
     const openModal = () =>  setIsOpen(true);
@@ -52,6 +58,9 @@ export default function App() {
       const name = listofGames.find(
         (id) => id.gameId === gameData.gameId
       ).gameName;
+      if(gameData.gameId === 4){
+        setDisplayPlayersList(false);
+      }
       setGameInfo({ gameName: name, minPlayers: gameData.minPlayers, roomCode: gameData.code, gameId:gameData.gameId});
       setInGame(true);
     });
@@ -86,24 +95,33 @@ export default function App() {
           setStartGame(true);
         }
       })
+
+      socket.on("GameRoomFullAlert", () => {
+        title = "Room Full";
+        dialogText = "The room you are trying to enter is already full. Try creating another room.";
+        buttonText = "ok";
+        setIsOpen(true);
+      })
   }, []);
 
   const closeModal = () => setIsOpen(false);
 
   const handleCreateGame = (playerName, selectedGame) => {
-    setCurrentPlayer(playerName);
+    let truncName = playerName.slice(0,19);
+    setCurrentPlayer(truncName);
     const id = selectedGame.gameId;
     socket.emit("newRoom", { 
-      name: playerName, 
+      name: truncName, 
       gameId: id, 
       minPlayers:  selectedGame.minPlayers
     });
   }
 
   const handleJoinGame = (playerName, roomCode) => {
-    setCurrentPlayer(playerName);
+    let truncName = playerName.slice(0,19);
+    setCurrentPlayer(truncName);
     socket.emit("joinGame", { 
-      name: playerName, 
+      name: truncName, 
       roomCode: roomCode 
     });
   }
@@ -116,9 +134,12 @@ export default function App() {
         }
         return <WaitRoom/>;
       case 2:
-        return <TestGame socket={socket}/>;
+       return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       case 3:
         break;
+      case 4:
+        console.log("inside APP");
+        return <UNOTM socket={socket} />;
       default:
         break;
     }
@@ -130,32 +151,33 @@ export default function App() {
 
       {/** Game Room of Selected Game */}
       {inGame ? (
-        <>
           <GameRoom
             gameInfo={gameInfo}
             currentPlayer={currentPlayer}
             leaveGame={setInGame}
             socket={socket}
+            displayPlayersList={displayPlayersList}
           >
             { 
               renderGame(gameInfo.gameId)
             }
           </GameRoom>
-        </>
       ) 
       : 
       // Landing page for user to select Game from dropdown 
       (
         <div className="App font-mono bg-thyme-darkest h-screen">
-          <h1 className="text-center text-4xl text-thyme font-medium">PlaThyme</h1>
+          <img src={logo} alt="PlaThyme" className="w-80 block m-auto"></img>
           <SelectGame
             listofGames={listofGames}
             createGame={handleCreateGame}
             joinGame={handleJoinGame}
+            setSelectedGame={setCarSelect}
           />
-          <Carousel />
+          <Carousel selectedGame={carSelect}/>
         </div>
       )}
+     
 
       {/** modal Dialog, will be displayed when any error occured */}
       <Transition appear show={isOpen} as={Fragment}>
@@ -167,9 +189,8 @@ export default function App() {
           <div className="min-h-screen px-4 text-center">
             <Transition.Child as={Fragment}>
               <Dialog.Overlay className="fixed inset-0" />
-            </Transition.Child>
+            </Transition.Child> 
 
-            {/** This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"

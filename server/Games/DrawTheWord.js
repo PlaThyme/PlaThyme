@@ -1,3 +1,7 @@
+/**
+ * @Game DrawTheWord
+ */
+
 const Game = require("./Game");
 /**
  * This is a backend implementation for `DrawTheWord` game. It contains all the Game logic.

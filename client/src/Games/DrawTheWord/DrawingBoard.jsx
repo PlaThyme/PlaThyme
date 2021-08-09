@@ -1,8 +1,8 @@
 /**
  * @Resources
- * https://dev.to/jerrymcdonald/creating-a-shareable-whiteboard-with-canvas-socket-io-and-react-2en
  * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
  */
+
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -351,7 +351,6 @@ export default function DrawingBoard({ socket }) {
               <Dialog.Overlay className="fixed inset-Y0" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
