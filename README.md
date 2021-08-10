@@ -83,6 +83,21 @@ you can also send email to <plathymegames@gmail.com>
 
 This project and everyone participating in it is governed by PlaThyme [Code of Conduct](https://github.com/PlaThyme/PlaThyme/blob/main/CODE_OF_CONDUCT.md). All contributors are required to follow it.
 
+# Work Summary
+Who did what? Here's a list of things each of us worked on:
+## Michael Fulton
+* Built server back end for the website 
+  * Made base server routing, socket creation and base events: Including, but not limited to the creation of communication channels, and managing of data for game rooms. Creating game objects and designing layout for front - back end communications.
+  * Built Game API: Designed game object for each game to extend along with its base methods. So each game when made past the first one would have an easy interface with the front ends using socket.io, and keeping the index.js file clean of game specific code.
+* Built the game room components, along with the player tracker, score tracker, and chat room, both front and back end for these parts.
+* Draw The Word: Built out the majority of the back end / event structure for the game, as well as the front end logic to sync the events with the back end across clients. Also built the scoring / chat detection components.
+* Enigma Breaker: Built the entire game from scratch, both front end and back end. The one exception is the CSS for the graph paper which was created by a friend, Ken. Did get some troubleshooting and playtesting help from some of my co-workers, as described in the game's readme. The game is inspired by illeo's Decrypto, but none of their assets, materials, or terminology were used in its creation.
+* Documentation: Helped write the base readme. Created the documentation for how to build a game's back end and integrate it into our project.
+* Testing:
+  * Created the unit testing structure in the server folder.
+  * Performed extensive playtesting of EnigmaBreaker, and the Draw The Word game, as well as the landing page. This assisted in creating many of the issues found in the tracker, as real user experience, and feedback was taken to inform decisions.
+* Deployment: Handled prepping the project for deploying, as well as actually did the deploying to Heroku.
+
 # Licence
 
 [MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
