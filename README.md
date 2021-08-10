@@ -39,9 +39,9 @@ We are planning to do this in `2 steps`.
 * create private rooms and play multiplayer game
 * first game creation: __Draw the Word__
 * Future work: Additional game ideas: 
-  1 __Draw the word, down the line__
-  2 __Enigma Breake -- DONE__
-  3 __Slapjack__
+  1. __Draw the word, down the line__
+  2. __Enigma Breake -- DONE__
+  3. __Slapjack__
 
 # Description of Games
 
