@@ -40,7 +40,7 @@ We are planning to do this in `2 steps`.
 * first game creation: __Draw the Word__
 * Future work: Additional game ideas: 
   1 __Draw the word, down the line__
-  2 __Enigma Breaker__
+  2 __Enigma Breake -- DONE__
   3 __Slapjack__
 
 # Description of Games
@@ -50,9 +50,18 @@ Description of each game can be found [here](https://github.com/PlaThyme/PlaThym
 # How to set up your environment and run tests
 
 ## Set-Up Environment
+To install and run locally, follow these steps:
+* Clone the repository locally.
+* You need to have node, and NPM installed.
+* From a terminal, in the repository do an "npm install".
+* In both the client, and the server folder also do an "npm install"
+* To start start it locally, from the base directory run the command "npm run buildnrun"
+* From this the website should be available from "localhost:3001"
+* In the package.json there are additional scripts for starting with different options.
+* To run unit tests, make sure you have mocha installed in the server directory. Then from there run an "npm run test"
 
 ## Testing Strategy
-Unit tests have been created for the back end code. More should continue to be made as code is created. Ideally, front end unit tests should be created too, but due to time constraints haven't been made yet. Unit tests for any game back end is required due to the potential for crashing the server. We're using Mocha for the unit testing framework, and Chai for the assert library.
+Unit tests have been created for the back end code. More should continue to be made as code is created. Ideally, front end unit tests should be created too, but due to time constraints haven't been made yet. We're using Mocha for the unit testing framework, and Chai for the assert library.
 
 In addition to unit tests, all code is required to be reviewed by someone else before it may be pulled into the dev branch. Then after general functionality testing has been complete and the code is deemed acceptable it may be then pulled to main.
 
