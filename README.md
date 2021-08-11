@@ -1,3 +1,6 @@
+# Deployed URL
+https://plathyme.herokuapp.com/
+
 # Team Names
 * Sree Vandana Nadipalli
 * Zachariah Santangelo
@@ -36,9 +39,9 @@ We are planning to do this in `2 steps`.
 * create private rooms and play multiplayer game
 * first game creation: __Draw the Word__
 * Future work: Additional game ideas: 
-  1 __Draw the word, down the line__
-  2 __Enigma Breaker__
-  3 __Slapjack__
+  1. __Draw the word, down the line__
+  2. __Enigma Breake -- DONE__
+  3. __Slapjack__
 
 # Description of Games
 
@@ -47,9 +50,18 @@ Description of each game can be found [here](https://github.com/PlaThyme/PlaThym
 # How to set up your environment and run tests
 
 ## Set-Up Environment
+To install and run locally, follow these steps:
+* Clone the repository locally.
+* You need to have node, and NPM installed.
+* From a terminal, in the repository do an "npm install".
+* In both the client, and the server folder also do an "npm install"
+* To start start it locally, from the base directory run the command "npm run buildnrun"
+* From this the website should be available from "localhost:3001"
+* In the package.json there are additional scripts for starting with different options.
+* To run unit tests, make sure you have mocha installed in the server directory. Then from there run an "npm run test"
 
 ## Testing Strategy
-Unit tests have been created for the back end code. More should continue to be made as code is created. Ideally, front end unit tests should be created too, but due to time constraints haven't been made yet. Unit tests for any game back end is required due to the potential for crashing the server. We're using Mocha for the unit testing framework, and Chai for the assert library.
+Unit tests have been created for the back end code. More should continue to be made as code is created. Ideally, front end unit tests should be created too, but due to time constraints haven't been made yet. We're using Mocha for the unit testing framework, and Chai for the assert library.
 
 In addition to unit tests, all code is required to be reviewed by someone else before it may be pulled into the dev branch. Then after general functionality testing has been complete and the code is deemed acceptable it may be then pulled to main.
 
@@ -70,6 +82,27 @@ you can also send email to <plathymegames@gmail.com>
  # Code of Conduct
 
 This project and everyone participating in it is governed by PlaThyme [Code of Conduct](https://github.com/PlaThyme/PlaThyme/blob/main/CODE_OF_CONDUCT.md). All contributors are required to follow it.
+
+# Work Summary
+Who did what? Here's a list of things each of us worked on:
+## Michael Fulton
+* Built server back end for the website 
+  * Made base server routing, socket creation and base events: Including, but not limited to the creation of communication channels, and managing of data for game rooms. Creating game objects and designing layout for front - back end communications.
+  * Built Game API: Designed game object for each game to extend along with its base methods. So each game when made past the first one would have an easy interface with the front ends using socket.io, and keeping the index.js file clean of game specific code.
+* Built the game room components, along with the player tracker, score tracker, and chat room, both front and back end for these parts.
+* Draw The Word: Built out the majority of the back end / event structure for the game, as well as the front end logic to sync the events with the back end across clients. Also built the scoring / chat detection components. Made unit tests for back end events.
+* Enigma Breaker: Built the entire game from scratch, both front end and back end. The one exception is the CSS for the graph paper which was created by a friend, Ken. Did get some troubleshooting and playtesting help from some of my co-workers, as described in the game's readme. The game is inspired by illeo's Decrypto, but none of their assets, materials, or terminology were used in its creation.
+* Documentation: Helped write the base readme. Created the documentation for how to build a game's back end and integrate it into our project.
+* Testing:
+  * Created the unit testing structure as well as the actual tests in the server folder.
+  * Performed extensive playtesting of EnigmaBreaker, and the Draw The Word game, as well as the landing page. This assisted in creating many of the issues found in the tracker, as real user experience, and feedback was taken to inform decisions.
+* Deployment: Handled prepping the project for deploying, as well as actually did the deploying to Heroku.
+
+
+## Zach Santangelo
+* Contributed Random word selection logic for draw the word and the Status message functionality. 
+* Made carousel component for game selection screen.
+* Added draggable/animated deck of cards to project for slapjack and any other card game that use a standard deck. 
 
 # Licence
 

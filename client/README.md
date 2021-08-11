@@ -35,6 +35,8 @@ A version of draw the word where players alternately draw, and guess the content
 
 ## __Enigma Breaker__
 A word game where teams of players try to pass secret message codes while the other team listens.
+A full description, how to, and information about this game is found here: https://github.com/PlaThyme/PlaThyme/blob/main/client/src/Games/EnigmaBreaker/README.md
+
 # Additional Note, to keep the code clean.
 
 1. Keep the `CSS` files within the Game folder you created. *Do Not add your game CSS inside `app.css` or `index.css` or any other file* 
