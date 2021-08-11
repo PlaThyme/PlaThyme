@@ -29,7 +29,7 @@ export default function App() {
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "The Card game - Mattle UNO™", minPlayers: 2 },
+    { gameId: 4, gameName: "U-Know Card game", minPlayers: 2 },
   ]);
 
   // Game and player Info

@@ -5,14 +5,14 @@ import shuffleArray from "./utils/shuffleArray";
 import Spinner from "./Spinner";
 import useSound from "use-sound";
 
-import bgMusic from "./assets/sounds/game-bg-music.mp3";
+import bgMusic from "./assets/sounds/game-bg-music.wav";
 import unoSound from "./assets/sounds/uno-sound.mp3";
-import shufflingSound from "./assets/sounds/shuffling-cards-1.mp3";
-import skipCardSound from "./assets/sounds/skip-sound.mp3";
-import draw2CardSound from "./assets/sounds/draw2-sound.mp3";
-import wildCardSound from "./assets/sounds/wild-sound.mp3";
-import draw4CardSound from "./assets/sounds/draw4-sound.mp3";
-import gameOverSound from "./assets/sounds/game-over-sound.mp3";
+import shufflingSound from "./assets/sounds/shuffling-cards-1.wav";
+import skipCardSound from "./assets/sounds/skip-sound.wav";
+import draw2CardSound from "./assets/sounds/draw2-sound.wav";
+import wildCardSound from "./assets/sounds/wild-sound.wav";
+import draw4CardSound from "./assets/sounds/draw4-sound.wav";
+import gameOverSound from "./assets/sounds/game-over-sound.wav";
 import "./unotm.css";
 
 export default function UNOTM({ socket }) {
@@ -1159,7 +1159,20 @@ export default function UNOTM({ socket }) {
           do {
             newColor = prompt("Enter first letter of new color (R/G/B/Y)");
             if (newColor !== null) {
-              newColor = newColor.toUpperCase();
+              if (
+                newColor === "R" ||
+                newColor === "G" ||
+                newColor === "B" ||
+                newColor === "Y" ||
+                newColor === "r" ||
+                newColor === "g" ||
+                newColor === "b" ||
+                newColor === "y"
+              ) {
+                newColor = newColor.toUpperCase();
+              } else {
+                newColor = null;
+              }
             }
           } while (newColor === null || newColor === "");
           const removeIndex = player1Deck.indexOf(played_card);
@@ -1228,7 +1241,20 @@ export default function UNOTM({ socket }) {
           do {
             newColor = prompt("Enter first letter of new color (R/G/B/Y)");
             if (newColor !== null) {
-              newColor = newColor.toUpperCase();
+              if (
+                newColor === "R" ||
+                newColor === "G" ||
+                newColor === "B" ||
+                newColor === "Y" ||
+                newColor === "r" ||
+                newColor === "g" ||
+                newColor === "b" ||
+                newColor === "y"
+              ) {
+                newColor = newColor.toUpperCase();
+              } else {
+                newColor = null;
+              }
             }
           } while (newColor === null || newColor === "");
           const removeIndex = player2Deck.indexOf(played_card);
@@ -1302,7 +1328,20 @@ export default function UNOTM({ socket }) {
           do {
             newColor = prompt("Enter first letter of new color (R/G/B/Y)");
             if (newColor !== null) {
-              newColor = newColor.toUpperCase();
+               if (
+                 newColor === "R" ||
+                 newColor === "G" ||
+                 newColor === "B" ||
+                 newColor === "Y" ||
+                 newColor === "r" ||
+                 newColor === "g" ||
+                 newColor === "b" ||
+                 newColor === "y"
+               ) {
+                 newColor = newColor.toUpperCase();
+               } else {
+                 newColor = null;
+               }
             }
           } while (newColor === null || newColor === "");
           const removeIndex = player1Deck.indexOf(played_card);
@@ -1398,7 +1437,20 @@ export default function UNOTM({ socket }) {
           do {
             newColor = prompt("Enter first letter of new color (R/G/B/Y)");
             if (newColor !== null) {
-              newColor = newColor.toUpperCase();
+               if (
+                 newColor === "R" ||
+                 newColor === "G" ||
+                 newColor === "B" ||
+                 newColor === "Y" ||
+                 newColor === "r" ||
+                 newColor === "g" ||
+                 newColor === "b" ||
+                 newColor === "y"
+               ) {
+                 newColor = newColor.toUpperCase();
+               } else {
+                 newColor = null;
+               }
             }
           } while (newColor === null || newColor === "");
           const removeIndex = player2Deck.indexOf(played_card);
@@ -1620,7 +1672,20 @@ export default function UNOTM({ socket }) {
       do {
         newColor = prompt("Enter first letter of new color (R/G/B/Y)");
         if (newColor !== null) {
-          newColor = newColor.toUpperCase();
+           if (
+             newColor === "R" ||
+             newColor === "G" ||
+             newColor === "B" ||
+             newColor === "Y" ||
+             newColor === "r" ||
+             newColor === "g" ||
+             newColor === "b" ||
+             newColor === "y"
+           ) {
+             newColor = newColor.toUpperCase();
+           } else {
+             newColor = null;
+           }
         }
       } while (newColor === null || newColor === "");
       !isSoundMuted && playWildCardSound();
@@ -1658,7 +1723,20 @@ export default function UNOTM({ socket }) {
       do {
         newColor = prompt("Enter first letter of new color (R/G/B/Y)");
         if (newColor !== null) {
-          newColor = newColor.toUpperCase();
+           if (
+             newColor === "R" ||
+             newColor === "G" ||
+             newColor === "B" ||
+             newColor === "Y" ||
+             newColor === "r" ||
+             newColor === "g" ||
+             newColor === "b" ||
+             newColor === "y"
+           ) {
+             newColor = newColor.toUpperCase();
+           } else {
+             newColor = null;
+           }
         }
       } while (newColor === null || newColor === "");
       let copiedDrawCardPileArray = [...drawCardPile];
