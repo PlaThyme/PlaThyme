@@ -2,7 +2,7 @@
 This is similar to the Mattel game UNO™. This is a 2 player game. The UI is failrly intutive to understand. There is a `Draw Card` button which is used to draw a random card and there is `UNO` button which you need to press when you which to say it. you will be able to watch what cards you got and not the other player crads.
 
 # UI
-![game-interface](https://github.com/Sree-Vandana/PlaThyme/tree/main/client/src/images/UKnowGameUI.png)
+![game-interface](https://github.com/Sree-Vandana/PlaThyme/blob/main/client/src/images/UKnowGameUI.png)
 
 # Game Rules
 1. Each player will be randomly distributed 7 cards. Any each player will get alternate turns to drop one or more cards. current player dropping the card, need to match either the number or the colour of the card.
