@@ -98,6 +98,12 @@ Who did what? Here's a list of things each of us worked on:
   * Performed extensive playtesting of EnigmaBreaker, and the Draw The Word game, as well as the landing page. This assisted in creating many of the issues found in the tracker, as real user experience, and feedback was taken to inform decisions.
 * Deployment: Handled prepping the project for deploying, as well as actually did the deploying to Heroku.
 
+
+## Zach Santangelo
+* Contributed Random word selection logic for draw the word and the Status message functionality. 
+* Made carousel component for game selection screen.
+* Added draggable/animated deck of cards to project for slapjack and any other card game that use a standard deck. 
+
 # Licence
 
 [MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
