@@ -150,7 +150,7 @@ Who did what? Here's a list of things each of us worked on:
 
 
 # Acknowledgement
-* Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source, We enjoyed making this project. 
+* Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
 
 # Licence
 
