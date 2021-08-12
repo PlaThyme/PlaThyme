@@ -55,7 +55,7 @@ We are planning to do this in `2 steps`.
 
 ## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm)
 
-![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/UKnowIt.gif)
+![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/Dev/client/src/images/UKnowIt.gif)
 
 # How to set up your environment and run tests
 
@@ -146,12 +146,16 @@ Who did what? Here's a list of things each of us worked on:
 * Added draggable/animated deck of cards to project for slapjack and any other card game that use a standard deck. 
 
 ## Sree Vandana Nadipalli
-
-
+* Modified the README and set up the git repo as per the [open source guide](https://opensource.guide/starting-a-project/)
+* created the `New Game`, `Join Game` form and `game drop down` on landing page.
+* Created the White Board, colour pallet, and other tools for canvas and grid structure for the `Draw The Word` game. along with socket events that transfer data of what the user draws on canvas to other players and score handling based on word difficulty in the backend.
+* Added waiting room feature. Game wont start till all players (minimum required players) join the room.
+* Integrated `Mattle UNO` game into PlaThyme. Modified the code which i got form [here](https://github.com/mizanxali/uno-online) to fix the bugs and correctly fit this platform.
+* Worked and helped with code cleaning and code documentations.
 
 # Acknowledgement
 * Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
-
+* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
 # Licence
 
 [MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
