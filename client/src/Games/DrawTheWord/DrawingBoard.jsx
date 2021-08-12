@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
+import WaitRoom from "../../components/WaitRoom";
 
 /**
  * @param {any} socket -- this is the socket objesct using which client connected to server.
@@ -21,7 +22,7 @@ export default function DrawingBoard({ socket }) {
   const [wordOptions, setWordOptions] = useState(["", "", ""]);
   const [countDown, setCountDown] = useState(0);
   const [turnStarted, setTurnStarted] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState("Waiting For Players");
 
   const colorsRef = useRef(null);
   const colourPalletDict = {
@@ -83,7 +84,6 @@ export default function DrawingBoard({ socket }) {
     socket.on("update-game", (data) => {
       var canvas = document.querySelector("#board");
       var ctx = canvas.getContext("2d");
-
       // Canvas data that user draws on whiteboard.
       if (data.event === "canvas-data") {
         var image = new Image();
@@ -117,7 +117,7 @@ export default function DrawingBoard({ socket }) {
       }
     });
   }, []);
-  
+
   // Logic for drawing on canvas.
   useEffect(() => {
     var canvas = document.querySelector("#board");
@@ -128,7 +128,7 @@ export default function DrawingBoard({ socket }) {
     var last_mouse = { x: 0, y: 0 };
     var strokeColor = "#00000000";
     let timeoutValue;
-    
+
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 

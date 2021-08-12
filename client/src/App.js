@@ -129,10 +129,7 @@ export default function App() {
   const renderGame = (gameId) => {
     switch(gameId){
       case 1:
-        if(startGame === true){
-          return <DrawTheWord socket={socket}/>;
-        }
-        return <WaitRoom/>;
+        return <DrawTheWord socket={socket}/>;
       case 2:
        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       case 3:
