@@ -22,7 +22,6 @@ class DrawTheWord extends Game {
     this.scores = {};
     this.scores[this.turnOrder[0]] = 0;
     this.selectedWordDifficulty = null;
-    this.handleEndOfTurn();
     this.scoreValues = { easyPoint: 100, mediumPoint: 200, hardPoint: 300 };
   }
 
@@ -31,7 +30,6 @@ class DrawTheWord extends Game {
    * This function deals with what to do with the data received form clients.
    * */
   recieveData(data) {
-    console.log("event from client: ", data);
     if (data.event === "canvas-data") {
       super.sendGameData(data);
     }
@@ -90,6 +88,9 @@ class DrawTheWord extends Game {
     if (playerName) {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
+    }
+    if(!this.gameStarted && (this.turnOrder.length >= this.minPlayers)){
+      this.startGame();
     }
   }
 
