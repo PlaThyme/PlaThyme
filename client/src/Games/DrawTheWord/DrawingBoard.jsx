@@ -1,8 +1,3 @@
-/**
- * @Resources
- * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
- */
-
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -117,7 +112,7 @@ export default function DrawingBoard({ socket }) {
       }
     });
   }, []);
-  
+
   // Logic for drawing on canvas.
   useEffect(() => {
     var canvas = document.querySelector("#board");
@@ -128,7 +123,7 @@ export default function DrawingBoard({ socket }) {
     var last_mouse = { x: 0, y: 0 };
     var strokeColor = "#00000000";
     let timeoutValue;
-    
+
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
