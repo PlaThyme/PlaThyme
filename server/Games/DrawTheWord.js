@@ -99,9 +99,9 @@ class DrawTheWord extends Game {
    * @param {String} playerName - name of the player.
    */
   disconnection(playerName) {
+    this.players = this.players.filter((player) => player !== playerName);
     if (playerName === this.turnOrder[0]) {
       //Do something about current player disconnection.
-      this.players = this.players.filter((player) => player !== playerName);
       this.turnStarted = false;
       if (this.turnOrder.length === 1) {
         this.turnOrder = this.turnOrder.filter(
