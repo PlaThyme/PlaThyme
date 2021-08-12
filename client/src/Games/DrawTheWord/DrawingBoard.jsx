@@ -120,99 +120,99 @@ export default function DrawingBoard({ socket }) {
 
   // Logic for drawing on canvas.
   useEffect(() => {
-      var canvas = document.querySelector("#board");
-      var ctx = canvas.getContext("2d");
-      var sketch = document.querySelector("#sketch");
-      var sketch_style = getComputedStyle(sketch);
-      var mouse = { x: 0, y: 0 };
-      var last_mouse = { x: 0, y: 0 };
-      var strokeColor = "#00000000";
-      let timeoutValue;
+    var canvas = document.querySelector("#board");
+    var ctx = canvas.getContext("2d");
+    var sketch = document.querySelector("#sketch");
+    var sketch_style = getComputedStyle(sketch);
+    var mouse = { x: 0, y: 0 };
+    var last_mouse = { x: 0, y: 0 };
+    var strokeColor = "#00000000";
+    let timeoutValue;
 
-      canvas.width = parseInt(sketch_style.getPropertyValue("width"));
-      canvas.height = parseInt(sketch_style.getPropertyValue("height"));
+    canvas.width = parseInt(sketch_style.getPropertyValue("width"));
+    canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
-      const onPaint = () => {
-        if (myTurn) {
-          ctx.beginPath();
-          ctx.moveTo(last_mouse.x, last_mouse.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.lineWidth = lineWidthValue;
-          ctx.strokeStyle = strokeColor;
-          ctx.lineJoin = "round";
-          ctx.lineCap = "round";
-          ctx.closePath();
-          ctx.stroke();
+    const onPaint = () => {
+      if (myTurn) {
+        ctx.beginPath();
+        ctx.moveTo(last_mouse.x, last_mouse.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.lineWidth = lineWidthValue;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.closePath();
+        ctx.stroke();
 
-          if (timeoutValue !== undefined) {
-            clearTimeout(timeoutValue);
-          }
-          timeoutValue = setTimeout(() => {
-            var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
-            socket.emit("game-data", {
-              event: "canvas-data",
-              image: base64ImageData,
-            });
-          }, 200);
+        if (timeoutValue !== undefined) {
+          clearTimeout(timeoutValue);
         }
+        timeoutValue = setTimeout(() => {
+          var base64ImageData = canvas.toDataURL("image/png"); // contains canvas images in coded fromat
+          socket.emit("game-data", {
+            event: "canvas-data",
+            image: base64ImageData,
+          });
+        }, 200);
+      }
+    };
+
+    if (myTurn) {
+      var colors = document.getElementsByClassName("color");
+      var svgPencil = document.getElementById("svgPencil");
+      var svgEraser = document.getElementById("svgEraser");
+      var svgCleanBoard = document.getElementById("svgCleanBoard");
+      var strokeWidth = document.getElementById("strokeWidth");
+      var lineWidthValue = 2;
+      strokeColor = "#000000";
+
+      const handleCleanBoard = (e) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        socket.emit("game-data", { event: "clear-canvas-data" });
+      };
+      const handleColorUpdate = (e) => {
+        strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
+      };
+      const handleLineWidthChange = (e) => {
+        lineWidthValue = e.target.value;
       };
 
-      if (myTurn) {
-        var colors = document.getElementsByClassName("color");
-        var svgPencil = document.getElementById("svgPencil");
-        var svgEraser = document.getElementById("svgEraser");
-        var svgCleanBoard = document.getElementById("svgCleanBoard");
-        var strokeWidth = document.getElementById("strokeWidth");
-        var lineWidthValue = 2;
-        strokeColor = "#000000";
-
-        const handleCleanBoard = (e) => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          socket.emit("game-data", { event: "clear-canvas-data" });
-        };
-        const handleColorUpdate = (e) => {
-          strokeColor = colourPalletDict[e.target.className.split(" ")[1]];
-        };
-        const handleLineWidthChange = (e) => {
-          lineWidthValue = e.target.value;
-        };
-
-        for (let i = 0; i < colors.length; i++) {
-          colors[i].addEventListener("click", handleColorUpdate, false);
-        }
-        svgPencil.addEventListener(
-          "click",
-          () => {
-            if (strokeColor === "#ffffff") strokeColor = "#000000";
-          },
-          false
-        );
-        svgEraser.addEventListener(
-          "click",
-          () => (strokeColor = "#ffffff"),
-          false
-        );
-        svgCleanBoard.addEventListener("click", handleCleanBoard, false);
-        strokeWidth.addEventListener("change", handleLineWidthChange, false);
-
-        function mouseMoveAddEvent(e) {
-          last_mouse.x = mouse.x;
-          last_mouse.y = mouse.y;
-
-          mouse.x = e.pageX - this.offsetLeft;
-          mouse.y = e.pageY - this.offsetTop;
-        }
-        function mouseDownAddEvent(e) {
-          canvas.addEventListener("mousemove", onPaint, false);
-        }
-        function mouseUpAddEvent(e) {
-          canvas.removeEventListener("mousemove", onPaint, false);
-        }
-
-        canvas.addEventListener("mousemove", mouseMoveAddEvent, false);
-        canvas.addEventListener("mousedown", mouseDownAddEvent, false);
-        canvas.addEventListener("mouseup", mouseUpAddEvent, false);
+      for (let i = 0; i < colors.length; i++) {
+        colors[i].addEventListener("click", handleColorUpdate, false);
       }
+      svgPencil.addEventListener(
+        "click",
+        () => {
+          if (strokeColor === "#ffffff") strokeColor = "#000000";
+        },
+        false
+      );
+      svgEraser.addEventListener(
+        "click",
+        () => (strokeColor = "#ffffff"),
+        false
+      );
+      svgCleanBoard.addEventListener("click", handleCleanBoard, false);
+      strokeWidth.addEventListener("change", handleLineWidthChange, false);
+
+      function mouseMoveAddEvent(e) {
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+
+        mouse.x = e.pageX - this.offsetLeft;
+        mouse.y = e.pageY - this.offsetTop;
+      }
+      function mouseDownAddEvent(e) {
+        canvas.addEventListener("mousemove", onPaint, false);
+      }
+      function mouseUpAddEvent(e) {
+        canvas.removeEventListener("mousemove", onPaint, false);
+      }
+
+      canvas.addEventListener("mousemove", mouseMoveAddEvent, false);
+      canvas.addEventListener("mousedown", mouseDownAddEvent, false);
+      canvas.addEventListener("mouseup", mouseUpAddEvent, false);
+    }
   }, [myTurn]);
 
   /** Handle functions for "Draw the word" Game */
