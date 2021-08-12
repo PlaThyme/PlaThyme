@@ -11,7 +11,7 @@ import logo from './images/plathyme.png';
 import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
 import TestGame from './Games/TestGame/TestGame';
-import UNOTM from './Games/UNOtm/UNOtm';
+import UKnowIt from './Games/UKnowIt/UKnowIt';
 
 import './App.css';
 import { TruckIcon } from '@heroicons/react/solid';
@@ -29,7 +29,7 @@ export default function App() {
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "U-Know Card game", minPlayers: 2 },
+    { gameId: 4, gameName: "U-Know It", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -130,6 +130,7 @@ export default function App() {
     switch(gameId){
       case 1:
         if(startGame === true){
+          console.log("DTW starting...");
           return <DrawTheWord socket={socket}/>;
         }
         return <WaitRoom/>;
@@ -139,7 +140,7 @@ export default function App() {
         break;
       case 4:
         console.log("inside APP");
-        return <UNOTM socket={socket} />;
+        return <UKnowIt socket={socket} />;
       default:
         break;
     }

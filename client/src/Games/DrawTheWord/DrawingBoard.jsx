@@ -229,7 +229,6 @@ export default function DrawingBoard({ socket }) {
   const handleWordSelect = (word, time, difficulty) => {
     setSelectedWord(word);
     closeModal();
-    console.log("in frontend emit --> ", word, word.length);
     socket.emit("game-data", {
       event: "word-selection",
       word: word,

@@ -17,10 +17,10 @@ This is similar to the Mattel game UNO™. This is a 2 player game. The UI is fa
 
 # Sources and Thanks to
 1. https://github.com/mizanxali/uno-online (Mizan Ali, thank you for letting us use and modify the code).
-2. https://alexder.itch.io/uno-card-game-asset-pack (Alex Der, thank you for card assets).
+2. https://alexder.itch.io/uno-card-game-asset-pack ([Alex Der](https://alexder.itch.io/), thank you for card assets).
 3. https://codepen.io/3mil1/details/eYYQbwb (Buttons Design, License info inside link).
 4. Sounds from [mixkit](https://mixkit.co/) and its [License Info here](https://mixkit.co/license/#sfxFree)
-    * [bell sounds](https://mixkit.co/free-sound-effects/bell/) (for draw2Cards, 4 cards, gameover and skip) : 
+    * [bell sounds](https://mixkit.co/free-sound-effects/bell/) (for draw2Cards, 4 cards, gameover, uno button, UNO button click and skip) : 
     * [magic notification](https://mixkit.co/free-sound-effects/magic/  ) (for wlid card)
     * [paper](https://mixkit.co/free-sound-effects/paper/) (for card shuffle)
     * [back ground music](https://mixkit.co/free-sound-effects/music/)

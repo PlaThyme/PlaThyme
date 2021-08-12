@@ -7,7 +7,7 @@ https://plathyme.herokuapp.com/
 * Michael Fulton
 
 # PlaThyme
-It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game, create a private room and start playing games. The site shall be able to host open source games created by other contributors. 
+It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game from the list of games (currently 3 games) and create a private room and start playing the game. The site will be able to host open source games created by other contributors ([learn how to integrate your game into Plathyme](https://github.com/PlaThyme/PlaThyme/blob/main/CONTRIBUTING.md)). 
 
 # Why PlaThyme
 Remote working made many of us start playing online games with our collegues or friends. We observed for different games we use different sites. We wanted to create a single site that can host multiple multiplayer games. So we are developing a Website that makes it easy for other developers to contribute and easily integrate their games into this project.
@@ -33,19 +33,29 @@ We are planning to do this in `2 steps`.
 2. Following this, additional games will be created individually by each of the initial contributors, using the Game API developed in `step 1`.
 
 # Project Roadmap
-* Repository creation and initial commit -- Done
+* Repository creation, basic project structure and initial commit 
 * Landing page and game selection menu / lobby + Private Room & game container.
 * set up a server and client communications (Server API, Socket.io implementation)
 * create private rooms and play multiplayer game
-* first game creation: __Draw the Word__
-* Future work: Additional game ideas: 
-  1. __Draw the word, down the line__
-  2. __Enigma Breake -- DONE__
-  3. __Slapjack__
+* first game creation: [__Draw the Word__](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)
+* Additional game ideas: 
+  1. __[Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker) -- DONE__
+  2. __Slapjack__
+  3. __[U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm) -- DONE__
 
-# Description of Games
+# Games in PlaThyme
 
-Description of each game can be found [here](https://github.com/PlaThyme/PlaThyme/tree/main/client/README.md)
+## [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)
+
+![DeawTheWord Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/drawing.gif)
+
+## [Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker)
+
+![Enigma Breake Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/notfound.gif)
+
+## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm)
+
+![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/notfound.gif)
 
 # How to set up your environment and run tests
 

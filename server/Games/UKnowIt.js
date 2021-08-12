@@ -1,9 +1,9 @@
 /**
- * @Game UNO™
+ * @Game Similar to Mattle UNO™ -  `U-Know` It Game
  */
 
 const Game = require("./Game.js");
-class UNOtm extends Game {
+class UKnowIt extends Game {
   /** 
    * All the game variables required by `UNO™` are initialized here. 
   **/
@@ -61,4 +61,4 @@ class UNOtm extends Game {
 
 }
 
-module.exports = UNOtm;
+module.exports = UKnowIt;
