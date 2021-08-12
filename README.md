@@ -146,12 +146,12 @@ Who did what? Here's a list of things each of us worked on:
 * Added draggable/animated deck of cards to project for slapjack and any other card game that use a standard deck. 
 
 ## Sree Vandana Nadipalli
-* Modified the README and set up the git repo as per the [open source guide](https://opensource.guide/starting-a-project/)
+* Modified the README and set up the git repo as per the [open source guide](https://opensource.guide/starting-a-project/) (opened discussions tab, contributing guidelines, and Code of Conduct. Added template for issues, bug report and new feature request). 
 * created the `New Game`, `Join Game` form and `game drop down` on landing page.
-* Created the White Board, colour pallet, and other tools for canvas and grid structure for the `Draw The Word` game. along with socket events that transfer data of what the user draws on canvas to other players and score handling based on word difficulty in the backend.
+* Created the White Board, colour pallet, and other tools for canvas and created grid structure for `Draw The Word` game for the placement of timer, word selected and canvas, along with socket events that transfer data of what the user draws on canvas to other players and added score handling based on word difficulty in the backend.
 * Added waiting room feature. Game wont start till all players (minimum required players) join the room.
-* Integrated `Mattle UNO` game into PlaThyme. Modified the code which i got form [here](https://github.com/mizanxali/uno-online) to fix the bugs and correctly fit this platform.
-* Worked and helped with code cleaning and code documentations.
+* Integrated `Mattle UNO` game into PlaThyme. Modified the code which I got from [here](https://github.com/mizanxali/uno-online) to correctly fit into this platform and fixed few bugs. (Also contacted the owner of the [repo which conatins code](https://github.com/mizanxali/uno-online) and developer of [game assets](https://alexder.itch.io/uno-card-game-asset-pack) to confirm that I could use their content in PlaThyme).
+* Periodically worked on and helped with code cleaning, code documentations and refactoring.
 
 # Acknowledgement
 * Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
