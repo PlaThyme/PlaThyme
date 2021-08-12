@@ -17,7 +17,6 @@ class Game{
     sendDataToPlayer(playerName, data){
         if(playerName){
             if(this.roomCode){
-                console.log("playerName, roomCode === ", playerName, this.roomCode);
                 this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
             }
         }
