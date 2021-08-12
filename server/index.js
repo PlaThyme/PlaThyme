@@ -4,7 +4,6 @@ const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const http = require("http").createServer(app);
-const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
 const UKnowIt = require("./Games/UKnowIt");
 const EnigmaBreaker = require("./Games/EnigmaBreaker/EnigmaBreaker");

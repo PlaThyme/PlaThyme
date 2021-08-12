@@ -5,17 +5,13 @@ import io from "socket.io-client";
 import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import WaitRoom from './components/WaitRoom';
 import logo from './images/plathyme.png';
 
 import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
-import TestGame from './Games/TestGame/TestGame';
 import UKnowIt from './Games/UKnowIt/UKnowIt';
 
 import './App.css';
-import { TruckIcon } from '@heroicons/react/solid';
-
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -135,7 +131,6 @@ export default function App() {
       case 3:
         break;
       case 4:
-        console.log("inside APP");
         return <UKnowIt socket={socket} />;
       default:
         break;

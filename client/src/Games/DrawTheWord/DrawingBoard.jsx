@@ -3,7 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
-import WaitRoom from "../../components/WaitRoom";
 
 /**
  * @param {any} socket -- this is the socket objesct using which client connected to server.

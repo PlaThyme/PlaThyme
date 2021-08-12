@@ -132,25 +132,6 @@ export default function UKnowIt({ socket }) {
           playedCardsPile,
           drawCardPile,
         } = data;
-        console.log(
-          "initData --> ",
-          "gameOver = ",
-          gameOver,
-          "turn = ",
-          turn,
-          "player1Deck = ",
-          player1Deck,
-          "player2Deck = ",
-          player2Deck,
-          "currentColor = ",
-          currentColor,
-          "currentNumber = ",
-          currentNumber,
-          "playedCardsPile = ",
-          playedCardsPile,
-          "drawCardPile = ",
-          drawCardPile
-        );
         setGameOver(gameOver);
         setTurn(turn);
         setPlayer1Deck(player1Deck);
@@ -173,28 +154,6 @@ export default function UKnowIt({ socket }) {
           playedCardsPile,
           drawCardPile,
         } = data;
-        console.log(
-          "updateGameState --> ",
-          "gameOver = ",
-          gameOver,
-          "winner = ",
-          winner,
-          "turn = ",
-          turn,
-          "player1Deck = ",
-          player1Deck,
-          "player2Deck = ",
-          player2Deck,
-          "currentColor = ",
-          currentColor,
-          "currentNumber = ",
-          currentNumber,
-          "playedCardsPile = ",
-          playedCardsPile,
-          "drawCardPile = ",
-          drawCardPile
-        );
-
         winner && setWinner(winner);
         turn && setTurn(turn);
         player1Deck && setPlayer1Deck(player1Deck);
@@ -1871,7 +1830,7 @@ export default function UKnowIt({ socket }) {
                       src={require("./assets/logo.png").default}
                       alt="asset logo"
                     />
-                    {turn === currentUser && (
+                    {turn === currentUser && winner === "" && (
                       <span className="text-white font-bold text-2xl">
                         <h1> -- Your Turn -- </h1>
                       </span>
@@ -1908,8 +1867,8 @@ export default function UKnowIt({ socket }) {
                     <div>
                       {winner !== "" && (
                         <>
-                          <h1>GAME OVER</h1>
-                          <h2>
+                          <h1 className="text-white text-xl">GAME OVER</h1>
+                          <h2 className="text-white text-xl">
                             {winner === "Player 1" ? users[0] : users[1]} wins!
                           </h2>
                         </>
