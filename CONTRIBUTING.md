@@ -17,6 +17,8 @@ __To integrate new game in this project. Follow these steps.__
 ## Build Your Game’s Back End
 If your game is multiplayer, or requires a server to make decisions, keep score, relay messages between players, etc, you’ll need to build out a back end. For ease of game creation, we’ve made a class that your game can extend which you can use to encapsulate your game’s needs, as well as keeping our own server code clean. So I’ll cover all the changes each game must put in, and then I’ll cover the functionality of the __Game__ class.
 
+*Detailed information about how `Game class` works and methods implemented in it can be found [here](https://github.com/PlaThyme/PlaThyme/tree/main/server)*
+
 __Below are the things required to be included in your game's back end.__
 
 ### 1) __./server/index.js__
@@ -56,13 +58,24 @@ So as you can see above, the MyGame class is extending the Game class, and calls
 
 To aid you, the Game class has functionality to simplify communications, and integration with the rest of the site. The methods for that are described in the next section.
 
-__Detailed discription of `Game.js` methods is provided [here](https://github.com/PlaThyme/PlaThyme/tree/Dev/server/README.md).__
+__Detailed discription of `Game.js` methods is provided [here](https://github.com/PlaThyme/PlaThyme/tree/main/server).__
 
-#  Issues and Pull Requests
-# How to file a bug report?
+#  Issues, Bug Report and Feature request
 
-# How to suggest a new feature?
+* Go to `Issues` tab on top and click on `new issue` button. You will see two options, one for `Bug report` and other for `Feature request` click on your desired option and you can start typing. *(you will find the desired Bug Report and Feature Request template, Please try to follow that, as it can help us clearly understand what you are saying)*
+# How to do Pull Request
 
+Have your own copy of `PlaThyme`. Fork the `PlaThyme` repo. Integrate your new game or modify the code to make it better, and when you are satisfied with your work and want us to integrate your work into PlaThyme. Come back to this [original repo](https://github.com/PlaThyme/PlaThyme) and follow these steps.
+* click on `Pull requets` tab present on  top.
+* Click on `New Request` button
+* click on `compare accross forks` and you will find something like
+  `base  repository: PlaThyme/PlaThyme` `base: PullRequest_Dev`   <--  `head repository: your_name/PlaThyme` `compare: your_desired_branch`
+  and click on `Create Pull Request button`. 
+* Congratulations you made your `Pull Request` Successfully
+
+  *__Always choose base branch as `PullRequest_Dev` and not `main`__*
+
+__Disclaimer__: *You making pull request does not guarantee that we will add your code into PlaThyme. We will review it and test it and if we feel your changes are not conflicting anything on the base branch then we will let ypu know and integrate you changes or additions.*
 # Code of Conduct
 
 This project and everyone participating in it is governed by PlaThyme [Code of Conduct](https://github.com/PlaThyme/PlaThyme/blob/main/CODE_OF_CONDUCT.md). All contributors are required to follow it.

@@ -198,9 +198,9 @@ export default function SelectGame({ listofGames, createGame, joinGame, setSelec
                 id="name"
                 name="name"
                 placeholder="Username"
-                maxlength="20"
+                maxLength="20"
                 className="border border-gray-300 shadow p-2 w-full"
-                autocomplete="off"
+                autoComplete="off"
                 ref={nameRef}
                 required
               />
@@ -220,8 +220,8 @@ export default function SelectGame({ listofGames, createGame, joinGame, setSelec
                 id="name"
                 name="name"
                 placeholder="Username"
-                autocomplete="off"
-                maxlength="20"
+                autoComplete="off"
+                maxLength="20"
                 className="border border-gray-300 shadow p-2 w-full"
                 ref={nameRef}
                 required
@@ -233,7 +233,7 @@ export default function SelectGame({ listofGames, createGame, joinGame, setSelec
                 id="name"
                 name="name"
                 placeholder="Enter Room Code"
-                autocomplete="off"
+                autoComplete="off"
                 className="border border-gray-300 shadow p-2 w-full"
                 ref={codeRef}
                 required

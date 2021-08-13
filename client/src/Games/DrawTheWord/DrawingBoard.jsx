@@ -1,14 +1,8 @@
-/**
- * @Resources
- * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
- */
-
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 import ToolTip from "../../components/ToolTip";
 import "./DrawingBoardStyles.css";
-import WaitRoom from "../../components/WaitRoom";
 
 /**
  * @param {any} socket -- this is the socket objesct using which client connected to server.
@@ -232,7 +226,6 @@ export default function DrawingBoard({ socket }) {
   const handleWordSelect = (word, time, difficulty) => {
     setSelectedWord(word);
     closeModal();
-    console.log("in frontend emit --> ", word, word.length);
     socket.emit("game-data", {
       event: "word-selection",
       word: word,

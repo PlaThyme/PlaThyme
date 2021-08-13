@@ -66,7 +66,10 @@ const GameRoom = ({
             <div className="text-center bg-thyme">PLAYERS</div>
             <ul className="flex-col bg-gray-900 divide-y-4 divide-thyme divide-dashed content-center">
               {allUsers.map((player) => (
-                <h1 className="text-xl text-center align-middle bg-gray-900 text-thyme-lightest p-2">
+                <h1
+                  className="text-xl text-center align-middle bg-gray-900 text-thyme-lightest p-2"
+                  key={player.name}
+                >
                   {player.name} : {player.score}
                 </h1>
               ))}
