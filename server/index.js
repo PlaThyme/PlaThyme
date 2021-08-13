@@ -4,9 +4,8 @@ const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const http = require("http").createServer(app);
-const TestGame = require("./Games/TestGame");
 const DrawTheWord = require("./Games/DrawTheWord");
-const UNOtm = require("./Games/UNOtm");
+const UKnowIt = require("./Games/UKnowIt");
 const EnigmaBreaker = require("./Games/EnigmaBreaker/EnigmaBreaker");
 const { makeid } = require("./makeid");
 const {
@@ -46,11 +45,6 @@ io.on("connection", (socket) => {
       console.error(error);
     }
   });
-  // socket.on('sendMessage-callback', (data, callback) => {
-  //   const user = getUser(socket.id)
-  //   io.to(user.roomCode).emit('message-callback', {user: user.name, text: data.message})
-  //   callback()
-  // })
 
   //Below are the functions to to handle the socket.on events.
   
@@ -101,8 +95,8 @@ io.on("connection", (socket) => {
       case 2:
         games[roomCode] = new EnigmaBreaker(roomCode, socket, io, [data.name], data.minPlayers);
         break;
-      case 4: // UNO™
-        games[roomCode] = new UNOtm(roomCode, socket, io, data.name, data.minPlayers);
+      case 3: // UKnowIt
+        games[roomCode] = new UKnowIt(roomCode, socket, io, data.name, data.minPlayers);
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
           games[roomCode].startGame();
         }
@@ -120,8 +114,6 @@ io.on("connection", (socket) => {
     try {
       const gid = getGameId(roomCode);
       const userId = socket.id;
-      // allow only min number of players to join the room; expect for game id: 1 (DrawTheWord)
-      if((games[roomCode].players.length + 1) <= games[roomCode].minPlayers || (gid == 1 || gid == 2)){
         //Make sure game room exists.
         if (gid === null || games[roomCode] === undefined) {
           socket.emit("error", { error: "gid" });
@@ -145,7 +137,6 @@ io.on("connection", (socket) => {
 
         //If the user name is valid, join the player to the room, aand
         if (error.error !== "dup" && error.error !== "dup") {
-
           socket.broadcast.to(roomCode).emit("message", {
             sender: "",
             text: `"${name}" has joined the game.`,
@@ -160,16 +151,14 @@ io.on("connection", (socket) => {
           //Notify the game object that a new player has joined.
           // Test: enter wrong room code; got error. (add checks)
           switch(gid){
-            case 1: // DrawTheWord
-              if ( games[roomCode].players.length >= games[roomCode].minPlayers) {
-                games[roomCode].startGame();
-              }
-              break;
-
-            case 4: // UNO?™
+            case 3: // UKnowIt
               if(games[roomCode].players.length === games[roomCode].minPlayers){
                   games[roomCode].startGame();
                 } 
+                else {
+                  // send an error event indicating thta current room is full and redireect them to home page agin.
+                  io.to(userId).emit("GameRoomFullAlert");
+                }
             break;
 
             default:
@@ -178,11 +167,6 @@ io.on("connection", (socket) => {
 
           //Send all players updated user list.
           io.to(roomCode).emit("userData", getUsersInRoom(roomCode));
-        }
-
-      } else {
-          // send an error event indicating thta current room is full and redireect them to home page agin.
-          io.to(userId).emit("GameRoomFullAlert");
         }
     } catch (error) {
       console.error(error);

@@ -15,10 +15,8 @@ class Game{
     }
     //Call this function in your class via "super.sendDataToPlayer(playerName, data) to broadcast a game state update to a specific player.
     sendDataToPlayer(playerName, data){
-        console.log("inside sendDattaToPlayer");
         if(playerName){
             if(this.roomCode){
-                console.log("playerName, roomCode === ", playerName, this.roomCode);
                 this.io.to(getUserByNameAndCode(playerName, this.roomCode).id).emit('update-game-player', data);
             }
         }

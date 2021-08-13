@@ -22,7 +22,6 @@ class DrawTheWord extends Game {
     this.scores = {};
     this.scores[this.turnOrder[0]] = 0;
     this.selectedWordDifficulty = null;
-    this.handleEndOfTurn();
     this.scoreValues = { easyPoint: 100, mediumPoint: 200, hardPoint: 300 };
   }
 
@@ -64,19 +63,19 @@ class DrawTheWord extends Game {
    * when minimum number of players join the GameRoom, start the game.
    */
   startGame() {
-    super.sendGameData({ event: "start-game" });
-    this.gameStarted = true;
-    //Send a request for the current player to select their word.
-    if (this.turnOrder.length === this.minPlayers) {
+    if(!this.gameStarted && this.turnOrder.length >= this.minPlayers){
+      super.sendGameData({ event: "start-game" });
+      this.gameStarted = true;
+      //Send a request for the current player to select their word.
       let words = this.generateWords();
       const theirTurn = { event: "your-turn", words };
       super.sendDataToPlayer(this.turnOrder[0], theirTurn);
-    }
-    if (this.gameStarted === true && this.turnOrder.length > this.minPlayers) {
-      super.sendGameData({
-        event: "show-blank-word",
-        wordLength: this.selectedWordLength,
-      });
+      if (this.gameStarted === true && this.turnOrder.length > this.minPlayers) {
+        super.sendGameData({
+          event: "show-blank-word",
+          wordLength: this.selectedWordLength,
+        });
+      }
     }
   }
 
@@ -90,6 +89,9 @@ class DrawTheWord extends Game {
       this.turnOrder.push(playerName);
       this.scores[playerName] = 0;
     }
+    if(!this.gameStarted && (this.turnOrder.length >= this.minPlayers)){
+      this.startGame();
+    }
   }
 
   /**
@@ -98,6 +100,7 @@ class DrawTheWord extends Game {
    * @param {String} playerName - name of the player.
    */
   disconnection(playerName) {
+    this.players = this.players.filter((player) => player !== playerName);
     if (playerName === this.turnOrder[0]) {
       //Do something about current player disconnection.
       this.turnStarted = false;

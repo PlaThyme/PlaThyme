@@ -1,8 +1,3 @@
-/**
- * @Resources
- * https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
- */
-
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -21,7 +16,7 @@ export default function DrawingBoard({ socket }) {
   const [wordOptions, setWordOptions] = useState(["", "", ""]);
   const [countDown, setCountDown] = useState(0);
   const [turnStarted, setTurnStarted] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState("Waiting For Players");
 
   const colorsRef = useRef(null);
   const colourPalletDict = {
@@ -83,7 +78,9 @@ export default function DrawingBoard({ socket }) {
     socket.on("update-game", (data) => {
       var canvas = document.querySelector("#board");
       var ctx = canvas.getContext("2d");
-
+      if (data.event === "start-game"){
+        setStatusMessage("Get ready! Waiting on word selection.");
+      }
       // Canvas data that user draws on whiteboard.
       if (data.event === "canvas-data") {
         var image = new Image();
@@ -117,7 +114,7 @@ export default function DrawingBoard({ socket }) {
       }
     });
   }, []);
-  
+
   // Logic for drawing on canvas.
   useEffect(() => {
     var canvas = document.querySelector("#board");
@@ -128,7 +125,7 @@ export default function DrawingBoard({ socket }) {
     var last_mouse = { x: 0, y: 0 };
     var strokeColor = "#00000000";
     let timeoutValue;
-    
+
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
@@ -229,7 +226,6 @@ export default function DrawingBoard({ socket }) {
   const handleWordSelect = (word, time, difficulty) => {
     setSelectedWord(word);
     closeModal();
-    console.log("in frontend emit --> ", word, word.length);
     socket.emit("game-data", {
       event: "word-selection",
       word: word,
