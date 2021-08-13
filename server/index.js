@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
       case 2:
         games[roomCode] = new EnigmaBreaker(roomCode, socket, io, [data.name], data.minPlayers);
         break;
-      case 4: // UNO™
+      case 3: // UKnowIt
         games[roomCode] = new UKnowIt(roomCode, socket, io, data.name, data.minPlayers);
         if (games[roomCode].players.length === games[roomCode].minPlayers) {
           games[roomCode].startGame();
@@ -151,13 +151,7 @@ io.on("connection", (socket) => {
           //Notify the game object that a new player has joined.
           // Test: enter wrong room code; got error. (add checks)
           switch(gid){
-            case 1: // DrawTheWord
-              if ( games[roomCode].players.length >= games[roomCode].minPlayers) {
-                games[roomCode].startGame();
-              }
-              break;
-
-            case 4: // UNO?™
+            case 3: // UKnowIt
               if(games[roomCode].players.length === games[roomCode].minPlayers){
                   games[roomCode].startGame();
                 } 
