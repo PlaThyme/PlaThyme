@@ -41,7 +41,7 @@ We are planning to do this in `2 steps`.
 * Additional game ideas: 
   1. __[Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker) -- DONE__
   2. __Slapjack__
-  3. __[U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm) -- DONE__
+  3. __[U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt) -- DONE__
 
 # Games in PlaThyme
 
@@ -53,7 +53,7 @@ We are planning to do this in `2 steps`.
 
 ![Enigma Breake Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/notfound.gif)
 
-## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm)
+## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt)
 
 ![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/Dev/client/src/images/UKnowIt.gif)
 
@@ -155,7 +155,7 @@ Who did what? Here's a list of things each of us worked on:
 
 # Acknowledgement
 * Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
-* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
+* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
 # Licence
 
 [MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
