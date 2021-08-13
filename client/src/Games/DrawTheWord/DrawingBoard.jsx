@@ -84,6 +84,9 @@ export default function DrawingBoard({ socket }) {
     socket.on("update-game", (data) => {
       var canvas = document.querySelector("#board");
       var ctx = canvas.getContext("2d");
+      if (data.event === "start-game"){
+        setStatusMessage("Get ready! Waiting on word selection.");
+      }
       // Canvas data that user draws on whiteboard.
       if (data.event === "canvas-data") {
         var image = new Image();
