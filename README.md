@@ -60,7 +60,7 @@ We are planning to do this in `2 steps`.
 
 ## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt)
 
-![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/Dev/client/src/images/UKnowIt.gif)
+![U-Know It](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/UKnowIt.gif)
 
 # How to set up your environment and run tests
 
