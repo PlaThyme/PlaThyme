@@ -25,7 +25,7 @@ export default function App() {
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "U-Know It", minPlayers: 2 },
+    { gameId: 3, gameName: "U-Know It", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -129,9 +129,9 @@ export default function App() {
       case 2:
        return <EnigmaBreaker socket={socket} playerName={currentPlayer}/>;
       case 3:
-        break;
-      case 4:
         return <UKnowIt socket={socket} />;
+      case 4:
+        break;
       default:
         break;
     }
