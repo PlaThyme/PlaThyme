@@ -253,7 +253,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player1Deck.indexOf(played_card);
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -314,7 +314,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player2Deck.indexOf(played_card);
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -379,7 +379,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player1Deck.indexOf(played_card);
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -440,7 +440,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player2Deck.indexOf(played_card);
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -517,7 +517,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player1Deck.indexOf(played_card);
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -576,7 +576,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player2Deck.indexOf(played_card);
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -639,7 +639,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player1Deck.indexOf(played_card);
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -698,7 +698,7 @@ export default function UKnowIt({ socket }) {
             const removeIndex = player2Deck.indexOf(played_card);
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let copiedDrawCardPileArray = [...drawCardPile];
               let num_of_pop = 2;
@@ -785,7 +785,7 @@ export default function UKnowIt({ socket }) {
             const drawCard2 = copiedDrawCardPileArray.pop();
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               //pull out last two elements from drawCardPile
               let num_of_pop = 2;
@@ -868,7 +868,7 @@ export default function UKnowIt({ socket }) {
             const drawCard2 = copiedDrawCardPileArray.pop();
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let num_of_pop = 2;
               let num_of_drawCardPile_after_pop =
@@ -954,7 +954,7 @@ export default function UKnowIt({ socket }) {
             const drawCard2 = copiedDrawCardPileArray.pop();
             if (player1Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let num_of_pop = 2;
               let num_of_drawCardPile_after_pop =
@@ -1036,7 +1036,7 @@ export default function UKnowIt({ socket }) {
             const drawCard2 = copiedDrawCardPileArray.pop();
             if (player2Deck.length === 2 && !isUnoButtonPressed) {
               alert(
-                "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+                "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
               );
               let num_of_pop = 2;
               let num_of_drawCardPile_after_pop =
@@ -1137,7 +1137,7 @@ export default function UKnowIt({ socket }) {
           const removeIndex = player1Deck.indexOf(played_card);
           if (player1Deck.length === 2 && !isUnoButtonPressed) {
             alert(
-              "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+              "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
             );
             let copiedDrawCardPileArray = [...drawCardPile];
             let num_of_pop = 2;
@@ -1219,7 +1219,7 @@ export default function UKnowIt({ socket }) {
           const removeIndex = player2Deck.indexOf(played_card);
           if (player2Deck.length === 2 && !isUnoButtonPressed) {
             alert(
-              "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+              "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
             );
             let copiedDrawCardPileArray = [...drawCardPile];
             let num_of_pop = 2;
@@ -1319,7 +1319,7 @@ export default function UKnowIt({ socket }) {
           const drawCard4 = copiedDrawCardPileArray.pop();
           if (player1Deck.length === 2 && !isUnoButtonPressed) {
             alert(
-              "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+              "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
             );
             let num_of_pop = 2;
             let num_of_drawCardPile_after_pop =
@@ -1455,7 +1455,7 @@ export default function UKnowIt({ socket }) {
           });
           if (player2Deck.length === 2 && !isUnoButtonPressed) {
             alert(
-              "Oops! You forgot to press UNO. You drew 2 cards as penalty."
+              "Oops! You forgot to press U-Know. You drew 2 cards as penalty."
             );
             let num_of_pop = 2;
             let num_of_drawCardPile_after_pop =
@@ -1826,10 +1826,7 @@ export default function UKnowIt({ socket }) {
               {users.length === 2 ? (
                 <>
                   <div className="topInfo">
-                    <img
-                      src={require("./assets/logo.png").default}
-                      alt="asset logo"
-                    />
+                    <div></div>
                     {turn === currentUser && winner === "" && (
                       <span className="text-white font-bold text-2xl">
                         <h1> -- Your Turn -- </h1>
@@ -1965,7 +1962,7 @@ export default function UKnowIt({ socket }) {
                             playUnoSound();
                           }}
                         >
-                          UNO
+                          U-Know
                         </button>
                       </div>
 
