@@ -152,7 +152,7 @@ Who did what? Here's a list of things each of us worked on:
 ## Zach Santangelo
 * Contributed Random word selection logic for draw the word and the Status message functionality. 
 * Made carousel component for game selection screen.
-* Added draggable/animated deck of cards to project for slapjack and any other card game that use a standard deck. 
+* Added [draggable/animated deck of cards](https://github.com/deck-of-cards/deck-of-cards) to project for slapjack and any other card game that use a standard deck with licenced assets cited in the game folders. 
 
 ## Sree Vandana Nadipalli
 * Modified the README and set up the git repo as per the [open source guide](https://opensource.guide/starting-a-project/) (opened discussions tab, contributing guidelines, and Code of Conduct. Added template for issues, bug report and new feature request). 
