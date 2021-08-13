@@ -9,6 +9,10 @@ https://plathyme.herokuapp.com/
 # PlaThyme
 It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game from the list of games (currently 3 games) and create a private room and start playing the game. The site will be able to host open source games created by other contributors ([learn how to integrate your game into Plathyme](https://github.com/PlaThyme/PlaThyme/blob/main/CONTRIBUTING.md)). 
 
+# Video Demo
+[![PlaThyme Demo](https://user-images.githubusercontent.com/53237662/129379894-0435d603-8754-4516-8613-8205c7d4a0f4.PNG)](https://youtu.be/39ayFc0gDOM)
+
+
 # Why PlaThyme
 Remote working made many of us start playing online games with our colleagues or friends. We observed for different games we use different sites. We wanted to create a single site that can host multiple multiplayer games. So we are developing a Website that makes it easy for other developers to contribute and easily integrate their games into this project.
 
