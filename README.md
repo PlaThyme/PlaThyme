@@ -33,15 +33,19 @@ We are planning to do this in `2 steps`.
 2. Following this, additional games will be created individually by each of the initial contributors, using the Game API developed in `step 1`.
 
 # Project Roadmap
-* Repository creation, basic project structure and initial commit 
-* Landing page and game selection menu / lobby + Private Room & game container.
-* set up a server and client communications (Server API, Socket.io implementation)
-* create private rooms and play multiplayer game
-* first game creation: [__Draw the Word__](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)
+* Repository creation, basic project structure and initial commit  __DONE__
+* Landing page and game selection menu / lobby + Private Room & game container. __DONE__
+* set up a server and client communications (Server API, Socket.io implementation) __DONE__
+* create private rooms and play multiplayer game __DONE__
+* first game creation: [__Draw the Word__](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord) __DONE__
 * Additional game ideas: 
-  1. __[Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker) -- DONE__
+  1. __[Enigma Breaker](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker) -- DONE__
   2. __Slapjack__
   3. __[U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm) -- DONE__
+  4. __Synchronize__ A game about crazy comparisons and clever references.
+* Future Features
+  * Dynamic URLs for sharable game rooms.
+  * User created room codes.
 
 # Games in PlaThyme
 
@@ -49,9 +53,9 @@ We are planning to do this in `2 steps`.
 
 ![DeawTheWord Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/drawing.gif)
 
-## [Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker)
+## [Enigma Breaker](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker)
 
-![Enigma Breake Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/notfound.gif)
+![Enigma Breaker Game](https://github.com/PlaThyme/PlaThyme/blob/main/client/src/images/notfound.gif)
 
 ## [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm)
 
@@ -155,7 +159,7 @@ Who did what? Here's a list of things each of us worked on:
 
 # Acknowledgement
 * Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
-* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breake](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
+* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breaker](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UNOtm), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
 # Licence
 
 [MIT Licence](https://github.com/PlaThyme/PlaThyme/blob/main/LICENSE)
