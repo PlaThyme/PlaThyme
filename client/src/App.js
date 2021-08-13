@@ -5,17 +5,13 @@ import io from "socket.io-client";
 import Carousel from './components/Carousel';
 import SelectGame from './components/SelectGame';
 import GameRoom from './components/GameRoom';
-import WaitRoom from './components/WaitRoom';
 import logo from './images/plathyme.png';
 
 import EnigmaBreaker from './Games/EnigmaBreaker/EnigmaBreaker';
 import DrawTheWord from './Games/DrawTheWord/DrawTheWord';
-import TestGame from './Games/TestGame/TestGame';
-import UNOTM from './Games/UNOtm/UNOtm';
+import UKnowIt from './Games/UKnowIt/UKnowIt';
 
 import './App.css';
-import { TruckIcon } from '@heroicons/react/solid';
-
 
 const SERVER = "http://localhost:3001";
 let socket;
@@ -29,7 +25,7 @@ export default function App() {
   const [listofGames, setListofGames] = useState([
     { gameId: 1, gameName: "Draw The Word", minPlayers: 3 },
     { gameId: 2, gameName: "Enigma Breaker", minPlayers: 4 },
-    { gameId: 4, gameName: "The Card game - Mattle UNO™", minPlayers: 2 },
+    { gameId: 4, gameName: "U-Know It", minPlayers: 2 },
   ]);
 
   // Game and player Info
@@ -135,8 +131,7 @@ export default function App() {
       case 3:
         break;
       case 4:
-        console.log("inside APP");
-        return <UNOTM socket={socket} />;
+        return <UKnowIt socket={socket} />;
       default:
         break;
     }
