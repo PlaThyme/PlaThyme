@@ -161,7 +161,10 @@ Who did what? Here's a list of things each of us worked on:
 # Acknowledgement
 * Thank you [`Bart Massey`](https://github.com/BartMassey) for teaching us about Open Source. We enjoyed developing this project. 
 
-* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. ([Enigma Breaker](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker), [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt), [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord)).
+* Each game in this platform is developed using help and support from different sources and we thank them for it. Each source used in a game is mentioned in the README of that game folder. Links Below.
+    * [Enigma Breaker](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/EnigmaBreaker)
+    * [U-Know It](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/UKnowIt)
+    * [Draw the Word](https://github.com/PlaThyme/PlaThyme/tree/main/client/src/Games/DrawTheWord).
 
 # Licence
 
