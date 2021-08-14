@@ -10,7 +10,7 @@ https://plathyme.herokuapp.com/
 It is a multiplayer web game hosting site. We are aiming to create a website where users can select a game from the list of games (currently 3 games) and create a private room and start playing the game. The site will be able to host open source games created by other contributors ([learn how to integrate your game into Plathyme](https://github.com/PlaThyme/PlaThyme/blob/main/CONTRIBUTING.md)). 
 
 # Video Demo
-[![PlaThyme Demo](https://user-images.githubusercontent.com/53237662/129379894-0435d603-8754-4516-8613-8205c7d4a0f4.PNG)](https://youtu.be/39ayFc0gDOM)
+[![PlaThyme Demo](https://user-images.githubusercontent.com/53237662/129379894-0435d603-8754-4516-8613-8205c7d4a0f4.PNG)](https://youtu.be/Rp-dLYJ4MPE)
 
 
 # Why PlaThyme
