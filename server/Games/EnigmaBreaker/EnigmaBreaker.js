@@ -3,6 +3,8 @@ const wordsList = require("./wordsList");
 
 class EnigmaBreaker extends Game {
   constructor(roomCode, socket, io, players) {
+
+    //These are all the state variables. Server keeps track of all of them so new players can get current game state
     super(roomCode, socket, io, players);
     this.teams = {};
     this.redTurnOrder = [];
@@ -41,33 +43,47 @@ class EnigmaBreaker extends Game {
   //When the recieveData is called by the server for this game instance, this switches on the events recieved.
   recieveData(data) {
     switch (data.event) {
+
+      //Start game event.
       case "begin-game":
         if (this.gameState === 0) {
           this.handleStartGame();
           this.handleStartTurn();
         }
         break;
+      //Event for joining a team
       case "join-team":
         this.handleJoinTeam(data);
         break;
+
+      //This just forwards team chat.
       case "team-chat":
         this.handleTeamChat(data);
         break;
+
+      //This happens when the client submits the red hint data.
       case "red-hints":
         this.handleRedHints(data);
         break;
+      //This happens when the client submits the blue hint data.
       case "blue-hints":
         this.handleBlueHints(data);
         break;
+
+      //When guesses are being made, update selections across all clients
       case "red-selections":
         this.handleRedSelections(data);
         break;
       case "blue-selections":
         this.handleBlueSelections(data);
         break;
+
+      //This event contains guess data for each team.
       case "submit-guess":
         this.handleGuess(data);
         break;
+
+      //Round is over, clients are ready for the next round to begin.
       case "next-round":
         if (this.gameState === 5) {
           this.advanceTurnOrder();
@@ -75,6 +91,8 @@ class EnigmaBreaker extends Game {
           this.handleStartTurn();
         }
         break;
+
+      //Reset the game for a new one.
       case "new-game":
         if (this.gameState === 6) {
           this.handleNewGame();
@@ -85,10 +103,15 @@ class EnigmaBreaker extends Game {
     }
   }
 
+  //On player disconnect a few things need to be done. Need to remove the player from turn / player count tracking.
+  //Need to check current game state, to see if they were giving guesses, and if someone else needs to do that now.
+  //Checks to see if there are enough players to continue playing. If drops to zero on one team reset the game.
   disconnection(playerName) {
     super.disconnection(playerName);
     let team = this.teams[playerName];
     let first = false;
+
+    //Remove player from turn tracking, find out if they were the first player this round.
     if (team === "red") {
       this.redNum -= 1;
       if (this.redTurnOrder[0] === playerName) {
@@ -108,7 +131,7 @@ class EnigmaBreaker extends Game {
       );
     }
 
-    //Determine if a new person needs to generate the hint.
+    //Determine if a new person needs to generate the hint. If they do, send the proper event.
     if (this.gameState > 0) {
       if (first && team === "red") {
         if (
@@ -604,6 +627,8 @@ class EnigmaBreaker extends Game {
       }
     }
 
+
+    //Transmit all data for game state
     if (this.teams[data.playerName] === "red") {
       super.sendDataToPlayer(data.playerName, {
         event: "team-info",
@@ -646,6 +671,8 @@ class EnigmaBreaker extends Game {
         wait: wait,
       });
     }
+
+    //Check if teams now have enough players to start the game, and that the game hasn't started. If this is the case, send the allow start event.
     if (this.redNum > 1 && this.blueNum > 1 && this.gameState === 0) {
       super.sendGameData({ event: "allow-start" });
     }
