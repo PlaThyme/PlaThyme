@@ -19,8 +19,12 @@ import {
 const EnigmaBreaker = ({ socket, playerName }) => {
   //Used to track current state of the game.
   const [currentRound, setCurrentRound] = useState(0);
+  //Ref is for event handler in use effect blocks.
   const currentRoundRef = useRef(currentRound);
+  
+  //Tracks game state. Information on that follows
   const [gameState, setGameState] = useState(0);
+  //Ref is for event handler in use effect blocks.
   const gameStateRef = useRef(gameState);
   // Game flow:
   // #0 : pre game, waiting for players
@@ -39,6 +43,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   //Emojis... really?
   const miss = "☠️";
   const hit = "💾";
+  //Character maximum for hints.
   const MAXHINTWIDTH = 46;
 
   //Controls the three digit code indicator
@@ -51,13 +56,19 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //Your teams secret words.
   const [words, setWords] = useState(["", "", "", ""]);
-
+  //Current hints to be displayed.
   const [hints, setHints] = useState(["", "", "", "", "", ""]);
 
+  //Array of hint history. Used for dot-matrix-printer
   const [history, setHistory] = useState({ redHistory: [], blueHistory: [] });
 
+  //Var keeping track if hints have been submitted yet.
   const [submitted, setSubmitted] = useState(false);
+
+  //This sets the confirm button between active, and inactive CSS formatting, and function.
   const [activeConfirm, setActiveConfirm] = useState(false);
+
+  //This controls status messages
   const [statusMessage, setStatusMessage] = useState(
     "Waiting for more players to join. A minimum of 2 per team are needed."
   );
@@ -88,6 +99,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const [myTeam, setMyTeam] = useState("");
   const myTeamRef = useRef(myTeam);
 
+  //Controls sound, default is off.
   const [soundToggle, SetSoundToggle] = useState(false);
 
   //Refs are for input boxes. Chat, and hints.
@@ -99,6 +111,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
   const b3HintRef = useRef();
   const chatRef = useRef();
 
+
+  //Initializes references, so they can be used inside event handlers.
   useEffect(() => {
     coderRef.current = coder;
     currentRoundRef.current = currentRound;
@@ -108,13 +122,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
 
   //These are all the socket events.
   useEffect(() => {
+
+    //Update-game events are ones that are sent to all clients in room.
     socket.on(
       "update-game",
       (data) => {
+        //Updates actual secret code numbers
         if (data.event === "updateActuals") {
           setActualNums(data.nums);
           return;
         }
+        //This event enables the game to start. When each team has 2 players, this should have been sent.
         if (data.event === "allow-start") {
           setButtonMessage("START GAME");
           setActiveConfirm(true);
@@ -123,6 +141,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           );
           return;
         }
+        //This is a notification that the game has been started.
         if (data.event === "start-game") {
           setActualNums(["?", "?", "?", "?", "?", "?"]);
           setButtonMessage("Inactive");
@@ -130,22 +149,29 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           setGameState(data.state);
           return;
         }
+
+        //This triggers a new turn. Resets much of the UI
         if (data.event === "new-turn") {
           handleNewTurn(data);
           return;
         }
+
+        //This indicates that red team has submitted their hints.
         if (data.event === "red-hints-in") {
           setStatusMessage(
             "Red has encoded their transmission. Waiting on Blue Encoder to complete encryption."
           );
           return;
         }
+        //This indicates that blue team has submitted their hints.
         if (data.event === "blue-hints-in") {
           setStatusMessage(
             "Blue has encoded their transmission. Waiting on Red Encoder to complete encryption."
           );
           return;
         }
+
+        //This indicates that players are waiting for red to submit their guesses.
         if (data.event === "wait-red-guess") {
           setGameState(data.state);
           if (myTeamRef.current === "blue") {
@@ -157,6 +183,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           );
           return;
         }
+        //This indicates that players are waiting for blue to submit their guesses.
         if (data.event === "wait-blue-guess") {
           setGameState(data.state);
           if (myTeamRef.current === "red") {
@@ -168,26 +195,35 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           );
           return;
         }
+
+        //This indicates that its time for both teams to decrypt the secret codes.
         if (data.event === "decryption") {
           setActiveConfirm(false);
           handleDecryption(data);
           return;
         }
+
+        //This event occurs when red team drops below 2 players.
         if (data.event === "red-needs-players") {
           setStatusMessage(
             "Red team no longer has enough players. Hire more agents."
           );
           return;
         }
+        //This event occurs when blue team drops below 2 players.
         if (data.event === "blue-needs-players") {
           setStatusMessage(
             "Blue team no longer has enough players. Hire more agents."
           );
           return;
         }
+
+        //This event contains score data, and ends the round.
         if (data.event === "score-result") {
           handleScoreResult(data);
         }
+
+        //Game has ended, final score and winner is indicated.
         if (data.event === "game-over") {
           handleGameOver(data);
           return;
@@ -198,7 +234,11 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         }
       }
     );
+
+    //These events are player specific, and haven't been sent to other clients.
     socket.on("update-game-player", (data) => {
+
+      //This event is the data / inforation for when joining a team. Contains all current game state info too.
       if (data.event === "team-info") {
         setMyTeam(data.team);
         setIsOpen(false);
@@ -209,14 +249,18 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueTwo(data.selections[4]);
         setBlueThree(data.selections[5]);
         setWords(data.wordList);
+
+        //The following conditional statements set the UI to match the current game state / phase.
         if (data.gameState > 2) {
           setHints([data.redHints, data.blueHints]);
         }
+        //State 1 and 2 indiates that they need to wait.
         if (data.gameState === 1 || data.gameState === 2) {
           setStatusMessage("Waiting on encoders to encrypt their secret code.");
           setActiveConfirm(false);
           setButtonMessage("Inactive");
         }
+        //State 3 is time to guess on the hints.
         if (data.gameState === 3) {
           setActiveConfirm(true);
           setButtonMessage("Submit");
@@ -224,6 +268,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             "Transmission received. Agents, decode the secret messages above."
           );
         }
+        //State 4 is the same as 3, but depending on the team sets wait, or indicates that they need to decode/guess
         if (data.gameState === 4) {
           if (data.wait) {
             setActiveConfirm(false);
@@ -240,16 +285,22 @@ const EnigmaBreaker = ({ socket, playerName }) => {
             );
           }
         }
+
+        //State 5 is end of round.
         if (data.gameState === 5) {
           setActiveConfirm(true);
           setButtonMessage("Next Round");
           setStatusMessage("Ready to start next round");
         }
+
+        //State 6 is the game has ended. Start new game
         if (data.gameState === 6) {
           setActiveConfirm(true);
           setButtonMessage("NEW GAME");
           setStatusMessage("Game Over... Start a new game?");
         }
+
+        //Sets final UI elements to match game state sent in the data json
         setCurrentRound(data.currentRound);
         setHistory({
           redHistory: data.redHistory,
@@ -259,6 +310,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueScore(data.blueScore);
         setGameState(data.gameState);
       }
+
+      //This event updates player selections.
       if (data.event === "selections") {
         setRedOne(data.selections[0]);
         setRedTwo(data.selections[1]);
@@ -267,9 +320,13 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         setBlueTwo(data.selections[4]);
         setBlueThree(data.selections[5]);
       }
+
+      //Team chat received.
       if (data.event === "team-chat") {
         setTeamChat(data.message);
       }
+
+      //This event indicates that they are the encoder. Sets UI to support this.
       if (data.event === "your-turn") {
         setCoder(true);
         setSecretCode(data.code);
@@ -281,6 +338,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         );
         setButtonMessage("./SUBMIT");
       }
+
+      //This event populates a teams guesses.
       if (data.event === "guess-data") {
         setShowGuesses(true);
         setGuessResults(data.guess);
@@ -291,6 +350,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         }
       }
     });
+
+    //This event handles decryption starting. References are used, as state variables will be stale.
     const handleDecryption = (data) => {
       setGameState(data.state);
       setHints([data.redHints, data.blueHints]);
@@ -324,6 +385,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
   }, [myTeam]);
 
+
+  //When the round hits 5, print history.
   useEffect(() => {
     if (gameStateRef.current === 5 || gameStateRef.current === 6) {
       if (myTeam === "red") {
@@ -335,7 +398,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
   }, [gameState]);
   
-
+  //Score data requires transcription into a readable message. This function produces it, and returns the human readable scores.
   const parseScores = (data) => {
     let rs = "";
     let bs = "";
@@ -362,6 +425,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     return [rs, bs];
   };
 
+  //This sets all of the game state information back to its default, and prints out a new game indication.
   const handleResetGame = () => {
     setButtonMessage("Wait For Players");
     setActiveConfirm(false);
@@ -410,6 +474,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     );
   };
 
+  //This resets all the UI state variables back to the start of the turn.
   const handleNewTurn = (data) => {
     setRedOne("-");
     setRedTwo("-");
@@ -427,6 +492,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setStatusMessage("Waiting for secret codes to be encrypted...");
   };
 
+  //Display final game scores, and setup game for starting a new one.
   const handleGameOver = (data) => {
     setHistory({
       redHistory: data.redHistory,
@@ -448,6 +514,8 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setGuesses(data.guesses);
   };
 
+
+  //This sets UI elements to the state for end of round, and prints out end of round scores.
   const handleScoreResult = (data) => {
     setHistory({
       redHistory: data.redHistory,
@@ -465,6 +533,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     setGuesses(data.guesses);
   };
 
+  //This calls blue history printing. Conditional allows for blank history.
   const printBlueHst = () => {
     if (history.blueHistory.length === 0) {
       printHst(
@@ -476,6 +545,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
       printHst(history.blueHistory, "blueType", false);
     }
   };
+  //This calls red history printing. Conditional allows for blank history.
   const printRedHst = () => {
     if (history.redHistory.length === 0) {
       printHst(
@@ -488,10 +558,14 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     }
   };
 
+
+  //Prints history... printing variable is because this is a timed animation. Do not allow a new print event to start while one is already running.
   let printing = false;
   const printHst = (historyList, color) => {
     if (!printing) {
       printing = true;
+
+      //Plays audio, if sound is turned on.
       if (soundToggle) {
         let audioElement;
         switch (historyList.length) {
@@ -522,10 +596,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
         }
         audioElement.play();
       }
+
+      //Nabs length of list
       let listLength = historyList.length;
+
+      //Timeout is used to countdown between print events.
       let timeOutValue;
 
+      //Recursive printing so the timing of each line can be maintained, and animation will by synchronized.
+      //Prints one line, then uses a timeout to wait for half a second before printing the next.
       const beginPrinting = (listLength, index, color) => {
+        //Checks if there are more lines to be printed.
         if (index < listLength ) {
           printLine(historyList[index], color);
           if (timeOutValue !== undefined) {
@@ -539,11 +620,16 @@ const EnigmaBreaker = ({ socket, playerName }) => {
           printing = false;
         }
       };
+      //Start recursive printing, with index starting at zero.
       beginPrinting(listLength, 0, color);
     }
   };
 
+
+  //Creates a line for the dot matrix printer sheet, and appends it to the list, before the last one. Thus pushing down the old ones.
   const printLine = (hstLine, color) => {
+
+    //Nabs the printer, creates base elements that make up a line of printed text for history.
     const paper = document.querySelector("#printer .paper");
     const edge = document.createElement("div");
     edge.className = "edge";
@@ -554,6 +640,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     const line = document.createElement("div");
     line.className = "line sheet1";
 
+    //Fill the line up with the text
     const col1 = col.cloneNode();
     col1.innerText = hstLine[0];
     const col2 = col.cloneNode();
@@ -563,6 +650,7 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     const col4 = col.cloneNode();
     col4.innerText = hstLine[3];
     const cnt = content.cloneNode();
+    //Add the text to the line.
     cnt.appendChild(col1);
     cnt.appendChild(col2);
     cnt.appendChild(col3);
@@ -571,12 +659,17 @@ const EnigmaBreaker = ({ socket, playerName }) => {
     currentLine.appendChild(edge.cloneNode());
     currentLine.appendChild(cnt);
     currentLine.appendChild(edge.cloneNode());
+
+    //Add the line to the sheet of printer paper. Prepend so its at the top.
     paper.prepend(currentLine.cloneNode(true));
+
+    //Remove elements that extend out of sight.
     if (paper.childElementCount > 11) {
       paper.removeChild(paper.childNodes[paper.childElementCount - 1]);
     }
   };
 
+  //Simply sets the sound toggle.
   const toggleSound = () => {
     SetSoundToggle(!soundToggle);
   };
